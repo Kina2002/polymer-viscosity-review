@@ -1,0 +1,6914 @@
+[
+  {
+    "measurementId": "PA-001-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-001-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-001-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-001-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-002-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-002-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-002-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-002-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-003-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-003-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-003-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-003-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-004-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-004-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-004-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-004-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-005-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-005-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-005-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-005-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-006-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-006-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-006-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-006-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-007-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-007-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-007-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-007-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-008-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-008-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-008-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-008-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-009-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-009-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-009-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-009-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-010-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-010-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-010-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-010-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-011-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-011-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-011-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-011-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-012-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-012-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-012-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-012-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-013-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-013-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-013-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-013-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-014-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-014-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-014-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-014-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-015-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-015-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-015-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-015-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-016-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-016-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-016-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-016-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-017-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-017-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-017-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-017-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-018-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-018-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-018-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-018-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-019-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-019-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-019-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-019-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-020-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-020-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-020-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-020-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-021-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-021-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-021-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-021-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-022-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-022-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-022-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-022-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-023-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-023-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-023-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-023-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-024-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-024-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-024-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-024-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-025-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-025-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-025-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-025-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-026-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-026-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-026-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-026-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-027-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-027-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-027-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-027-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-028-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-028-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-028-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-028-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-029-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-029-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-029-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-029-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-030-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-030-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-030-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-030-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-031-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-031-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-031-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-031-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-032-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-032-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-032-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-032-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-033-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-033-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-033-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-033-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-034-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-034-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-034-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-034-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-035-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-035-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-035-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-035-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-036-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-036-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-036-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-036-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-037-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-037-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-037-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-037-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-038-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-038-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-038-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-038-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-039-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-039-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-039-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-039-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-040-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-040-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-040-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-040-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-041-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-041-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-041-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-041-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-042-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-042-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-042-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-042-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-043-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-043-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-043-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-043-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-044-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-044-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-044-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-044-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-045-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-045-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-045-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-045-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-046-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-046-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-046-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-046-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-047-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-047-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-047-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-047-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-048-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-048-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-048-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-048-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-049-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-049-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-049-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-049-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-050-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-050-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-050-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-050-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-051-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-051-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-051-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-051-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-052-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-052-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-052-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-052-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-053-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-053-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-053-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-053-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-054-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-054-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-054-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-054-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-055-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-055-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-055-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-055-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-056-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-056-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-056-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-056-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-057-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-057-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-057-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-057-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-058-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-058-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-058-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-058-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-059-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-059-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-059-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-059-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-060-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-060-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-060-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-060-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-061-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-061-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-061-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-061-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-062-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-062-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-062-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-062-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-063-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-063-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-063-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-063-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-064-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-064-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-064-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-064-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-065-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-065-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-065-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-065-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-066-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-066-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-066-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-066-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-067-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-067-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-067-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-067-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-068-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-068-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-068-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-068-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-069-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-069-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-069-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-069-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-070-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-070-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-070-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-070-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-071-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-071-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-071-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-071-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-072-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-072-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-072-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-072-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-073-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-073-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-073-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-073-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-074-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-074-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-074-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-074-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-075-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-075-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-075-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-075-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-076-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-076-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-076-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-076-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-077-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-077-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-077-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-077-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-078-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-078-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-078-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-078-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-079-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-079-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-079-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-079-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-080-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-080-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-080-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-080-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-081-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-081-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-081-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-081-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-082-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-082-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-082-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-082-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-083-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-083-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-083-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-083-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-084-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-084-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-084-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-084-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-085-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-085-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-085-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-085-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-086-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-086-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-086-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-086-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-087-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-087-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-087-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-087-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-088-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-088-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-088-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-088-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-089-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-089-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-089-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-089-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-090-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-090-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-090-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-090-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-091-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-091-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-091-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-091-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-092-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-092-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-092-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-092-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-093-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-093-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-093-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-093-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-094-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-094-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-094-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-094-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-095-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-095-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-095-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-095-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-096-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-096-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-096-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-096-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-097-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-097-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-097-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-097-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-098-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-098-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-098-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-098-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-099-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-099-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-099-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-099-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-100-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-100-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-100-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-100-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-101-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-101-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-101-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-101-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-102-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-102-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-102-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-102-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-103-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-103-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-103-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-103-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-104-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-104-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-104-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-104-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-105-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-105-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-105-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-105-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-106-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-106-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-106-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-106-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-107-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-107-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-107-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-107-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-108-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-108-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-108-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-108-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-109-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-109-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-109-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-109-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-110-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-110-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-110-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-110-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-111-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-111-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-111-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-111-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-112-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-112-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-112-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-112-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-113-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-113-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-113-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-113-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-114-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-114-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-114-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-114-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-115-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-115-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-115-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-115-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-116-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-116-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-116-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-116-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-117-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-117-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-117-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-117-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-118-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-118-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-118-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-118-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-119-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-119-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-119-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-119-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-120-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-120-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-120-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-120-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-121-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-121-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-121-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-121-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-122-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-122-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-122-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-122-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-123-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-123-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-123-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-123-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-124-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-124-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-124-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-124-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-125-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-125-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-125-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-125-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-126-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-126-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-126-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-126-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-127-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-127-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-127-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-127-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-128-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-128-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-128-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-128-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-129-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-129-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-129-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-129-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-130-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-130-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-130-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-130-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-131-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-131-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-131-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-131-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-132-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-132-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-132-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-132-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-133-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-133-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-133-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-133-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-134-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-134-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-134-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-134-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-135-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-135-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-135-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-135-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-136-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-136-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-136-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-136-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-137-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-137-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-137-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-137-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-138-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-138-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-138-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-138-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-139-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-139-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-139-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-139-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-140-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-140-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-140-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-140-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-141-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-141-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-141-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-141-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-142-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-142-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-142-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-142-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-143-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-143-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-143-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-143-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-144-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-144-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-144-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-144-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-145-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-145-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-145-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-145-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-146-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-146-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-146-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-146-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-147-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-147-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-147-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-147-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-148-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-148-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-148-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-148-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-149-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-149-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-149-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-149-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-150-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-150-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-150-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-150-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-151-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-151-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-151-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-151-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-152-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-152-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-152-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-152-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-153-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-153-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-153-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-153-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-154-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-154-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-154-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-154-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-155-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-155-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-155-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-155-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-156-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-156-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-156-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-156-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-157-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-157-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-157-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-157-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-158-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-158-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-158-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-158-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-159-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-159-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-159-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-159-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-160-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-160-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-160-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-160-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-161-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-161-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-161-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-161-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-162-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-162-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-162-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-162-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-163-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-163-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-163-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-163-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-164-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-164-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-164-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-164-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-165-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-165-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-165-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-165-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-166-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-166-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-166-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-166-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-167-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-167-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-167-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-167-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-168-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-168-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-168-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-168-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-169-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-169-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-169-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-169-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-170-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-170-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-170-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-170-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-171-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-171-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-171-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-171-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-172-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-172-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-172-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-172-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-173-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-173-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-173-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-173-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-174-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-174-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-174-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-174-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-175-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-175-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-175-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-175-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-176-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-176-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-176-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-176-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-177-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-177-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-177-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-177-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-178-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-178-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-178-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-178-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-179-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-179-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-179-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-179-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-180-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-180-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-180-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-180-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-181-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-181-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-181-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-181-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-182-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-182-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-182-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-182-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-183-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-183-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-183-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-183-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-184-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-184-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-184-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-184-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-185-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-185-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-185-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-185-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-186-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-186-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-186-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-186-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-187-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-187-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-187-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-187-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-188-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-188-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-188-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-188-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-189-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-189-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-189-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-189-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-190-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-190-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-190-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-190-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-191-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-191-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-191-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-191-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-192-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-192-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-192-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-192-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-193-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-193-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-193-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-193-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-194-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-194-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-194-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-194-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-195-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-195-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-195-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-195-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-196-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-196-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-196-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-196-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-197-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-197-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-197-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-197-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-198-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-198-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-198-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-198-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-199-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-199-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-199-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-199-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-200-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-200-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-200-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-200-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-201-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-201-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-201-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-201-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-202-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-202-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-202-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-202-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-203-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-203-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-203-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-203-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-204-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-204-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-204-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-204-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-205-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-205-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-205-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-205-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-206-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-206-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-206-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-206-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-207-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-207-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-207-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-207-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-208-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-208-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-208-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-208-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-209-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-209-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-209-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-209-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-210-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-210-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-210-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-210-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-211-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-211-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-211-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-211-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-212-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-212-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-212-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-212-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-213-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-213-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-213-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-213-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-214-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-214-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-214-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-214-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-215-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-215-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-215-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-215-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-216-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-216-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-216-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-216-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-217-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-217-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-217-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-217-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-218-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-218-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-218-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-218-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-219-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-219-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-219-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-219-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-220-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-220-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-220-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-220-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-221-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-221-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-221-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-221-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-222-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-222-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-222-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-222-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-223-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-223-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-223-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-223-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-224-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-224-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-224-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-224-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-225-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-225-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-225-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-225-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-226-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-226-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-226-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-226-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-227-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-227-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-227-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-227-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-228-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-228-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-228-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-228-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-229-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-229-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-229-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-229-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-230-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-230-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-230-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-230-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-231-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-231-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-231-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-231-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-232-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-232-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-232-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-232-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-233-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-233-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-233-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-233-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-234-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-234-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-234-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-234-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-235-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-235-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-235-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-235-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-236-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-236-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-236-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-236-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-237-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-237-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-237-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-237-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-238-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-238-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-238-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-238-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-239-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-239-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-239-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-239-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-240-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-240-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-240-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-240-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-241-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-241-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-241-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-241-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-242-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-242-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-242-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-242-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-243-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-243-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-243-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-243-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-244-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-244-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-244-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-244-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-245-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-245-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-245-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-245-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-246-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-246-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-246-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-246-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-247-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-247-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-247-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-247-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-248-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-248-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-248-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-248-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-249-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-249-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-249-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-249-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-250-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-250-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-250-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-250-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-251-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-251-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-251-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-251-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-252-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-252-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-252-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-252-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-253-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-253-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-253-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-253-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-254-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-254-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-254-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-254-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-255-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-255-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-255-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-255-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-256-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-256-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-256-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-256-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-257-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-257-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-257-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-257-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-258-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-258-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-258-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-258-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-259-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-259-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-259-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-259-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-260-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-260-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-260-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-260-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-261-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-261-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-261-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-261-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-262-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-262-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-262-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-262-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-263-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-263-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-263-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-263-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-264-M1",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-264-M2",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-264-M3",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-264-M4",
+    "scenario": "normal",
+    "categories": []
+  },
+  {
+    "measurementId": "PA-265-M1",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-265-M2",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-265-M3",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-265-M4",
+    "scenario": "manufacturing",
+    "categories": [
+      "manufacturing"
+    ]
+  },
+  {
+    "measurementId": "PA-266-M1",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-266-M2",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-266-M3",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-266-M4",
+    "scenario": "measurement",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-267-M1",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-267-M2",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-267-M3",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-267-M4",
+    "scenario": "missing",
+    "categories": [
+      "missing"
+    ]
+  },
+  {
+    "measurementId": "PA-268-M1",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-268-M2",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-268-M3",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-268-M4",
+    "scenario": "specification",
+    "categories": [
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-269-M1",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-269-M2",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-269-M3",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-269-M4",
+    "scenario": "preparation",
+    "categories": [
+      "measurement"
+    ]
+  },
+  {
+    "measurementId": "PA-270-M1",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-270-M2",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-270-M3",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  },
+  {
+    "measurementId": "PA-270-M4",
+    "scenario": "combined",
+    "categories": [
+      "manufacturing",
+      "measurement",
+      "specification"
+    ]
+  }
+]
