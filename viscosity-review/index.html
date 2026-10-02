@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#153e40">
+  <title>점도 검토실 · 고분자 배치 검토</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23153e40'/%3E%3Cpath d='M20 7C18 12 11 19 11 25a9 9 0 0018 0c0-6-7-13-9-18z' fill='%239cdfbc'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./src/styles.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#records">측정 기록으로 이동</a>
+  <aside class="sidebar">
+    <a class="brand" href="#top" aria-label="점도 검토실 처음으로"><span class="logo" aria-hidden="true">◒</span><span>점도 검토실<small>POLYMER QUALITY LAB</small></span></a>
+    <p class="nav-caption">검토 공간</p>
+    <nav aria-label="주요 메뉴">
+      <a class="nav-link active" href="#top"><span aria-hidden="true">▦</span> 배치 검토</a>
+      <a class="nav-link" href="#records"><span aria-hidden="true">≡</span> 측정 기록</a>
+      <button class="nav-link" id="open-criteria-nav"><span aria-hidden="true">⚙</span> 검토 기준</button>
+    </nav>
+    <div class="sidebar-note"><span class="tiny-dot"></span> 첫 번째 실험실<strong>가상 고분자 수용액 A</strong><p>숫자와 조건을 함께 살펴보는<br>품질 검토 연습</p><span class="version">PORTFOLIO · v0.1</span></div>
+  </aside>
+  <main id="top">
+    <header class="topbar"><span>작업 공간 <span class="slash">/</span> 제조 배치 검토</span><span class="demo-tag">가상 데이터 · 시연용 기준</span></header>
+    <section class="hero" aria-labelledby="page-title">
+      <div><p class="eyebrow">FROM MEASUREMENT TO REVIEW</p><h1 id="page-title">좋은 검토는,<br>측정 조건에서 <br class="mobile-break">시작해요.</h1><p class="hero-copy">점도와 제조·측정 기록을 함께 확인하세요.<br>차이를 찾고, 확인할 근거를 남기는 공간입니다.</p></div>
+      <div class="hero-sample" aria-hidden="true"><div class="sample-caption">POLY-A / AQUEOUS SOLUTION</div><svg viewBox="0 0 220 180"><path d="M77 20h66M91 20v42l-37 75q-10 26 21 26h72q31 0 20-26l-37-75V20" fill="none" stroke="currentColor" stroke-width="3"/><path d="M77 98h65l21 43q7 18-17 18H75q-24 0-17-18z" fill="#8cd5af" opacity=".6"/><path d="M95 104q16-8 37 0" fill="none" stroke="#b6edd2" stroke-width="2"/><circle cx="95" cy="131" r="5" fill="#def5e8"/><circle cx="124" cy="143" r="3" fill="#def5e8"/><path d="M179 44h18M188 35v18M41 81h10M46 76v10" stroke="#94cdb1" stroke-width="2"/></svg><span>조건을 맞추고, 기록을 연결하고.</span></div>
+    </section>
+    <section class="metrics" aria-label="전체 데이터 검토 요약">
+      <div class="metric"><span>검토 대상</span><strong id="total-count">—</strong><small id="batch-count">데이터를 불러오는 중</small></div>
+      <div class="metric"><span>기준 충족</span><strong class="green" id="pass-count">—</strong><small>입력된 가상 기준과 일치</small></div>
+      <div class="metric"><span>검토 필요</span><strong class="amber" id="review-count">—</strong><small>누락·조건 차이·수치 이탈 포함</small></div>
+      <div class="metric method-metric"><span>현재 검토 기준</span><strong id="criteria-version">—</strong><button class="text-button" id="open-criteria">기준 확인 및 수정 <span aria-hidden="true">↗</span></button></div>
+    </section>
+    <section class="workspace-toolbar" aria-label="입력과 저장">
+      <div class="source"><span class="file-icon" aria-hidden="true">▤</span><div><strong id="source-name">합성 시연 데이터</strong><small id="source-description">모든 수치는 검토 기능을 확인하기 위한 가상 값입니다.</small><a id="download-template" class="template-link" href="./data/demo-records.csv" download="점도_입력양식_1080건.csv">입력 양식 CSV 내려받기 ↗</a></div></div>
+      <div class="actions"><button id="load-demo" class="button quiet">시연 데이터</button><label class="button secondary" for="csv-file">CSV 불러오기</label><input id="csv-file" type="file" accept=".csv,text/csv" hidden><button id="export-csv" class="button secondary">결과 CSV</button><button id="export-report" class="button primary">보고서 저장 <span aria-hidden="true">↓</span></button></div>
+    </section>
+    <p id="message" role="status" aria-live="polite" class="message" hidden></p>
+    <section class="chart-grid">
+      <div class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow muted">BATCH OVERVIEW</p><h2>배치별 점도 기록</h2></div><label class="check-label"><input type="checkbox" id="comparable-only" checked> 비교 조건이 맞는 값만</label></div><div id="chart" class="chart" aria-live="polite"></div><div class="chart-footer"><span><i class="legend-dot green-dot"></i> 수치상 범위 내 <i class="legend-dot amber-dot"></i> 수치상 범위 외</span><span id="chart-note">개별 측정값 · 평균으로 합치지 않음</span></div></div>
+      <div class="panel findings-panel"><p class="eyebrow muted">REVIEW SIGNALS</p><h2>확인할 기록</h2><p class="subtle">범주를 눌러 해당 기록을 살펴보세요.</p><div id="category-counts"></div><p class="small-note">한 측정에 여러 항목이 표시될 수 있어요.<br>조건 차이는 원인 확정이나 불량 판정이 아닙니다.</p></div>
+    </section>
+    <section id="records" class="record-section" aria-labelledby="records-title">
+      <div class="section-heading"><div><p class="eyebrow muted">MEASUREMENT RECORDS</p><h2 id="records-title">측정 기록</h2></div><span id="filtered-count" class="count-label"></span></div>
+      <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="배치·측정·시료 번호 검색" aria-label="배치 측정 시료 번호 검색"></label><label class="filter-label">검토 상태<select id="status-filter"><option value="all">전체 상태</option><option value="pass">기준 충족</option><option value="review">검토 필요</option></select></label><label class="filter-label">확인 항목<select id="category-filter"><option value="all">전체 항목</option><option value="missing">기록 누락</option><option value="data">입력 확인</option><option value="manufacturing">제조 조건 차이</option><option value="measurement">측정 조건 차이</option><option value="specification">점도 규격 이탈</option></select></label><button id="reset-filter" class="text-button">초기화</button></div>
+      <div class="record-grid">
+        <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">현재 조건에 해당하는 개별 측정 기록. 측정 번호를 눌러 상세 정보를 확인하세요.</caption><thead><tr><th scope="col">배치 / 측정</th><th scope="col">점도 <small>mPa·s</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>
+        <aside id="detail" class="panel detail-panel" aria-label="선택한 측정의 상세 기록"><p class="empty-detail">측정 기록을 선택하세요.</p></aside>
+      </div>
+    </section>
+    <footer>점도 검토실 <span>·</span> 교육용 가상 제품 POLY-A <span>·</span> 첫 버전은 규칙에 따른 검토를 제공합니다.</footer>
+  </main>
+  <dialog id="criteria-dialog" aria-labelledby="criteria-title"><form id="criteria-form"><div class="dialog-heading"><div><p class="eyebrow muted">REVIEW METHOD</p><h2 id="criteria-title">시연용 검토 기준</h2></div><button type="button" id="close-criteria" class="page-button" aria-label="기준 설정 닫기">×</button></div><p class="dialog-intro">실제 SOP가 확정되기 전의 가상 초안입니다. 변경하면 모든 기록을 다시 검토하고 새 기준 버전을 남깁니다.</p><div id="criteria-fields"></div><p class="small-note">고정 확인 요건: 온도 평형·수평·영점 완료, 침지 표시 준수, 기포 육안 미관찰, 유효한 교정·적합한 표준액 점검 기록. 이 요건도 이번 시연을 위한 가정입니다.</p><p id="criteria-error" role="alert" class="form-error" hidden></p><div class="dialog-actions"><button type="button" id="reset-criteria" class="button secondary">가상 초안으로 되돌리기</button><button type="submit" class="button primary">기준 적용</button></div></form></dialog>
+</body>
+</html>

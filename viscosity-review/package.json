@@ -1,0 +1,14 @@
+{
+  "name": "polymer-viscosity-review",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "고분자 수용액 제조 배치 검토 포트폴리오",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "generate": "node scripts/generate.mjs",
+    "build:portable": "node scripts/build-portable.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
