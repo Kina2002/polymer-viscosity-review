@@ -215,11 +215,18 @@ export function followUpSignature(record, criteria) {
     criteria: Object.keys(DEFAULT_CRITERIA).map(key => [key, criteria[key]]),
     record: FIELDS.map(([key]) => [key, record[key] ?? ''])});
 }
+export const FOLLOW_UP_STATUS_LABELS = Object.freeze({pending: '미확인', done: '자료 확인 완료', unavailable: '확인 불가'});
 export function followUpProgress(record, criteria, checklists = {}) {
   const state = checklists[record.measurementId];
-  const checked = state?.signature === followUpSignature(record, criteria) && Array.isArray(state.checked)
-    ? new Set(state.checked) : new Set();
-  return followUpPlan(record, criteria).map(task => ({...task, checked: checked.has(task.id)}));
+  const valid = state?.signature === followUpSignature(record, criteria);
+  const checked = valid && Array.isArray(state.checked) ? new Set(state.checked) : new Set();
+  return followUpPlan(record, criteria).map(task => {
+    const outcome = valid ? state.outcomes?.[task.id] : null;
+    // 기존 체크만 저장한 기록은 확인 완료로 읽는다. 확인 불가와 동시에 완료될 수 없다.
+    const status = Object.hasOwn(FOLLOW_UP_STATUS_LABELS, outcome?.status) ? outcome.status : checked.has(task.id) ? 'done' : 'pending';
+    const reason = status === 'unavailable' && typeof outcome?.reason === 'string' ? outcome.reason.slice(0, 2000) : '';
+    return {...task, status, checked: status === 'done', reason};
+  });
 }
 
 export function parseCSV(text) {
@@ -296,10 +303,10 @@ export function reportMarkdown(records, criteria, notes = {}, source = '합성 �
       const result = reviews[i];
       return `| ${md(record.batchId)} | ${md(record.measurementId)} | ${md(result.viscosity ?? '비교 불가')} | ${result.status} | ${result.numericStatus} | ${result.comparable ? '확인됨' : '확인 필요'} | ${md(result.issues.map(issue => `${LABELS[issue.field]}: 실제 ${issue.actual === '' ? '미기재' : issue.actual}, 기준 ${issue.expected}`).join('; ') || '가상 기준과 일치')} | ${md(notes[record.measurementId] ?? '')} |`;
     }), '', '## 추가 확인 질문과 체크리스트', '',
-    '체크는 사용자가 자료를 확인했다고 표시한 상태입니다. 원인 확정, 판정 변경 또는 출하 승인을 뜻하지 않습니다.', '',
+    '확인 상태는 사용자가 선택한 자료 확인 결과입니다. 확인 불가는 자료를 확인할 수 없었다는 뜻이며, 원인 확정·판정 변경·출하 승인을 뜻하지 않습니다.', '',
     ...records.flatMap(record => {
       const tasks = followUpProgress(record, criteria, checklists);
-      return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
+      return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}. 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}${task.status === 'unavailable' ? ` 확인 불가 이유: ${md(task.reason.trim() || '미기재')}` : ''}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
     }), '## 원본 기록', '', '원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 현재 필터로 선택한 기록의 검토 결과입니다.', ''
   ].join('\n');
 }
