@@ -12,6 +12,52 @@
 @media(max-width:900px){.sidebar{position:static;width:100%;padding:14px 22px;flex-direction:row;justify-content:space-between;align-items:center}.brand{font-size:17px}.brand small{display:none}.logo{width:29px;height:32px;font-size:23px}.sidebar nav{display:flex;gap:5px}.nav-link{width:auto;margin:0;padding:9px 12px;font-size:11px}.nav-link span{display:none}.nav-caption,.sidebar-note{display:none}main{margin:0;padding:0 22px}.hero{padding-top:29px}.topbar{height:52px}.record-grid{grid-template-columns:minmax(0,1.4fr) minmax(270px,1fr)}h1{font-size:30px}.hero-sample{width:210px}}
 @media(max-width:650px){main{padding:0 15px}.sidebar{padding:12px 15px}.brand{font-size:15px;gap:7px}.sidebar nav{gap:0}.nav-link{padding:8px;font-size:10px}.sidebar nav>a[href="#records"]{display:none}.topbar{font-size:9px}.demo-tag{font-size:8px;padding:5px 6px}.slash{margin:0 5px}.hero{padding:28px 0 26px;gap:4px}.hero-sample{width:135px;flex-shrink:0;padding:5px}.hero-sample svg{height:113px}.hero-sample>span{font-size:8px}.sample-caption{font-size:6px;letter-spacing:.3px}h1{font-size:25px;letter-spacing:-1.2px}.eyebrow{font-size:7px;letter-spacing:1.2px}.hero-copy{font-size:10px;line-height:1.9;margin-top:12px}.metrics{grid-template-columns:1fr 1fr}.metric{padding:16px;gap:7px;border-bottom:1px solid var(--border)}.metric:nth-child(2){border-right:0}.metric:nth-child(3){border-bottom:0}.metric>strong{font-size:26px}.metric>small{font-size:9px}.method-metric>strong{font-size:11px;margin:5px 0}.metric>span{font-size:10px}.workspace-toolbar{padding:20px 0;gap:13px}.source small{font-size:9px}.actions{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.button{font-size:10px;padding:9px 7px;gap:4px}.chart-grid{grid-template-columns:1fr}.chart-panel{padding:18px 16px}.panel-heading{flex-direction:row;align-items:center}.check-label{font-size:9px}.chart{height:200px}.findings-panel{padding:17px}#category-counts{grid-template-columns:1fr 1fr;gap:5px 22px}.small-note{font-size:9px}.findings-panel .small-note br{display:none}.record-section{padding-top:24px}h2{font-size:17px}.filters{gap:10px}.search{max-width:none;flex-basis:100%;min-width:0}.filter-label{font-size:9px}.filter-label select{padding:8px;font-size:10px}.filters>.text-button{margin-left:auto;font-size:10px}.record-grid{grid-template-columns:1fr}.detail-panel{position:static;padding:22px}.table-scroll table{min-width:360px}td,th{padding:12px}.reading strong{font-size:34px}.record-fields{font-size:11px}.issue{font-size:11px}dialog form{padding:21px}.criteria-grid{gap:12px}.criteria-input{font-size:10px}.dialog-actions{bottom:-21px}.dialog-intro{font-size:11px}footer{font-size:8px}}
 .mobile-break{display:none}.template-link{display:inline-block;font-size:10px;color:#3a715e;margin-top:6px;text-underline-offset:3px}.record-link,table,.category-button,.conclusion,.note-input{font-size:12px}.record-link span,th,.badge{font-size:10px}.record-fields,.issue{font-size:11px}.detail-section h3,.note-label{font-size:12px}.detail-panel{scroll-margin-top:15px}
+.record-grid{grid-template-columns:minmax(315px,.85fr) minmax(0,1.65fr)}
+.detail-panel{position:static}
+.comparison-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.comparison-heading h3{font-size:16px;margin:0}
+.comparison-intro{font-size:11px;color:#617b70;line-height:1.7;margin-top:9px;overflow-wrap:anywhere}
+.comparison-filter{display:flex;align-items:center;gap:7px;font-size:12px;margin:13px 0;color:#486956}
+.comparison-filter input{accent-color:var(--green)}
+.comparison-scroll{max-height:610px;overflow:auto;border:1px solid var(--border);border-radius:7px;scrollbar-gutter:stable}
+.comparison-scroll:focus-visible{outline:3px solid #7dbfa0;outline-offset:3px}
+.comparison-table{white-space:normal;table-layout:fixed;font-size:12px}
+.comparison-table thead{position:sticky;top:0;z-index:1;background:#eaf1eb}
+.comparison-table thead th{font-size:11px;color:#385b4c;font-weight:650}
+.comparison-table th,.comparison-table td{padding:12px 10px;vertical-align:top;line-height:1.65;overflow-wrap:anywhere}
+.comparison-table thead th:nth-child(1){width:25%}
+.comparison-table thead th:nth-child(2){width:20%}
+.comparison-table thead th:nth-child(3){width:28%}
+.comparison-table thead th:nth-child(4){width:27%}
+.comparison-table .comparison-group th{background:#f1f5f0;color:#5d7764;padding:8px 10px;font-size:11px;font-weight:600}
+.comparison-name{font-size:12px;font-weight:500;color:#425c4c}
+.comparison-actual{font-weight:650;color:#274e3f;font-variant-numeric:tabular-nums}
+.comparison-expected{color:#617465;font-variant-numeric:tabular-nums}
+.comparison-row.needs-review{background:#fff7e9}
+.comparison-row.needs-review .comparison-actual{color:#91591c}
+.comparison-row:hover{background:#f4f8f2}
+.comparison-row.needs-review:hover{background:#fff0d8}
+.comparison-reason{display:block;color:#896a42;font-size:10px;margin-top:5px;line-height:1.6}
+.comparison-table .badge{font-size:10px;white-space:nowrap}
+.comparison-footnote{font-size:11px;color:#7c8c80;line-height:1.8;margin-top:11px}
+.comparison-empty{color:#617b70}
+@media(max-width:1200px){.record-grid{grid-template-columns:1fr}.comparison-scroll{max-height:560px}}
+@media(max-width:650px){
+  .comparison-scroll{max-height:650px;scrollbar-gutter:auto}
+  .comparison-table,.comparison-table tbody{display:block;width:100%}
+  .comparison-table thead{display:none}
+  .comparison-table .comparison-group{display:block}
+  .comparison-table .comparison-group th{display:block;width:100%}
+  .comparison-table .comparison-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);padding:13px 12px;gap:8px 12px;border-bottom:1px solid var(--border)}
+  .comparison-table .comparison-row th,.comparison-table .comparison-row td{display:block;border:0;padding:0;font-size:12px}
+  .comparison-name{grid-column:1 / -1;font-weight:650}
+  .comparison-table td[data-label]:before{content:attr(data-label);display:block;font-size:10px;font-weight:400;color:#7a8e7f;margin-bottom:4px}
+  .comparison-table .comparison-status{grid-column:1 / -1}
+  .comparison-table .comparison-status:before{display:none}
+  .comparison-reason{font-size:11px}
+  .comparison-table .comparison-empty{display:block;padding:15px}
+  .comparison-heading h3{font-size:15px}
+}
 @media(max-width:650px){.mobile-break{display:block}.hero-sample{width:110px}.record-fields,.issue,.note-input{font-size:12px}.record-link,table{font-size:12px}.check-label{white-space:normal;max-width:135px}.chart-footer{font-size:10px}.template-link{font-size:10px}.record-link span{font-size:10px}.badge{font-size:10px}}
 @media(prefers-reduced-motion:no-preference){button,.button,a{transition:background .15s ease,color .15s ease}.hero-sample svg{animation:appear .7s ease-out}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
 </style>
@@ -95,6 +141,11 @@ const CATEGORY_LABELS = {
   missing: '기록 누락', data: '입력 확인', manufacturing: '제조 조건 차이',
   measurement: '측정 조건 차이', specification: '점도 규격 이탈'
 };
+const FIXED_REQUIREMENTS = Object.freeze({
+  product: 'POLY-A', thermalEquilibrium: '완료', bubbleState: '육안 미관찰',
+  immersion: '표시 준수', calibrationStatus: '유효 기록 확인',
+  standardCheck: '적합 기록 확인', levelCheck: '완료', zeroCheck: '완료'
+});
 const NUMERIC_FIELDS = new Set([
   'repeat', 'polymerMass', 'solventMass', 'concentration', 'manufacturingTemperature',
   'mixingRpm', 'mixingMinutes', 'storageTemperature', 'ageHours', 'sampleTemperature',
@@ -168,10 +219,9 @@ function reviewRecord(record, criteria = DEFAULT_CRITERIA) {
   range('rpm', criteria.rpm, 0, 'measurement', 'rpm');
   range('elapsedSeconds', criteria.elapsed, 0, 'measurement', '초');
   range('sampleVolume', criteria.volume, 0, 'measurement', 'mL');
-  exact('product', 'POLY-A', 'measurement');
   exact('spindle', criteria.spindle, 'measurement');
   exact('vessel', criteria.vessel, 'measurement');
-  for (const [field, expected] of Object.entries({thermalEquilibrium: '완료', bubbleState: '육안 미관찰', immersion: '표시 준수', calibrationStatus: '유효 기록 확인', standardCheck: '적합 기록 확인', levelCheck: '완료', zeroCheck: '완료'})) exact(field, expected, 'measurement');
+  for (const [field, expected] of Object.entries(FIXED_REQUIREMENTS)) exact(field, expected, 'measurement');
   if (!invalid.has('torquePercent')) {
     const torque = Number(record.torquePercent);
     if (torque < criteria.torqueMin || torque > criteria.torqueMax)
@@ -197,6 +247,42 @@ function reviewRecord(record, criteria = DEFAULT_CRITERIA) {
     conclusion: !comparable ? `${numericStatus} · 비교 조건 확인 필요` : numericStatus,
     criteriaVersion: criteria.version
   };
+}
+
+// 비교표는 판정과 같은 기준을 사용하고, 기록만 확인한 항목을 기준 일치로 표시하지 않는다.
+function comparisonRows(record, criteria = DEFAULT_CRITERIA) {
+  const review = reviewRecord(record, criteria);
+  const target = (value, tolerance, unit) => `${value}${tolerance ? ` ± ${tolerance}` : ''} ${unit}`;
+  const requirements = {
+    ...FIXED_REQUIREMENTS,
+    viscosity: `${criteria.viscosityMin}~${criteria.viscosityMax} mPa·s`, unit: 'mPa·s 또는 cP',
+    sampleTemperature: target(criteria.temperature, criteria.temperatureTolerance, '℃'),
+    spindle: criteria.spindle, vessel: criteria.vessel, rpm: `${criteria.rpm} rpm`,
+    elapsedSeconds: `${criteria.elapsed} 초`, sampleVolume: `${criteria.volume} mL`,
+    torquePercent: `${criteria.torqueMin}~${criteria.torqueMax}%`,
+    manufacturingTemperature: target(criteria.manufacturingTemperature, criteria.manufacturingTolerance, '℃'),
+    mixingRpm: target(criteria.mixingRpm, criteria.mixingRpmTolerance, 'rpm'),
+    mixingMinutes: target(criteria.mixingMinutes, criteria.mixingMinutesTolerance, '분'),
+    concentration: target(criteria.concentration, criteria.concentrationTolerance, 'wt%')
+  };
+  const groups = [
+    ['점도 결과', ['viscosity', 'unit']],
+    ['측정 조건', ['sampleTemperature', 'thermalEquilibrium', 'rpm', 'elapsedSeconds', 'torquePercent', 'spindle', 'vessel', 'sampleVolume', 'immersion', 'bubbleState', 'calibrationStatus', 'standardCheck', 'levelCheck', 'zeroCheck']],
+    ['제조 조건', ['concentration', 'manufacturingTemperature', 'mixingRpm', 'mixingMinutes']],
+    ['제품과 나머지 기록', FIELDS.map(([field]) => field).filter(field => !['viscosity', 'unit', 'sampleTemperature', 'thermalEquilibrium', 'rpm', 'elapsedSeconds', 'torquePercent', 'spindle', 'vessel', 'sampleVolume', 'immersion', 'bubbleState', 'calibrationStatus', 'standardCheck', 'levelCheck', 'zeroCheck', 'concentration', 'manufacturingTemperature', 'mixingRpm', 'mixingMinutes'].includes(field))]
+  ];
+  return groups.flatMap(([group, fields]) => fields.map(field => {
+    const issues = review.issues.filter(issue => issue.field === field);
+    const hasRule = Object.hasOwn(requirements, field);
+    const blocked = field === 'viscosity' && review.viscosity === null;
+    const status = issues.some(issue => issue.category === 'missing') ? '기록 누락'
+      : issues.some(issue => issue.category === 'data') ? '입력 확인'
+      : issues.some(issue => issue.category === 'specification') ? '범위 이탈'
+      : issues.length ? '조건 차이' : blocked ? '비교 불가' : hasRule ? '기준 일치' : '기록 있음';
+    return {field, label: LABELS[field], group, actual: missing(record[field]) ? '미기재' : String(record[field]),
+      expected: hasRule ? requirements[field] : '기록 필요 · 비교 기준 미설정',
+      status, warning: issues.length > 0 || blocked, hasRule, issues};
+  }));
 }
 
 function parseCSV(text) {
@@ -302,6 +388,7 @@ let criteria = {...(validateCriteria(savedCriteria).length ? DEFAULT_CRITERIA : 
 let records = [], reviews = new Map(), batchMap = new Map(), filtered = [], selectedId = null;
 let page = 0, datasetKey = 'demo-20261002', source = '합성 시연 데이터', notes = Object.create(null);
 const PAGE_SIZE = 10;
+let comparisonOnlyIssues = false;
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
@@ -385,14 +472,51 @@ function select(id) {
   renderRows(); renderDetail();
   if (window.matchMedia('(max-width: 650px)').matches) $('detail').scrollIntoView({behavior: 'instant', block: 'start'});
 }
-function fieldsList(record, keys, review) {
-  const list = element('dl', 'record-fields');
-  for (const key of keys) {
-    const value = record[key];
-    const warning = review.issues.some(issue => issue.field === key);
-    list.append(element('dt', '', LABELS[key]), element('dd', warning ? 'field-warning' : '', String(value ?? '').trim() === '' ? '미기재' : String(value)));
+function renderComparison(record) {
+  const section = element('section', 'detail-section comparison-section');
+  const heading = element('div', 'comparison-heading');
+  heading.append(element('h3', '', '실험 기록 ↔ 검토 기준'));
+  const edit = element('button', 'text-button', '기준 수정 ↗'); edit.type = 'button';
+  edit.addEventListener('click', openCriteria); heading.append(edit);
+  section.append(heading, element('p', 'comparison-intro', `적용 기준: ${criteria.version} · 교육용 가상 기준`));
+  const label = element('label', 'comparison-filter');
+  const filter = element('input'); filter.type = 'checkbox'; filter.id = 'comparison-only-issues'; filter.checked = comparisonOnlyIssues;
+  label.append(filter, document.createTextNode('확인할 항목만 보기'));
+  section.append(label);
+  const scroll = element('div', 'comparison-scroll'); scroll.tabIndex = 0;
+  scroll.setAttribute('role', 'region'); scroll.setAttribute('aria-label', '실험 기록과 검토 기준 비교표');
+  const table = element('table', 'comparison-table');
+  table.append(element('caption', 'sr-only', `${record.measurementId}의 40개 기록과 현재 검토 기준 비교`));
+  const head = element('thead'), header = element('tr');
+  for (const title of ['항목', '실험 기록', '검토 기준', '확인 결과']) {
+    const cell = element('th', '', title); cell.scope = 'col'; header.append(cell);
   }
-  return list;
+  head.append(header); const body = element('tbody'); table.append(head, body); scroll.append(table); section.append(scroll);
+  const draw = () => {
+    body.replaceChildren(); let previousGroup = null;
+    const rows = comparisonRows(record, criteria).filter(row => !comparisonOnlyIssues || row.warning);
+    for (const row of rows) {
+      if (row.group !== previousGroup) {
+        const group = element('tr', 'comparison-group'), cell = element('th', '', row.group);
+        cell.colSpan = 4; cell.scope = 'rowgroup'; group.append(cell); body.append(group); previousGroup = row.group;
+      }
+      const tr = element('tr', `comparison-row${row.warning ? ' needs-review' : ''}`); tr.dataset.field = row.field;
+      const name = element('th', 'comparison-name', row.label); name.scope = 'row';
+      const actual = element('td', 'comparison-actual', row.actual); actual.dataset.label = '실험 기록';
+      const expected = element('td', 'comparison-expected', row.expected); expected.dataset.label = '검토 기준';
+      const status = element('td', 'comparison-status'); status.dataset.label = '확인 결과';
+      status.append(element('span', `badge${row.warning ? ' warning' : !row.hasRule ? ' muted-badge' : ''}`, row.status));
+      for (const issue of row.issues) status.append(element('small', 'comparison-reason', issue.reason));
+      tr.append(name, actual, expected, status); body.append(tr);
+    }
+    if (!rows.length) {
+      const tr = element('tr'), cell = element('td', 'comparison-empty', '이 측정에서 확인할 차이·누락이 없습니다. 전체 항목을 보려면 체크를 해제하세요.');
+      cell.colSpan = 4; tr.append(cell); body.append(tr);
+    }
+  };
+  filter.addEventListener('change', () => { comparisonOnlyIssues = filter.checked; draw(); }); draw();
+  section.append(element('p', 'comparison-footnote', '「기록 있음」은 값이 기록되었다는 뜻이에요. 비교 기준이 없는 항목까지 적합하다고 판정한 것은 아닙니다.'));
+  return section;
 }
 function renderDetail() {
   const panel = $('detail'); panel.replaceChildren();
@@ -405,22 +529,7 @@ function renderDetail() {
   panel.append(element('p', 'detail-subtitle', `${record.batchId} · 시료 ${record.sampleId || '미기재'} · 반복 ${record.repeat || '?'}회차`));
   const reading = element('div', 'reading'); reading.append(element('strong', '', format(review.viscosity)), element('span', '', review.viscosity === null ? '비교 불가' : 'mPa·s'));
   panel.append(reading, element('p', `conclusion${!review.comparable || review.numericStatus === '수치상 범위 외' ? ' attention' : ''}`, review.conclusion));
-  const issuesSection = element('div', 'detail-section'); issuesSection.append(element('h3', '', '검토 이유와 적용 기준'));
-  if (!review.issues.length) issuesSection.append(element('p', 'small-note', '필수 기록과 가상 기준이 일치합니다. 실제 제품의 출하 승인 결과는 아닙니다.'));
-  else {
-    const list = element('div', 'issues');
-    for (const issue of review.issues) {
-      const item = element('div', 'issue');
-      item.append(element('span', 'issue-category', CATEGORY_LABELS[issue.category]), element('strong', '', LABELS[issue.field]),
-        element('p', '', `실제: ${issue.actual === '' ? '미기재' : issue.actual} / 기준: ${issue.expected}`), element('p', '', issue.reason));
-      list.append(item);
-    }
-    issuesSection.append(list);
-  }
-  panel.append(issuesSection);
-  const core = element('div', 'detail-section'); core.append(element('h3', '', '주요 측정 조건'), fieldsList(record, ['sampleTemperature', 'thermalEquilibrium', 'rpm', 'elapsedSeconds', 'torquePercent', 'bubbleState'], review)); panel.append(core);
-  const full = element('details'); full.append(element('summary', '', `전체 준비·측정 기록 (${FIELDS.length}개 항목)`));
-  const fullFields = fieldsList(record, FIELDS.map(([key]) => key), review); fullFields.classList.add('full-fields'); full.append(fullFields); panel.append(full);
+  panel.append(renderComparison(record));
   const repetitions = element('div', 'detail-section'); repetitions.append(element('h3', '', '같은 배치의 반복 측정'));
   const repetitionList = element('div', 'repeat-list');
   const siblings = batchMap.get(record.batchId) ?? [];

@@ -1,4 +1,4 @@
-import { DEFAULT_CRITERIA, FIELDS, LABELS, CATEGORY_LABELS, numeric, reviewRecord, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from './core.js';
+import { DEFAULT_CRITERIA, CATEGORY_LABELS, numeric, reviewRecord, comparisonRows, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from './core.js';
 
 const $ = id => document.getElementById(id);
 const format = value => numeric(value) === null ? '—' : Number(value).toLocaleString('ko-KR', {maximumFractionDigits: 2});
@@ -25,6 +25,7 @@ let criteria = {...(validateCriteria(savedCriteria).length ? DEFAULT_CRITERIA : 
 let records = [], reviews = new Map(), batchMap = new Map(), filtered = [], selectedId = null;
 let page = 0, datasetKey = 'demo-20261002', source = '합성 시연 데이터', notes = Object.create(null);
 const PAGE_SIZE = 10;
+let comparisonOnlyIssues = false;
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
@@ -108,14 +109,51 @@ function select(id) {
   renderRows(); renderDetail();
   if (window.matchMedia('(max-width: 650px)').matches) $('detail').scrollIntoView({behavior: 'instant', block: 'start'});
 }
-function fieldsList(record, keys, review) {
-  const list = element('dl', 'record-fields');
-  for (const key of keys) {
-    const value = record[key];
-    const warning = review.issues.some(issue => issue.field === key);
-    list.append(element('dt', '', LABELS[key]), element('dd', warning ? 'field-warning' : '', String(value ?? '').trim() === '' ? '미기재' : String(value)));
+function renderComparison(record) {
+  const section = element('section', 'detail-section comparison-section');
+  const heading = element('div', 'comparison-heading');
+  heading.append(element('h3', '', '실험 기록 ↔ 검토 기준'));
+  const edit = element('button', 'text-button', '기준 수정 ↗'); edit.type = 'button';
+  edit.addEventListener('click', openCriteria); heading.append(edit);
+  section.append(heading, element('p', 'comparison-intro', `적용 기준: ${criteria.version} · 교육용 가상 기준`));
+  const label = element('label', 'comparison-filter');
+  const filter = element('input'); filter.type = 'checkbox'; filter.id = 'comparison-only-issues'; filter.checked = comparisonOnlyIssues;
+  label.append(filter, document.createTextNode('확인할 항목만 보기'));
+  section.append(label);
+  const scroll = element('div', 'comparison-scroll'); scroll.tabIndex = 0;
+  scroll.setAttribute('role', 'region'); scroll.setAttribute('aria-label', '실험 기록과 검토 기준 비교표');
+  const table = element('table', 'comparison-table');
+  table.append(element('caption', 'sr-only', `${record.measurementId}의 40개 기록과 현재 검토 기준 비교`));
+  const head = element('thead'), header = element('tr');
+  for (const title of ['항목', '실험 기록', '검토 기준', '확인 결과']) {
+    const cell = element('th', '', title); cell.scope = 'col'; header.append(cell);
   }
-  return list;
+  head.append(header); const body = element('tbody'); table.append(head, body); scroll.append(table); section.append(scroll);
+  const draw = () => {
+    body.replaceChildren(); let previousGroup = null;
+    const rows = comparisonRows(record, criteria).filter(row => !comparisonOnlyIssues || row.warning);
+    for (const row of rows) {
+      if (row.group !== previousGroup) {
+        const group = element('tr', 'comparison-group'), cell = element('th', '', row.group);
+        cell.colSpan = 4; cell.scope = 'rowgroup'; group.append(cell); body.append(group); previousGroup = row.group;
+      }
+      const tr = element('tr', `comparison-row${row.warning ? ' needs-review' : ''}`); tr.dataset.field = row.field;
+      const name = element('th', 'comparison-name', row.label); name.scope = 'row';
+      const actual = element('td', 'comparison-actual', row.actual); actual.dataset.label = '실험 기록';
+      const expected = element('td', 'comparison-expected', row.expected); expected.dataset.label = '검토 기준';
+      const status = element('td', 'comparison-status'); status.dataset.label = '확인 결과';
+      status.append(element('span', `badge${row.warning ? ' warning' : !row.hasRule ? ' muted-badge' : ''}`, row.status));
+      for (const issue of row.issues) status.append(element('small', 'comparison-reason', issue.reason));
+      tr.append(name, actual, expected, status); body.append(tr);
+    }
+    if (!rows.length) {
+      const tr = element('tr'), cell = element('td', 'comparison-empty', '이 측정에서 확인할 차이·누락이 없습니다. 전체 항목을 보려면 체크를 해제하세요.');
+      cell.colSpan = 4; tr.append(cell); body.append(tr);
+    }
+  };
+  filter.addEventListener('change', () => { comparisonOnlyIssues = filter.checked; draw(); }); draw();
+  section.append(element('p', 'comparison-footnote', '「기록 있음」은 값이 기록되었다는 뜻이에요. 비교 기준이 없는 항목까지 적합하다고 판정한 것은 아닙니다.'));
+  return section;
 }
 function renderDetail() {
   const panel = $('detail'); panel.replaceChildren();
@@ -128,22 +166,7 @@ function renderDetail() {
   panel.append(element('p', 'detail-subtitle', `${record.batchId} · 시료 ${record.sampleId || '미기재'} · 반복 ${record.repeat || '?'}회차`));
   const reading = element('div', 'reading'); reading.append(element('strong', '', format(review.viscosity)), element('span', '', review.viscosity === null ? '비교 불가' : 'mPa·s'));
   panel.append(reading, element('p', `conclusion${!review.comparable || review.numericStatus === '수치상 범위 외' ? ' attention' : ''}`, review.conclusion));
-  const issuesSection = element('div', 'detail-section'); issuesSection.append(element('h3', '', '검토 이유와 적용 기준'));
-  if (!review.issues.length) issuesSection.append(element('p', 'small-note', '필수 기록과 가상 기준이 일치합니다. 실제 제품의 출하 승인 결과는 아닙니다.'));
-  else {
-    const list = element('div', 'issues');
-    for (const issue of review.issues) {
-      const item = element('div', 'issue');
-      item.append(element('span', 'issue-category', CATEGORY_LABELS[issue.category]), element('strong', '', LABELS[issue.field]),
-        element('p', '', `실제: ${issue.actual === '' ? '미기재' : issue.actual} / 기준: ${issue.expected}`), element('p', '', issue.reason));
-      list.append(item);
-    }
-    issuesSection.append(list);
-  }
-  panel.append(issuesSection);
-  const core = element('div', 'detail-section'); core.append(element('h3', '', '주요 측정 조건'), fieldsList(record, ['sampleTemperature', 'thermalEquilibrium', 'rpm', 'elapsedSeconds', 'torquePercent', 'bubbleState'], review)); panel.append(core);
-  const full = element('details'); full.append(element('summary', '', `전체 준비·측정 기록 (${FIELDS.length}개 항목)`));
-  const fullFields = fieldsList(record, FIELDS.map(([key]) => key), review); fullFields.classList.add('full-fields'); full.append(fullFields); panel.append(full);
+  panel.append(renderComparison(record));
   const repetitions = element('div', 'detail-section'); repetitions.append(element('h3', '', '같은 배치의 반복 측정'));
   const repetitionList = element('div', 'repeat-list');
   const siblings = batchMap.get(record.batchId) ?? [];

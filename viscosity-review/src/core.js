@@ -31,6 +31,11 @@ export const CATEGORY_LABELS = {
   missing: '기록 누락', data: '입력 확인', manufacturing: '제조 조건 차이',
   measurement: '측정 조건 차이', specification: '점도 규격 이탈'
 };
+export const FIXED_REQUIREMENTS = Object.freeze({
+  product: 'POLY-A', thermalEquilibrium: '완료', bubbleState: '육안 미관찰',
+  immersion: '표시 준수', calibrationStatus: '유효 기록 확인',
+  standardCheck: '적합 기록 확인', levelCheck: '완료', zeroCheck: '완료'
+});
 export const NUMERIC_FIELDS = new Set([
   'repeat', 'polymerMass', 'solventMass', 'concentration', 'manufacturingTemperature',
   'mixingRpm', 'mixingMinutes', 'storageTemperature', 'ageHours', 'sampleTemperature',
@@ -104,10 +109,9 @@ export function reviewRecord(record, criteria = DEFAULT_CRITERIA) {
   range('rpm', criteria.rpm, 0, 'measurement', 'rpm');
   range('elapsedSeconds', criteria.elapsed, 0, 'measurement', '초');
   range('sampleVolume', criteria.volume, 0, 'measurement', 'mL');
-  exact('product', 'POLY-A', 'measurement');
   exact('spindle', criteria.spindle, 'measurement');
   exact('vessel', criteria.vessel, 'measurement');
-  for (const [field, expected] of Object.entries({thermalEquilibrium: '완료', bubbleState: '육안 미관찰', immersion: '표시 준수', calibrationStatus: '유효 기록 확인', standardCheck: '적합 기록 확인', levelCheck: '완료', zeroCheck: '완료'})) exact(field, expected, 'measurement');
+  for (const [field, expected] of Object.entries(FIXED_REQUIREMENTS)) exact(field, expected, 'measurement');
   if (!invalid.has('torquePercent')) {
     const torque = Number(record.torquePercent);
     if (torque < criteria.torqueMin || torque > criteria.torqueMax)
@@ -133,6 +137,42 @@ export function reviewRecord(record, criteria = DEFAULT_CRITERIA) {
     conclusion: !comparable ? `${numericStatus} · 비교 조건 확인 필요` : numericStatus,
     criteriaVersion: criteria.version
   };
+}
+
+// 비교표는 판정과 같은 기준을 사용하고, 기록만 확인한 항목을 기준 일치로 표시하지 않는다.
+export function comparisonRows(record, criteria = DEFAULT_CRITERIA) {
+  const review = reviewRecord(record, criteria);
+  const target = (value, tolerance, unit) => `${value}${tolerance ? ` ± ${tolerance}` : ''} ${unit}`;
+  const requirements = {
+    ...FIXED_REQUIREMENTS,
+    viscosity: `${criteria.viscosityMin}~${criteria.viscosityMax} mPa·s`, unit: 'mPa·s 또는 cP',
+    sampleTemperature: target(criteria.temperature, criteria.temperatureTolerance, '℃'),
+    spindle: criteria.spindle, vessel: criteria.vessel, rpm: `${criteria.rpm} rpm`,
+    elapsedSeconds: `${criteria.elapsed} 초`, sampleVolume: `${criteria.volume} mL`,
+    torquePercent: `${criteria.torqueMin}~${criteria.torqueMax}%`,
+    manufacturingTemperature: target(criteria.manufacturingTemperature, criteria.manufacturingTolerance, '℃'),
+    mixingRpm: target(criteria.mixingRpm, criteria.mixingRpmTolerance, 'rpm'),
+    mixingMinutes: target(criteria.mixingMinutes, criteria.mixingMinutesTolerance, '분'),
+    concentration: target(criteria.concentration, criteria.concentrationTolerance, 'wt%')
+  };
+  const groups = [
+    ['점도 결과', ['viscosity', 'unit']],
+    ['측정 조건', ['sampleTemperature', 'thermalEquilibrium', 'rpm', 'elapsedSeconds', 'torquePercent', 'spindle', 'vessel', 'sampleVolume', 'immersion', 'bubbleState', 'calibrationStatus', 'standardCheck', 'levelCheck', 'zeroCheck']],
+    ['제조 조건', ['concentration', 'manufacturingTemperature', 'mixingRpm', 'mixingMinutes']],
+    ['제품과 나머지 기록', FIELDS.map(([field]) => field).filter(field => !['viscosity', 'unit', 'sampleTemperature', 'thermalEquilibrium', 'rpm', 'elapsedSeconds', 'torquePercent', 'spindle', 'vessel', 'sampleVolume', 'immersion', 'bubbleState', 'calibrationStatus', 'standardCheck', 'levelCheck', 'zeroCheck', 'concentration', 'manufacturingTemperature', 'mixingRpm', 'mixingMinutes'].includes(field))]
+  ];
+  return groups.flatMap(([group, fields]) => fields.map(field => {
+    const issues = review.issues.filter(issue => issue.field === field);
+    const hasRule = Object.hasOwn(requirements, field);
+    const blocked = field === 'viscosity' && review.viscosity === null;
+    const status = issues.some(issue => issue.category === 'missing') ? '기록 누락'
+      : issues.some(issue => issue.category === 'data') ? '입력 확인'
+      : issues.some(issue => issue.category === 'specification') ? '범위 이탈'
+      : issues.length ? '조건 차이' : blocked ? '비교 불가' : hasRule ? '기준 일치' : '기록 있음';
+    return {field, label: LABELS[field], group, actual: missing(record[field]) ? '미기재' : String(record[field]),
+      expected: hasRule ? requirements[field] : '기록 필요 · 비교 기준 미설정',
+      status, warning: issues.length > 0 || blocked, hasRule, issues};
+  }));
 }
 
 export function parseCSV(text) {
