@@ -155,6 +155,36 @@ function renderComparison(record) {
   section.append(element('p', 'comparison-footnote', '「기록 있음」은 값이 기록되었다는 뜻이에요. 비교 기준이 없는 항목까지 적합하다고 판정한 것은 아닙니다.'));
   return section;
 }
+function renderComparisonGuide(record) {
+  const rows = comparisonRows(record, criteria);
+  const warnings = rows.filter(row => row.warning);
+  const targets = warnings.length ? warnings : ['viscosity', 'sampleTemperature', 'rpm'].map(field => rows.find(row => row.field === field));
+  const guide = element('section', 'comparison-guide');
+  guide.setAttribute('aria-label', '먼저 비교할 값 안내');
+  guide.append(element('h3', '', warnings.length ? '먼저 이 값을 비교하세요' : '이 값을 기준과 비교하세요'));
+  guide.append(element('p', 'guide-intro', warnings.length
+    ? `확인이 필요한 ${warnings.length}개 항목의 실험 기록과 기준입니다.`
+    : '표시 점도의 범위와 측정 조건을 함께 확인하세요.'));
+  const units = {viscosity: record.unit, sampleTemperature: '℃', manufacturingTemperature: '℃', rpm: 'rpm', mixingRpm: 'rpm', elapsedSeconds: '초', mixingMinutes: '분', sampleVolume: 'mL', torquePercent: '%', concentration: 'wt%'};
+  const item = row => {
+    const wrapper = element('li', 'guide-item'); wrapper.dataset.field = row.field;
+    wrapper.append(element('strong', 'guide-label', row.label));
+    const pair = element('div', 'guide-pair');
+    const actual = units[row.field] && numeric(record[row.field]) !== null ? `${row.actual} ${units[row.field]}` : row.actual;
+    const actualValue = element('span', 'guide-actual'); actualValue.append(element('small', '', '실험 기록'), element('span', '', actual));
+    const expected = element('span', 'guide-expected'); expected.append(element('small', '', '비교할 기준'), element('span', '', row.expected));
+    const arrow = element('span', 'guide-arrow', '↔'); arrow.setAttribute('aria-hidden', 'true');
+    pair.append(actualValue, arrow, expected); wrapper.append(pair);
+    return wrapper;
+  };
+  const list = element('ul', 'guide-list'); targets.slice(0, 4).forEach(row => list.append(item(row))); guide.append(list);
+  if (targets.length > 4) {
+    const more = element('details', 'guide-more'); more.append(element('summary', '', `나머지 ${targets.length - 4}개 비교할 값 보기`));
+    const rest = element('ul', 'guide-list'); targets.slice(4).forEach(row => rest.append(item(row))); more.append(rest); guide.append(more);
+  }
+  guide.append(element('p', 'guide-footnote', `적용 기준: ${criteria.version} · 아래 비교표에서 확인 결과와 이유를 볼 수 있어요.`));
+  return guide;
+}
 function renderDetail() {
   const panel = $('detail'); panel.replaceChildren();
   const record = records.find(row => row.measurementId === selectedId);
@@ -166,6 +196,7 @@ function renderDetail() {
   panel.append(element('p', 'detail-subtitle', `${record.batchId} · 시료 ${record.sampleId || '미기재'} · 반복 ${record.repeat || '?'}회차`));
   const reading = element('div', 'reading'); reading.append(element('strong', '', format(review.viscosity)), element('span', '', review.viscosity === null ? '비교 불가' : 'mPa·s'));
   panel.append(reading, element('p', `conclusion${!review.comparable || review.numericStatus === '수치상 범위 외' ? ' attention' : ''}`, review.conclusion));
+  panel.append(renderComparisonGuide(record));
   panel.append(renderComparison(record));
   const repetitions = element('div', 'detail-section'); repetitions.append(element('h3', '', '같은 배치의 반복 측정'));
   const repetitionList = element('div', 'repeat-list');

@@ -22,18 +22,25 @@ const { pathToFileURL } = require('node:url');
     assert.equal(await page.locator('#pass-count').innerText(), '432');
     assert.equal(await page.locator('#review-count').innerText(), '648');
     assert.equal(await page.locator('#chart circle').count(), 648);
+    assert.equal(await page.locator('.comparison-guide .guide-item').count(), 3);
+    assert.equal(await page.locator('.comparison-guide .guide-item[data-field="viscosity"] .guide-expected span').innerText(), '1000~1500 mPa·s');
     pass('1,080건 로딩과 실제 화면 집계·그래프');
     await page.screenshot({path:path.join(output,'desktop.png'), fullPage:true});
 
     await page.locator('#search').fill('PA-006');
     assert.equal(await page.locator('#record-rows tr').count(), 4);
     assert.ok((await page.locator('#detail').innerText()).includes('비교 조건 확인 필요'));
+    assert.equal(await page.locator('.comparison-guide .guide-item[data-field="sampleTemperature"] .guide-actual span').innerText(), '28 ℃');
+    assert.equal(await page.locator('.comparison-guide .guide-item[data-field="sampleTemperature"] .guide-expected span').innerText(), '25 ± 0.5 ℃');
+    await page.locator('.comparison-guide').screenshot({path:path.join(output,'guidance-desktop.png')});
     await page.locator('.record-link').nth(1).click();
     assert.ok((await page.locator('#detail').innerText()).includes('측정 속도 (rpm)'));
     const rpmRow = page.locator('.comparison-row[data-field="rpm"]');
     assert.equal(await rpmRow.locator('.comparison-actual').innerText(), '30');
     assert.equal(await rpmRow.locator('.comparison-expected').innerText(), '60 rpm');
     assert.ok((await rpmRow.locator('.comparison-status').innerText()).includes('조건 차이'));
+    assert.equal(await page.locator('.comparison-guide .guide-item').count(), 1);
+    assert.equal(await page.locator('.comparison-guide .guide-actual span').innerText(), '30 rpm');
     pass('배치 검색·반복 기록 선택·실제 값과 기준 이유');
 
     assert.equal(await page.locator('.comparison-row').count(), 40);
@@ -48,6 +55,7 @@ const { pathToFileURL } = require('node:url');
     await page.locator('#search').fill('PA-007');
     assert.equal(await page.locator('.comparison-row[data-field="sampleTemperature"] .comparison-actual').innerText(), '미기재');
     assert.equal(await page.locator('.comparison-row[data-field="sampleTemperature"] .comparison-expected').innerText(), '25 ± 0.5 ℃');
+    assert.equal(await page.locator('.comparison-guide .guide-actual span').innerText(), '미기재');
     await page.locator('#search').fill('PA-008');
     assert.equal(await page.locator('.comparison-row[data-field="viscosity"] .badge').innerText(), '범위 이탈');
     await page.locator('#search').fill('PA-006'); await page.locator('.record-link').nth(1).click();
@@ -90,6 +98,8 @@ const { pathToFileURL } = require('node:url');
     await page.locator('#criteria-form button[type=submit]').click();
     assert.notEqual(await page.locator('#pass-count').innerText(), '432');
     assert.equal(await page.locator('.comparison-row[data-field="viscosity"] .comparison-expected').innerText(), '1000~1250 mPa·s');
+    await page.locator('#search').fill('PA-008');
+    assert.equal(await page.locator('.comparison-guide .guide-item[data-field="viscosity"] .guide-expected span').innerText(), '1000~1250 mPa·s');
     const version = await page.locator('#criteria-version').innerText();
     await page.reload(); await page.waitForFunction(() => document.getElementById('total-count').textContent === '1,080');
     assert.equal(await page.locator('#criteria-version').innerText(), version);
@@ -118,6 +128,14 @@ const { pathToFileURL } = require('node:url');
     assert.ok((await page.locator('.comparison-row[data-field="sourceNote"] .comparison-actual').innerText()).includes('<img src=x'));
     pass('CSV의 HTML을 실행하지 않고 원문으로 표시');
 
+    await page.locator('#csv-file').setInputFiles({name:'누락안내.csv', mimeType:'text/csv', buffer:Buffer.from('batchId,measurementId,viscosity,unit\nb,m,1200,cP')});
+    await page.waitForFunction(() => document.getElementById('source-name').textContent === '누락안내.csv');
+    assert.equal(await page.locator('.comparison-guide > .guide-list .guide-item').count(), 4);
+    assert.ok((await page.locator('.guide-more summary').innerText()).includes('나머지'));
+    await page.locator('.guide-more summary').click();
+    assert.ok(await page.locator('.guide-more .guide-item').count() > 0);
+    pass('상단 비교 안내: 정상·차이·누락·기준 변경·여러 확인 항목 표시');
+
     await page.locator('#load-demo').click(); await page.waitForFunction(() => document.getElementById('total-count').textContent === '1,080');
     await page.locator('#reset-filter').click();
     for (const width of [390,320]) {
@@ -138,6 +156,9 @@ const { pathToFileURL } = require('node:url');
     await page.locator('.comparison-section').scrollIntoViewIfNeeded();
     await page.screenshot({path:path.join(output,'comparison-mobile.png'), fullPage:true});
     await page.locator('.comparison-section').screenshot({path:path.join(output,'comparison-panel-mobile.png')});
+    await page.locator('.record-link').first().click();
+    await page.locator('.comparison-guide').screenshot({path:path.join(output,'guidance-mobile.png')});
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     assert.deepEqual(errors, []); pass('브라우저 JavaScript·콘솔 오류 없음');
     await fs.writeFile(path.join(output, process.env.PORTABLE_TEST === '1' ? 'portable-results.json' : 'ui-results.json'), JSON.stringify({targetURL,checks,errors},null,2));
   } finally { await browser.close(); }
