@@ -175,6 +175,52 @@ export function comparisonRows(record, criteria = DEFAULT_CRITERIA) {
   }));
 }
 
+// 사용자가 합의한 검토 원칙을 질문으로 연결한다. 원인이나 재측정 필요를 확정하지 않는다.
+export function followUpPlan(record, criteria = DEFAULT_CRITERIA) {
+  const review = reviewRecord(record, criteria);
+  const comparisons = new Map(comparisonRows(record, criteria).map(row => [row.field, row]));
+  const methodQuestions = {
+    sampleTemperature: '사용한 시험 방법의 목표 온도와 실제 시료 온도 기록을 확인했나요? 조건을 맞춘 재측정이 필요한지 검토하세요.',
+    thermalEquilibrium: '목표 측정 온도에서 시료와 측정 부품의 온도가 안정됐다는 기록이 있나요?',
+    rpm: '적용한 시험 방법의 회전 속도와 실제 설정 기록이 일치하나요? 값을 맞추려고 속도를 임의로 바꾸지 않았는지 확인하세요.',
+    elapsedSeconds: '회전 시작 후 언제 값을 읽었는지와 시험 방법의 읽는 시점을 확인했나요?',
+    spindle: '기록된 스핀들과 적용한 시험 방법의 스핀들이 같은가요?',
+    vessel: '용기 형태·규격이 적용한 시험 방법과 같은가요?',
+    sampleVolume: '시료량 기록과 시험 방법의 요구량을 확인했나요?',
+    immersion: '스핀들의 침지 표시를 준수했다는 기록이 있나요?',
+    bubbleState: '기포 관찰 기록과 시료 준비 방법을 확인했나요? 육안 관찰만으로 미세 기포 유무를 확정하지 마세요.',
+    torquePercent: '실제 장비와 시험 방법에서 허용하는 토크 범위를 확인했나요?',
+    calibrationStatus: '해당 장비의 교정 기록과 유효 기간을 확인했나요?',
+    standardCheck: '표준액 점검 기록과 적용한 허용 범위를 확인했나요?',
+    levelCheck: '측정 전 장비의 수평 확인 기록이 있나요?',
+    zeroCheck: '측정 전 장비의 영점 확인 기록이 있나요?',
+    product: '제품 코드와 적용한 시험 방법이 이 시료에 맞는지 확인했나요?'
+  };
+  const priority = {missing: 0, data: 1, measurement: 2, specification: 3, manufacturing: 4};
+  return review.issues.map(issue => {
+    const row = comparisons.get(issue.field);
+    const question = issue.category === 'missing' ? `원본 실험·제조 기록에서 ${row.label}을 확인할 수 있나요? 자료가 없으면 추정값을 넣지 말고 확인 불가 이유를 메모하세요.`
+      : issue.category === 'data' ? `${row.label}의 원본 표기와 숫자·단위·일시 형식을 확인했나요? 확인한 값을 원본 자료와 대조하세요.`
+      : issue.category === 'measurement' ? methodQuestions[issue.field] ?? '사용한 시험 방법과 실제 설정 기록을 확인하고 재측정 필요 여부를 검토하세요.'
+      : issue.category === 'manufacturing' ? `${row.label}의 배치 제조 기록과 작업 지시를 확인했나요? 차이의 발생 경위를 기록하고 점도 변화의 원인이라고 단정하지 마세요.`
+      : '측정 조건을 먼저 확인한 뒤, 같은 배치의 반복 측정값과 제조 기록을 함께 검토했나요? 원인이나 배치 불량을 수치만으로 확정하지 마세요.';
+    return {id: `${issue.category}:${issue.field}`, category: issue.category, field: issue.field,
+      label: row.label, actual: row.actual, expected: row.expected, question};
+  }).sort((a, b) => priority[a.category] - priority[b.category]);
+}
+
+export function followUpSignature(record, criteria) {
+  return JSON.stringify({policy: 'POLY-A-follow-up-v1',
+    criteria: Object.keys(DEFAULT_CRITERIA).map(key => [key, criteria[key]]),
+    record: FIELDS.map(([key]) => [key, record[key] ?? ''])});
+}
+export function followUpProgress(record, criteria, checklists = {}) {
+  const state = checklists[record.measurementId];
+  const checked = state?.signature === followUpSignature(record, criteria) && Array.isArray(state.checked)
+    ? new Set(state.checked) : new Set();
+  return followUpPlan(record, criteria).map(task => ({...task, checked: checked.has(task.id)}));
+}
+
 export function parseCSV(text) {
   const source = text.replace(/^\uFEFF/, '');
   const rows = []; let row = [], field = '', quoted = false, closed = false;
@@ -221,19 +267,19 @@ function csvCell(value, safe) {
   if (safe && numeric(str) === null && /^[\s]*[=+\-@]/.test(str)) str = `'${str}`;
   return `"${str.replaceAll('"', '""')}"`;
 }
-export function recordsCSV(records, criteria, notes = {}, includeReview = true) {
-  const extra = includeReview ? ['criteriaVersion', 'criteriaSnapshot', 'reviewStatus', 'numericStatus', 'comparable', 'categories', 'reasons', 'reviewNote'] : [];
+export function recordsCSV(records, criteria, notes = {}, includeReview = true, checklists = {}) {
+  const extra = includeReview ? ['criteriaVersion', 'criteriaSnapshot', 'reviewStatus', 'numericStatus', 'comparable', 'categories', 'reasons', 'reviewNote', 'followUpChecklist'] : [];
   const headers = [...FIELDS.map(([key]) => key), ...extra];
   return '\uFEFF' + [headers.map(value => csvCell(value, false)).join(','), ...records.map(record => {
     const review = reviewRecord(record, criteria);
     const values = FIELDS.map(([key]) => record[key]);
-    if (includeReview) values.push(criteria.version, JSON.stringify(criteria), review.status, review.numericStatus, review.comparable ? '조건 확인됨' : '조건 확인 필요', review.categories.map(key => CATEGORY_LABELS[key]).join(' / '), review.issues.map(issue => `${LABELS[issue.field]}: ${issue.actual === '' ? '미기재' : issue.actual} → ${issue.expected}`).join(' | '), notes[record.measurementId] ?? '');
+    if (includeReview) values.push(criteria.version, JSON.stringify(criteria), review.status, review.numericStatus, review.comparable ? '조건 확인됨' : '조건 확인 필요', review.categories.map(key => CATEGORY_LABELS[key]).join(' / '), review.issues.map(issue => `${LABELS[issue.field]}: ${issue.actual === '' ? '미기재' : issue.actual} → ${issue.expected}`).join(' | '), notes[record.measurementId] ?? '', JSON.stringify(followUpProgress(record, criteria, checklists)));
     return values.map(value => csvCell(value, true)).join(',');
   })].join('\r\n');
 }
 
 const md = value => String(value ?? '').replaceAll('\\', '\\\\').replaceAll('|', '\\|').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\r', '').replaceAll('\n', '<br>');
-export function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 데이터', date = new Date().toISOString()) {
+export function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 데이터', date = new Date().toISOString(), checklists = {}) {
   const reviews = records.map(record => reviewRecord(record, criteria));
   const counts = Object.keys(CATEGORY_LABELS).map(key => `- ${CATEGORY_LABELS[key]}: ${reviews.filter(review => review.categories.includes(key)).length}건`);
   return [
@@ -248,6 +294,11 @@ export function reportMarkdown(records, criteria, notes = {}, source = '합성 �
     ...records.map((record, i) => {
       const result = reviews[i];
       return `| ${md(record.batchId)} | ${md(record.measurementId)} | ${md(result.viscosity ?? '비교 불가')} | ${result.status} | ${result.numericStatus} | ${result.comparable ? '확인됨' : '확인 필요'} | ${md(result.issues.map(issue => `${LABELS[issue.field]}: 실제 ${issue.actual === '' ? '미기재' : issue.actual}, 기준 ${issue.expected}`).join('; ') || '가상 기준과 일치')} | ${md(notes[record.measurementId] ?? '')} |`;
-    }), '', '## 원본 기록', '', '원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 현재 필터로 선택한 기록의 검토 결과입니다.', ''
+    }), '', '## 추가 확인 질문과 체크리스트', '',
+    '체크는 사용자가 자료를 확인했다고 표시한 상태입니다. 원인 확정, 판정 변경 또는 출하 승인을 뜻하지 않습니다.', '',
+    ...records.flatMap(record => {
+      const tasks = followUpProgress(record, criteria, checklists);
+      return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
+    }), '## 원본 기록', '', '원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 현재 필터로 선택한 기록의 검토 결과입니다.', ''
   ].join('\n');
 }

@@ -1,4 +1,4 @@
-import { DEFAULT_CRITERIA, CATEGORY_LABELS, numeric, reviewRecord, comparisonRows, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from './core.js';
+import { DEFAULT_CRITERIA, CATEGORY_LABELS, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from './core.js';
 
 const $ = id => document.getElementById(id);
 const format = value => numeric(value) === null ? '—' : Number(value).toLocaleString('ko-KR', {maximumFractionDigits: 2});
@@ -24,12 +24,14 @@ const savedCriteria = stored('poly-criteria-v1', DEFAULT_CRITERIA);
 let criteria = {...(validateCriteria(savedCriteria).length ? DEFAULT_CRITERIA : savedCriteria)};
 let records = [], reviews = new Map(), batchMap = new Map(), filtered = [], selectedId = null;
 let page = 0, datasetKey = 'demo-20261002', source = '합성 시연 데이터', notes = Object.create(null);
+let checklists = Object.create(null);
 const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
   notes = Object.assign(Object.create(null), stored(`poly-notes-${datasetKey}`, {}));
+  checklists = Object.assign(Object.create(null), stored(`poly-checklists-${datasetKey}`, {}));
   batchMap = new Map();
   for (const record of records) {
     if (!batchMap.has(record.batchId)) batchMap.set(record.batchId, []);
@@ -185,6 +187,36 @@ function renderComparisonGuide(record) {
   guide.append(element('p', 'guide-footnote', `적용 기준: ${criteria.version} · 아래 비교표에서 확인 결과와 이유를 볼 수 있어요.`));
   return guide;
 }
+function renderFollowUps(record) {
+  const tasks = followUpProgress(record, criteria, checklists);
+  const section = element('section', 'detail-section follow-up-section');
+  section.append(element('h3', '', '다음 확인 질문 · 체크리스트'));
+  section.append(element('p', 'follow-up-intro', '원본 자료를 확인한 항목에 체크하고, 확인한 내용과 남은 질문은 아래 검토 메모에 남기세요.'));
+  const progress = element('p', 'follow-up-progress'); progress.setAttribute('role', 'status');
+  const update = () => { progress.textContent = `자료 확인 표시 ${tasks.filter(task => task.checked).length} / ${tasks.length}개`; };
+  update(); section.append(progress);
+  const list = element('div', 'follow-up-list');
+  let previousCategory = null;
+  for (const task of tasks) {
+    if (task.category !== previousCategory) {
+      list.append(element('h4', 'follow-up-category', CATEGORY_LABELS[task.category])); previousCategory = task.category;
+    }
+    const card = element('div', 'follow-up-task'); card.dataset.task = task.id;
+    card.append(element('strong', 'follow-up-label', task.label), element('p', 'follow-up-evidence', `실험 기록: ${task.actual} / 검토 기준: ${task.expected}`), element('p', 'follow-up-question', task.question));
+    const label = element('label', 'follow-up-check');
+    const checkbox = element('input'); checkbox.type = 'checkbox'; checkbox.checked = task.checked;
+    checkbox.setAttribute('aria-label', `${record.measurementId} ${task.label} 자료 확인`);
+    checkbox.addEventListener('change', () => {
+      task.checked = checkbox.checked;
+      checklists[record.measurementId] = {signature: followUpSignature(record, criteria), checked: tasks.filter(item => item.checked).map(item => item.id)};
+      store(`poly-checklists-${datasetKey}`, checklists); update();
+    });
+    label.append(checkbox, document.createTextNode('자료를 확인했어요')); card.append(label); list.append(card);
+  }
+  if (!tasks.length) list.append(element('p', 'follow-up-empty', '규칙에서 추가 확인할 차이·누락을 찾지 못했어요. 별도로 확인한 내용은 검토 메모에 남기세요.'));
+  section.append(list, element('p', 'follow-up-note', '체크는 자료 확인 표시이며 판정 변경이나 출하 승인이 아닙니다. 기준·원본 기록이 달라지면 이전 체크를 적용하지 않습니다. 저장한 체크는 결과 CSV와 보고서에 포함됩니다.'));
+  return section;
+}
 function renderDetail() {
   const panel = $('detail'); panel.replaceChildren();
   const record = records.find(row => row.measurementId === selectedId);
@@ -198,6 +230,7 @@ function renderDetail() {
   panel.append(reading, element('p', `conclusion${!review.comparable || review.numericStatus === '수치상 범위 외' ? ' attention' : ''}`, review.conclusion));
   panel.append(renderComparisonGuide(record));
   panel.append(renderComparison(record));
+  panel.append(renderFollowUps(record));
   const repetitions = element('div', 'detail-section'); repetitions.append(element('h3', '', '같은 배치의 반복 측정'));
   const repetitionList = element('div', 'repeat-list');
   const siblings = batchMap.get(record.batchId) ?? [];
@@ -346,11 +379,11 @@ $('csv-file').addEventListener('change', async event => {
   finally { event.target.value = ''; }
 });
 $('export-csv').addEventListener('click', () => {
-  download(recordsCSV(filtered, criteria, notes), '점도_검토결과.csv', 'text/csv;charset=utf-8');
+  download(recordsCSV(filtered, criteria, notes, true, checklists), '점도_검토결과.csv', 'text/csv;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 검토 결과 CSV를 저장했습니다.`);
 });
 $('export-report').addEventListener('click', () => {
-  download(reportMarkdown(filtered, criteria, notes, source), '점도_검토보고서.md', 'text/markdown;charset=utf-8');
+  download(reportMarkdown(filtered, criteria, notes, source, undefined, checklists), '점도_검토보고서.md', 'text/markdown;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 보고서를 저장했습니다. 원본 CSV와 함께 보관하세요.`);
 });
 try { await demo(); }
