@@ -1,11 +1,26 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { DEFAULT_CRITERIA as C, reviewRecord, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from '../src/core.js';
+import { DEFAULT_CRITERIA as C, reviewRecord, comparisonRows, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from '../src/core.js';
 
 const data = JSON.parse(await readFile(new URL('../data/demo-records.json', import.meta.url), 'utf8'));
 const expected = JSON.parse(await readFile(new URL('../data/expected-results.json', import.meta.url), 'utf8'));
 const base = data[0];
+test('비교표: 전체 기록, 변경 기준, 누락과 비교 불가, 기록 전용 항목 구분', () => {
+  const rows = comparisonRows(base);
+  assert.equal(rows.length, 40); assert.equal(new Set(rows.map(row => row.field)).size, 40);
+  assert.equal(rows.find(row => row.field === 'sampleTemperature').status, '기준 일치');
+  assert.equal(rows.find(row => row.field === 'sourceNote').status, '기록 있음');
+  const changed = comparisonRows({...base, sampleTemperature: '', rpm: 0, unit: 'Pa·s'}, {...C, temperature: 30, temperatureTolerance: 1, rpm: 50});
+  assert.equal(changed.find(row => row.field === 'sampleTemperature').actual, '미기재');
+  assert.equal(changed.find(row => row.field === 'sampleTemperature').expected, '30 ± 1 ℃');
+  assert.equal(changed.find(row => row.field === 'sampleTemperature').status, '기록 누락');
+  assert.equal(changed.find(row => row.field === 'rpm').actual, '0');
+  assert.equal(changed.find(row => row.field === 'rpm').expected, '50 rpm');
+  assert.equal(changed.find(row => row.field === 'rpm').warning, true);
+  assert.equal(changed.find(row => row.field === 'viscosity').status, '비교 불가');
+  assert.equal(changed.find(row => row.field === 'viscosity').warning, true);
+});
 test('1,080건, 고유 ID, 270배치와 각 배치 4회 측정, 독립 시나리오 정답', () => {
   assert.equal(data.length, 1080); assert.equal(new Set(data.map(r => r.measurementId)).size, 1080);
   const batches = new Map(); for (const r of data) batches.set(r.batchId, (batches.get(r.batchId) ?? 0) + 1);
