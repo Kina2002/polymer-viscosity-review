@@ -318,7 +318,7 @@ function followUpPlan(record, criteria = DEFAULT_CRITERIA) {
   const review = reviewRecord(record, criteria);
   const comparisons = new Map(comparisonRows(record, criteria).map(row => [row.field, row]));
   const methodQuestions = {
-    sampleTemperature: '사용한 시험 방법의 목표 온도와 실제 시료 온도 기록을 확인했나요? 조건을 맞춘 재측정이 필요한지 검토하세요.',
+    sampleTemperature: row => `실험 기록에는 ${row.actual}℃, 비교 기준에는 ${row.expected}가 적혀 있어요. 먼저 원본 실험 기록에도 이 온도로 적혀 있는지 확인하세요. 실제로 기준과 다른 온도에서 측정했다면, 기준 온도에 맞춰 다시 측정할 필요가 있는지 검토하세요.`,
     thermalEquilibrium: '목표 측정 온도에서 시료와 측정 부품의 온도가 안정됐다는 기록이 있나요?',
     rpm: '적용한 시험 방법의 회전 속도와 실제 설정 기록이 일치하나요? 값을 맞추려고 속도를 임의로 바꾸지 않았는지 확인하세요.',
     elapsedSeconds: '회전 시작 후 언제 값을 읽었는지와 시험 방법의 읽는 시점을 확인했나요?',
@@ -337,9 +337,10 @@ function followUpPlan(record, criteria = DEFAULT_CRITERIA) {
   const priority = {missing: 0, data: 1, measurement: 2, specification: 3, manufacturing: 4};
   return review.issues.map(issue => {
     const row = comparisons.get(issue.field);
+    const methodQuestion = typeof methodQuestions[issue.field] === 'function' ? methodQuestions[issue.field](row) : methodQuestions[issue.field];
     const question = issue.category === 'missing' ? `원본 실험·제조 기록에서 ${row.label}을 확인할 수 있나요? 자료가 없으면 추정값을 넣지 말고 확인 불가 이유를 메모하세요.`
       : issue.category === 'data' ? `${row.label}의 원본 표기와 숫자·단위·일시 형식을 확인했나요? 확인한 값을 원본 자료와 대조하세요.`
-      : issue.category === 'measurement' ? methodQuestions[issue.field] ?? '사용한 시험 방법과 실제 설정 기록을 확인하고 재측정 필요 여부를 검토하세요.'
+      : issue.category === 'measurement' ? methodQuestion ?? '사용한 시험 방법과 실제 설정 기록을 확인하고 재측정 필요 여부를 검토하세요.'
       : issue.category === 'manufacturing' ? `${row.label}의 배치 제조 기록과 작업 지시를 확인했나요? 차이의 발생 경위를 기록하고 점도 변화의 원인이라고 단정하지 마세요.`
       : '측정 조건을 먼저 확인한 뒤, 같은 배치의 반복 측정값과 제조 기록을 함께 검토했나요? 원인이나 배치 불량을 수치만으로 확정하지 마세요.';
     return {id: `${issue.category}:${issue.field}`, category: issue.category, field: issue.field,

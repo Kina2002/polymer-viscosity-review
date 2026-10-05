@@ -12,7 +12,7 @@ test('후속 질문: 정상은 비어 있고 누락·측정·규격·제조 차�
   const tasks = followUpPlan(record);
   assert.deepEqual(tasks.map(task => task.id), ['missing:rpm', 'measurement:sampleTemperature', 'specification:viscosity', 'manufacturing:manufacturingTemperature']);
   assert.equal(tasks[0].actual, '미기재'); assert.equal(tasks[0].expected, '60 rpm');
-  assert.ok(tasks[1].question.includes('재측정')); assert.ok(tasks[2].question.includes('반복 측정값'));
+  assert.ok(tasks[1].question.includes('다시 측정')); assert.ok(tasks[2].question.includes('반복 측정값'));
   assert.ok(tasks[3].question.includes('단정하지'));
   assert.ok(followUpPlan({...base, unit: 'Pa·s'})[0].question.includes('원본 표기'));
 });
