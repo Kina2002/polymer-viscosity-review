@@ -33,6 +33,21 @@
 .comparison-table .badge{font-size:10px;white-space:nowrap}
 .comparison-footnote{font-size:11px;color:#7c8c80;line-height:1.8;margin-top:11px}
 .comparison-empty{color:#617b70}
+.comparison-guide{border:1px solid #cbded2;background:#f1f7f2;border-radius:8px;padding:16px;margin-top:12px}
+.comparison-guide h3{font-size:14px;color:#285843}
+.guide-intro{font-size:11px;color:#627e6b;margin-top:7px;line-height:1.7}
+.guide-list{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:11px}
+.guide-item{padding-top:11px;border-top:1px solid #d9e6db;min-width:0}
+.guide-label{display:block;font-size:12px;font-weight:600;color:#405f4a;margin-bottom:7px}
+.guide-pair{display:grid;grid-template-columns:minmax(0,1fr) 20px minmax(0,1.5fr);gap:9px;align-items:center;font-size:14px;line-height:1.6}
+.guide-pair small{display:block;font-size:10px;font-weight:400;color:#728977;margin-bottom:3px}
+.guide-pair span{overflow-wrap:anywhere}
+.guide-actual{font-weight:650;color:#234d3a;font-variant-numeric:tabular-nums}
+.guide-expected{color:#48674f;font-variant-numeric:tabular-nums}
+.guide-arrow{color:#72977c;text-align:center}
+.guide-footnote{font-size:10px;color:#718974;line-height:1.8;margin-top:12px;overflow-wrap:anywhere}
+.guide-more{margin-top:12px;padding-top:11px;border-top-color:#d9e6db}
+@media(max-width:650px){.comparison-guide{padding:14px}.guide-pair{font-size:13px;gap:7px;grid-template-columns:minmax(0,1fr) 16px minmax(0,1.25fr)}}
 @media(max-width:1200px){.record-grid{grid-template-columns:1fr}.comparison-scroll{max-height:560px}}
 @media(max-width:650px){
   .comparison-scroll{max-height:650px;scrollbar-gutter:auto}
