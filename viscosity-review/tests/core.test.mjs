@@ -28,6 +28,22 @@ test('후속 체크: 원본·기준 변경과 측정별 분리, 보고서와 CSV
   const csv = recordsCSV([record], C, {}, true, checks);
   assert.ok(csv.includes('followUpChecklist')); assert.ok(csv.includes('""checked"":true'));
 });
+test('확인 불가: 완료와 동시 표시 금지, 이유·내보내기·기준 변경·기존 체크 호환', () => {
+  const record = {...base, sampleTemperature: ''};
+  const taskId = 'missing:sampleTemperature';
+  const checks = {[record.measurementId]: {signature: followUpSignature(record, C), checked: [taskId], outcomes: {[taskId]: {status: 'unavailable', reason: '원본 | 온도 기록 없음\n담당자 확인 필요'}}}};
+  const progress = followUpProgress(record, C, checks)[0];
+  assert.equal(progress.status, 'unavailable'); assert.equal(progress.checked, false);
+  assert.ok(progress.reason.includes('담당자 확인 필요'));
+  assert.equal(followUpProgress(record, {...C, temperatureTolerance: 1}, checks)[0].status, 'pending');
+  assert.equal(followUpProgress(record, {...C, temperatureTolerance: 1}, checks)[0].reason, '');
+  const report = reportMarkdown([record], C, {}, '테스트', '2026-10-05', checks);
+  assert.ok(report.includes('상태: 확인 불가')); assert.ok(report.includes('원본 \\| 온도 기록 없음<br>담당자 확인 필요'));
+  assert.ok(report.includes('- [ ] 실제 측정 온도'));
+  const csv = recordsCSV([record], C, {}, true, checks);
+  assert.ok(csv.includes('""status"":""unavailable""')); assert.ok(csv.includes('""checked"":false'));
+  assert.equal(followUpProgress(record, C, {[record.measurementId]: {signature: followUpSignature(record, C), checked: [taskId]}})[0].status, 'done');
+});
 test('비교표: 전체 기록, 변경 기준, 누락과 비교 불가, 기록 전용 항목 구분', () => {
   const rows = comparisonRows(base);
   assert.equal(rows.length, 40); assert.equal(new Set(rows.map(row => row.field)).size, 40);
