@@ -6,6 +6,31 @@ import { DEFAULT_CRITERIA as C, DEFAULT_REASON_CATEGORIES, reasonCategoryName, v
 const data = JSON.parse(await readFile(new URL('../data/demo-records.json', import.meta.url), 'utf8'));
 const expected = JSON.parse(await readFile(new URL('../data/expected-results.json', import.meta.url), 'utf8'));
 const base = data[0];
+
+test('확인 완료 메모: 기존 체크 호환·상태 전환 보존·원본과 기준 변경 무효화', () => {
+  const record = {...base, manufacturingTemperature: 45}, id = 'manufacturing:manufacturingTemperature';
+  const checks = {[record.measurementId]: {signature: followUpSignature(record, C), outcomes: {[id]: {status: 'done', completionNote: '제조 기록 45℃ 확인'}}}};
+  assert.equal(followUpProgress(record, C, checks)[0].completionNote, '제조 기록 45℃ 확인');
+  checks[record.measurementId].outcomes[id].status = 'pending';
+  assert.equal(followUpProgress(record, C, checks)[0].completionNote, '제조 기록 45℃ 확인');
+  assert.equal(followUpProgress(record, {...C, manufacturingTolerance: 3}, checks)[0].completionNote, '');
+  assert.equal(followUpProgress({...record, sourceNote: '수정된 원본'}, C, checks)[0].completionNote, '');
+  assert.equal(followUpProgress(record, C, {[record.measurementId]: {signature: followUpSignature(record, C), checked: [id]}})[0].completionNote, '');
+  checks[record.measurementId].outcomes[id].completionNote = '가'.repeat(2001);
+  assert.equal(followUpProgress(record, C, checks)[0].completionNote.length, 2000);
+});
+
+test('확인 완료 메모: TXT·Markdown·CSV 내보내기와 판정 유지', () => {
+  const record = {...base, manufacturingTemperature: 45}, id = 'manufacturing:manufacturingTemperature';
+  const completionNote = '원본 | 제조 기록 <확인>\n추가 사유 확인 필요';
+  const checks = {[record.measurementId]: {signature: followUpSignature(record, C), outcomes: {[id]: {status: 'done', completionNote}}}};
+  assert.ok(reportText([record], C, {}, '테스트', '2026-10-06', checks).includes('확인 완료 메모:\n  원본 | 제조 기록 <확인>\n  추가 사유 확인 필요'));
+  assert.ok(reportMarkdown([record], C, {}, '테스트', '2026-10-06', checks).includes('원본 \\| 제조 기록 &lt;확인&gt;<br>추가 사유 확인 필요'));
+  const exported = recordsCSV([record], C, {}, true, checks);
+  assert.ok(exported.includes('""completionNote"":'));
+  assert.ok(exported.includes('제조 기록 <확인>\\n추가 사유 확인 필요'));
+  assert.equal(reviewRecord(record, C).status, '검토 필요');
+});
 test('TXT 보고서: 선택한 기록·읽기 쉬운 기준·확인 불가 분류와 이유·여러 줄 메모 보존', () => {
   const record = data.find(record => record.measurementId === 'PA-007-M1');
   const id = 'missing:sampleTemperature';

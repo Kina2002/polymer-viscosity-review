@@ -245,7 +245,8 @@ export function followUpProgress(record, criteria, checklists = {}) {
     const reason = status === 'unavailable' && typeof outcome?.reason === 'string' ? outcome.reason.slice(0, 2000) : '';
     const categoryName = reasonCategoryName(outcome?.reasonCategory);
     const reasonCategory = status === 'unavailable' && categoryName.length <= 40 && categoryName !== '미분류' ? categoryName : '';
-    return {...task, status, checked: status === 'done', reason, reasonCategory};
+    const completionNote = typeof outcome?.completionNote === 'string' ? outcome.completionNote.slice(0, 2000) : '';
+    return {...task, status, checked: status === 'done', reason, reasonCategory, completionNote};
   });
 }
 
@@ -386,6 +387,7 @@ export function reportText(records, criteria, notes = {}, source = '합성 시�
         `  기록: ${task.actual} / 기준: ${task.expected}`, indented(task.question));
       if (task.status === 'unavailable') lines.push(`  확인 불가 이유 분류: ${task.reasonCategory || '미분류'}`,
         '  확인 불가 이유:', indented(task.reason.trim() || '미기재'));
+      if (task.status === 'done') lines.push('  확인 완료 메모:', indented(task.completionNote.trim() || '미기재 (선택 항목)'));
     }
     if (!tasks.length) lines.push('  규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.');
     lines.push('');
@@ -424,7 +426,7 @@ export function reportMarkdown(records, criteria, notes = {}, source = '합성 �
     '확인 상태는 사용자가 선택한 자료 확인 결과입니다. 확인 불가는 자료를 확인할 수 없었다는 뜻이며, 원인 확정·판정 변경·출하 승인을 뜻하지 않습니다.', '',
     ...records.flatMap(record => {
       const tasks = followUpProgress(record, criteria, checklists);
-      return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}. 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}${task.status === 'unavailable' ? ` 확인 불가 이유 분류: ${md(task.reasonCategory || '미분류')}. 확인 불가 이유: ${md(task.reason.trim() || '미기재')}` : ''}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
+      return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}. 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}${task.status === 'unavailable' ? ` 확인 불가 이유 분류: ${md(task.reasonCategory || '미분류')}. 확인 불가 이유: ${md(task.reason.trim() || '미기재')}` : ''}${task.status === 'done' ? ` 확인 완료 메모: ${md(task.completionNote.trim() || '미기재 (선택 항목)')}` : ''}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
     }), '## 원본 기록', '', `원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 ${md(scope)}의 검토 결과입니다.`, ''
   ].join('\n');
 }

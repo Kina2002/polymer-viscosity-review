@@ -144,6 +144,27 @@ const { pathToFileURL } = require('node:url');
     assert.equal(await page.locator('.comparison-guide .guide-actual span').innerText(), '30 rpm');
     pass('배치 검색·반복 기록 선택·실제 값과 기준 이유');
 
+    const completedNote = page.locator('.follow-up-completion-note');
+    assert.equal(await completedNote.isVisible(),true);
+    assert.equal(await completedNote.inputValue(),'');
+    await completedNote.fill('원본 측정 속도 30 rpm 확인. 추가 사유 확인 필요');
+    await page.locator('.follow-up-section').screenshot({path:path.join(output,'completed-note-desktop.png')});
+    await page.locator('.follow-up-check input').uncheck();
+    assert.equal(await completedNote.isVisible(),false);
+    await page.locator('.follow-up-check input').check();
+    assert.equal(await completedNote.inputValue(),'원본 측정 속도 30 rpm 확인. 추가 사유 확인 필요');
+    await page.reload(); await page.waitForFunction(() => document.getElementById('total-count').textContent === '1,080');
+    await page.locator('#search').fill('PA-006-M2');
+    assert.equal(await completedNote.inputValue(),'원본 측정 속도 30 rpm 확인. 추가 사유 확인 필요');
+    assert.equal(await page.locator('.follow-up-check input').isChecked(),true);
+    assert.equal(await page.locator('.detail-top .badge').innerText(),'검토 필요');
+    await page.locator('#search').fill('PA-005-M1');
+    await page.locator('.follow-up-check input').check();
+    assert.equal(await completedNote.inputValue(),'');
+    await page.locator('#search').fill('PA-006'); await page.locator('.record-link').nth(1).click();
+    await comparisonSummary.click(); await expandAllComparisonGroups();
+    pass('확인 완료 메모: 선택 입력·자동 저장·상태 전환과 새로고침 보존·측정별 분리·판정 유지');
+
     assert.equal(await page.locator('.comparison-row').count(), 40);
     await page.locator('#comparison-only-issues').check();
     assert.equal(await page.locator('.comparison-row').count(), 1);
