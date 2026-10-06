@@ -110,4 +110,9 @@
   .comparison-heading h3{font-size:15px}
 }
 @media(max-width:650px){.mobile-break{display:block}.hero-sample{width:110px}.record-fields,.issue,.note-input{font-size:12px}.record-link,table{font-size:12px}.check-label{white-space:normal;max-width:135px}.chart-footer{font-size:10px}.template-link{font-size:10px}.record-link span{font-size:10px}.badge{font-size:10px}}
+.chart-hint{font-size:11px;line-height:1.7;color:#54705a;margin-top:8px}
+.chart-point{cursor:pointer}
+.chart-point.selected,.chart-point:hover,.chart-point:focus-visible{stroke:var(--ink);stroke-width:2;opacity:1}
+.chart-point:hover,.chart-point:focus-visible{r:4px;outline:none}
+.detail-panel{scroll-margin-top:20px}
 @media(prefers-reduced-motion:no-preference){button,.button,a{transition:background .15s ease,color .15s ease}.hero-sample svg{animation:appear .7s ease-out}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}

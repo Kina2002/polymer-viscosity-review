@@ -39,7 +39,7 @@
     </section>
     <p id="message" role="status" aria-live="polite" class="message" hidden></p>
     <section class="chart-grid">
-      <div class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow muted">BATCH OVERVIEW</p><h2>배치별 점도 기록</h2></div><label class="check-label"><input type="checkbox" id="comparable-only" checked> 비교 조건이 맞는 값만</label></div><div id="chart" class="chart" aria-live="polite"></div><div class="chart-footer"><span><i class="legend-dot green-dot"></i> 수치상 범위 내 <i class="legend-dot amber-dot"></i> 수치상 범위 외</span><span id="chart-note">개별 측정값 · 평균으로 합치지 않음</span></div></div>
+      <div class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow muted">BATCH OVERVIEW</p><h2>배치별 점도 기록</h2></div><label class="check-label"><input type="checkbox" id="comparable-only" checked> 비교 조건이 맞는 값만</label></div><div id="chart" class="chart" aria-live="polite"></div><div class="chart-footer"><span><i class="legend-dot green-dot"></i> 수치상 범위 내 <i class="legend-dot amber-dot"></i> 수치상 범위 외</span><span id="chart-note">개별 측정값 · 평균으로 합치지 않음</span></div><p id="chart-hint" class="chart-hint">점을 누르면 해당 측정 기록으로 이동해요.</p></div>
       <div class="panel findings-panel"><p class="eyebrow muted">REVIEW SIGNALS</p><h2>확인할 기록</h2><p class="subtle">범주를 눌러 해당 기록을 살펴보세요.</p><div id="category-counts"></div><p class="small-note">한 측정에 여러 항목이 표시될 수 있어요.<br>조건 차이는 원인 확정이나 불량 판정이 아닙니다.</p></div>
     </section>
     <details id="unavailable-summary" class="panel unavailable-summary">
@@ -58,7 +58,7 @@
       <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="배치·측정·시료 번호 검색" aria-label="배치 측정 시료 번호 검색"></label><label class="filter-label">검토 상태<select id="status-filter"><option value="all">전체 상태</option><option value="pass">기준 충족</option><option value="review">검토 필요</option></select></label><label class="filter-label">확인 항목<select id="category-filter"><option value="all">전체 항목</option><option value="missing">기록 누락</option><option value="data">입력 확인</option><option value="manufacturing">제조 조건 차이</option><option value="measurement">측정 조건 차이</option><option value="specification">점도 규격 이탈</option></select></label><button id="reset-filter" class="text-button">초기화</button></div>
       <div class="record-grid">
         <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">현재 조건에 해당하는 개별 측정 기록. 측정 번호를 눌러 상세 정보를 확인하세요.</caption><thead><tr><th scope="col">배치 / 측정</th><th scope="col">점도 <small>mPa·s</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>
-        <aside id="detail" class="panel detail-panel" aria-label="선택한 측정의 상세 기록"><p class="empty-detail">측정 기록을 선택하세요.</p></aside>
+        <aside id="detail" class="panel detail-panel" tabindex="-1" aria-label="선택한 측정의 상세 기록"><p class="empty-detail">측정 기록을 선택하세요.</p></aside>
       </div>
     </section>
     <footer>점도 검토실 <span>·</span> 교육용 가상 제품 POLY-A <span>·</span> 첫 버전은 규칙에 따른 검토를 제공합니다.</footer>

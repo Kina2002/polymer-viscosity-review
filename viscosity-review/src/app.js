@@ -118,8 +118,22 @@ function select(id) {
   selectedId = id;
   const index = filtered.findIndex(record => record.measurementId === id);
   if (index >= 0) page = Math.floor(index / PAGE_SIZE);
-  renderRows(); renderDetail();
+  renderRows(); renderDetail(); updateChartSelection();
   if (window.matchMedia('(max-width: 650px)').matches) $('detail').scrollIntoView({behavior: 'instant', block: 'start'});
+}
+function openChartRecord(id) {
+  if (!records.some(record => record.measurementId === id)) return;
+  if (!filtered.some(record => record.measurementId === id)) { resetFilters(); applyFilters(); }
+  select(id);
+  $('detail').focus({preventScroll: true});
+  $('detail').scrollIntoView({behavior: 'instant', block: 'start'});
+}
+function updateChartSelection() {
+  for (const point of $('chart').querySelectorAll('.chart-point')) {
+    const selected = point.dataset.measurementId === selectedId;
+    point.classList.toggle('selected', selected);
+    point.setAttribute('aria-pressed', String(selected));
+  }
 }
 function renderComparison(record) {
   const section = element('section', 'detail-section comparison-section');
@@ -385,7 +399,7 @@ function renderChart() {
   const padding = Math.max(100, (maxValue - minValue) * 0.18), low = Math.max(0, minValue - padding), high = maxValue + padding;
   const y = value => top + (high - value) / (high - low) * (height - top - bottom);
   const x = index => left + (index + 0.5) / batchIds.length * (width - left - right);
-  const svg = svgElement('svg', {viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': `${batchIds.length}개 배치의 개별 점도 ${points.length}건. 가로축은 배치 순서, 세로축은 점도 mPa·s. 점선은 가상 규격 상한과 하한.`});
+  const svg = svgElement('svg', {viewBox: `0 0 ${width} ${height}`, role: 'group', 'aria-label': `${batchIds.length}개 배치의 개별 점도 ${points.length}건. 가로축은 배치 순서, 세로축은 점도 mPa·s. 점선은 가상 규격 상한과 하한.`, 'aria-describedby': 'chart-hint'});
   svg.append(svgElement('rect', {x: left, y: y(criteria.viscosityMax), width: width-left-right, height: y(criteria.viscosityMin)-y(criteria.viscosityMax), fill:'#eff6ec'}));
   for (let i = 0; i <= 3; i++) {
     const value = low + (high-low) * i / 3, ypos = y(value);
@@ -399,12 +413,16 @@ function renderChart() {
   const batchIndex = new Map(batchIds.map((id, i) => [id, i]));
   for (const record of points) {
     const review = reviews.get(record.measurementId);
-    const circle = svgElement('circle', {cx:x(batchIndex.get(record.batchId)), cy:y(review.viscosity), r:points.length > 500 ? 2 : 3, fill:review.numericStatus === '수치상 범위 외' ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3'});
+    const circle = svgElement('circle', {cx:x(batchIndex.get(record.batchId)), cy:y(review.viscosity), r:points.length > 500 ? 2 : 3, fill:review.numericStatus === '수치상 범위 외' ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3', class:'chart-point', 'data-measurement-id':record.measurementId, role:'button', tabindex:0, 'aria-label':`${record.measurementId} · ${format(review.viscosity)} mPa·s · 상세 기록 열기`});
+    circle.addEventListener('click', () => openChartRecord(record.measurementId));
+    circle.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openChartRecord(record.measurementId); }
+    });
     circle.append(svgElement('title', {}, `${record.measurementId}: ${format(review.viscosity)} mPa·s / ${review.conclusion}`)); svg.append(circle);
   }
   const ticks = [...new Set([0, Math.floor((batchIds.length - 1)/2), batchIds.length-1])];
   for (const index of ticks) svg.append(svgElement('text', {x:x(index), y:height-8, 'text-anchor':'middle', fill:'#8c9b86', 'font-size':10}, batchIds[index]));
-  graph.append(svg);
+  graph.append(svg); updateChartSelection();
 }
 
 const CRITERIA_GROUPS = [
