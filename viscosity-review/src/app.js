@@ -297,7 +297,7 @@ function renderFollowUps(record) {
   const save = () => {
     checklists[record.measurementId] = {signature: followUpSignature(record, criteria),
       checked: tasks.filter(task => task.status === 'done').map(task => task.id),
-      outcomes: Object.fromEntries(tasks.map(task => [task.id, {status: task.status, reason: task.status === 'unavailable' ? task.reason : '', reasonCategory: task.status === 'unavailable' ? task.reasonCategory : ''}]))};
+      outcomes: Object.fromEntries(tasks.map(task => [task.id, {status: task.status, reason: task.status === 'unavailable' ? task.reason : '', reasonCategory: task.status === 'unavailable' ? task.reasonCategory : '', completionNote: task.completionNote}]))};
     store(`poly-checklists-${datasetKey}`, checklists); update(); updateUnavailableRecord(record);
   };
   update(); section.append(progress);
@@ -312,6 +312,14 @@ function renderFollowUps(record) {
     const label = element('label', 'follow-up-check');
     const checkbox = element('input'); checkbox.type = 'checkbox'; checkbox.checked = task.checked;
     checkbox.setAttribute('aria-label', `${record.measurementId} ${task.label} 자료 확인`);
+    const completionFields = element('div', 'follow-up-completion-fields');
+    const completionLabel = element('label', 'follow-up-completion-label', '확인 완료 메모 (선택)');
+    const completionNote = element('textarea', 'follow-up-completion-note'); completionNote.maxLength = 2000; completionNote.rows = 2;
+    completionNote.value = task.completionNote;
+    completionNote.placeholder = '확인한 자료, 확인한 내용과 추가로 확인할 점을 적으세요.';
+    completionLabel.append(completionNote); completionFields.append(completionLabel,
+      element('p', 'note-hint', '입력하면 이 브라우저에 자동 저장되고 보고서에도 포함돼요.'));
+    completionNote.addEventListener('input', () => { task.completionNote = completionNote.value; save(); });
     const badge = element('span', 'badge follow-up-status'); badge.setAttribute('role', 'status');
     const unavailable = element('button', 'follow-up-unavailable', '확인 불가'); unavailable.type = 'button';
     unavailable.setAttribute('aria-label', `${record.measurementId} ${task.label} 확인 불가`);
@@ -337,6 +345,7 @@ function renderFollowUps(record) {
       badge.classList.toggle('warning', task.status === 'unavailable'); badge.classList.toggle('muted-badge', task.status === 'pending');
       unavailable.setAttribute('aria-pressed', String(task.status === 'unavailable'));
       reasonFields.hidden = task.status !== 'unavailable';
+      completionFields.hidden = task.status !== 'done';
     };
     checkbox.addEventListener('change', () => {
       task.status = checkbox.checked ? 'done' : 'pending'; refresh(); save();
@@ -345,7 +354,7 @@ function renderFollowUps(record) {
     reason.addEventListener('input', () => { task.reason = reason.value; save(); });
     label.append(checkbox, document.createTextNode('자료 확인 완료'));
     const actions = element('div', 'follow-up-actions'); actions.append(unavailable, badge);
-    card.append(label, actions, reasonFields); refresh(); list.append(card);
+    card.append(label, completionFields, actions, reasonFields); refresh(); list.append(card);
   }
   if (!tasks.length) list.append(element('p', 'follow-up-empty', '규칙에서 추가 확인할 차이·누락을 찾지 못했어요. 별도로 확인한 내용은 검토 메모에 남기세요.'));
   section.append(list, element('p', 'follow-up-note', '확인 불가를 다시 누르면 미확인으로 돌아갑니다. 자료 확인 상태는 판정 변경이나 출하 승인이 아닙니다. 기준·원본 기록이 달라지면 이전 상태를 적용하지 않습니다. 상태·이유는 결과 CSV와 보고서에 포함됩니다.'));
