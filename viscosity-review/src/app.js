@@ -97,11 +97,32 @@ function prepareConditionControls() {
   }
   select.value = 'manufacturingTemperature'; $('condition-limit').checked = true; fillConditionDraft();
 }
+const chartFieldLabel = definition => definition.field === 'viscosity' ? '점도 (mPa·s)' : definition.label;
+function prepareChartControls() {
+  const xSelect = $('chart-axis'), ySelect = $('chart-y-field');
+  xSelect.replaceChildren(); ySelect.replaceChildren();
+  for (const [value, label] of [['batch', '배치 순서'], ['condition', '적용한 조건']]) {
+    const option = element('option', '', label); option.value = value; xSelect.append(option);
+  }
+  for (const [type, label] of [['number','숫자로 기록하는 항목'], ['text','종류·상태로 기록하는 항목']]) {
+    const group = element('optgroup'); group.label = label;
+    for (const definition of CONDITION_FIELDS.filter(item => item.type === type)) {
+      const option = element('option', '', chartFieldLabel(definition)); option.value = `field:${definition.field}`; group.append(option);
+      if (type === 'number') {
+        const yOption = element('option', '', chartFieldLabel(definition)); yOption.value = definition.field; ySelect.append(yOption);
+      }
+    }
+    xSelect.append(group);
+  }
+  ySelect.value = 'viscosity';
+}
 function updateConditionStatus() {
   $('condition-summary').textContent = describeConditionFilter(activeCondition);
   $('clear-condition').disabled = !activeCondition;
-  $('chart-axis-controls').hidden = !activeCondition;
-  if (activeCondition) $('chart-axis').querySelector('[value="condition"]').textContent = CONDITION_FIELDS.find(item => item.field === activeCondition.field).label;
+  const option = $('chart-axis').querySelector('[value="condition"]');
+  option.disabled = !activeCondition;
+  option.textContent = '적용한 조건';
+  if (activeCondition) option.textContent = `적용 조건: ${chartFieldLabel(CONDITION_FIELDS.find(item => item.field === activeCondition.field))}`;
 }
 
 function loadRecords(next, name, key) {
@@ -117,7 +138,7 @@ function loadRecords(next, name, key) {
   selectedId = records[0]?.measurementId ?? null;
   $('source-name').textContent = name;
   $('source-description').textContent = key === 'demo-20261002' ? '270개 배치 × 4회 측정 · 모든 수치는 합성된 가상 값입니다.' : '업로드 파일을 브라우저에서 검토합니다. 원본 파일은 수정하지 않습니다.';
-  prepareConditionControls(); resetFilters(); recalculate();
+  prepareConditionControls(); prepareChartControls(); resetFilters(); recalculate();
 }
 function recalculate() {
   reviews = new Map(records.map(record => [record.measurementId, reviewRecord(record, criteria)]));
@@ -132,7 +153,7 @@ function recalculate() {
 }
 function resetFilters() {
   $('search').value = ''; $('status-filter').value = 'all'; $('category-filter').value = 'all'; page = 0;
-  activeCondition = null; $('chart-axis').value = 'batch'; updateConditionStatus();
+  activeCondition = null; $('chart-axis').value = 'batch'; $('chart-y-field').value = 'viscosity'; updateConditionStatus();
   $('condition-error').hidden = true;
 }
 function applyFilters() {
@@ -541,64 +562,85 @@ function svgElement(tag, attrs = {}, text) {
 function renderChart() {
   const graph = $('chart'); graph.replaceChildren();
   const onlyComparable = $('comparable-only').checked;
-  const condition = activeCondition && $('chart-axis').value === 'condition' ? activeCondition : null;
-  const definition = condition && CONDITION_FIELDS.find(item => item.field === condition.field);
-  $('chart-title').textContent = condition ? '조건별 점도 기록' : '배치별 점도 기록';
-  $('chart-condition-hint').hidden = !condition;
+  const xSelection = $('chart-axis').value;
+  const xField = xSelection === 'condition' ? activeCondition?.field : xSelection.startsWith('field:') ? xSelection.slice(6) : null;
+  const definition = CONDITION_FIELDS.find(item => item.field === xField);
+  const yDefinition = CONDITION_FIELDS.find(item => item.field === $('chart-y-field').value && item.type === 'number');
+  const yField = yDefinition?.field ?? 'viscosity', viscosityAxis = yField === 'viscosity';
+  const yLabel = yDefinition ? chartFieldLabel(yDefinition) : '점도 (mPa·s)';
+  const yName = yLabel.replace(/ \([^)]+\)$/, '');
+  const range = activeCondition?.field === xField && activeCondition.mode === 'range' ? activeCondition : null;
+  $('chart-title').textContent = `${definition ? '조건별' : '배치별'} ${yName} 기록`;
+  $('chart-condition-hint').hidden = !definition && viscosityAxis;
+  const legend = $('chart-legend'); legend.replaceChildren();
+  legend.append(element('i', 'legend-dot green-dot'), ` ${viscosityAxis ? '수치상 범위 내' : '기준 충족'} `,
+    element('i', 'legend-dot amber-dot'), ` ${viscosityAxis ? '수치상 범위 외' : '검토 필요'}`);
   const points = filtered.filter(record => {
     const review = reviews.get(record.measurementId);
-    return review.viscosity !== null && (!onlyComparable || review.comparable) && (!condition || conditionValue(record, condition.field) !== null);
+    return conditionValue(record, yField) !== null && (!onlyComparable || review.comparable) && (!definition || conditionValue(record, xField) !== null);
   });
   const batchIds = [...new Set(filtered.map(record => record.batchId))];
-  const conditionValues = condition ? [...new Set(points.map(record => conditionValue(record, condition.field)))] : [];
+  const conditionValues = definition ? [...new Set(points.map(record => conditionValue(record, xField)))] : [];
+  const values = points.map(record => conditionValue(record, yField));
   $('chart-note').textContent = `${points.length.toLocaleString('ko-KR')}개 개별 값 · 목록 ${filtered.length.toLocaleString('ko-KR')}건 · 평균으로 합치지 않음`;
-  if (condition) $('chart-condition-hint').textContent = `가로축: ${definition.label} · 세로축: 점도 (mPa·s). 가상 기록의 분포이며, 다른 조건도 함께 확인하세요.${conditionValues.length === 1 ? ` 현재 표시된 ${definition.label} 기록값은 모두 ${conditionDisplay(points[0], condition.field)}입니다.` : ''}`;
+  const sameValueNotes = [];
+  if (conditionValues.length === 1) sameValueNotes.push(`현재 표시된 ${definition.label} 기록값은 모두 ${conditionDisplay(points[0], xField)}입니다.`);
+  if (!viscosityAxis && xField !== yField && new Set(values).size === 1) sameValueNotes.push(`현재 표시된 ${yLabel} 기록값은 모두 ${conditionDisplay(points[0], yField)}입니다.`);
+  $('chart-condition-hint').textContent = `가로축: ${definition ? chartFieldLabel(definition) : '배치 순서'} · 세로축: ${yLabel}. ${datasetKey === 'demo-20261002' ? '가상 기록의 분포이며, ' : ''}다른 조건도 함께 확인하세요.${!viscosityAxis ? ' 점 색은 기존 검토 판정이며, 비교 조건 체크는 점도 시험 조건을 기준으로 해요.' : ''}${sameValueNotes.length ? ` ${sameValueNotes.join(' ')}` : ''}`;
   if (!points.length) {
-    graph.append(element('p', 'empty-detail', `표시할 점도 기록이 없습니다.${onlyComparable ? ' 「비교 조건이 맞는 값만」을 해제해 다른 기록도 살펴보세요.' : ' 선택한 항목과 점도에 유효한 기록값이 있는지 확인하세요.'}`)); return;
+    graph.append(element('p', 'empty-detail', `표시할 ${yName} 기록이 없습니다.${onlyComparable ? ' 「비교 조건이 맞는 값만」을 해제해 다른 기록도 살펴보세요.' : ' 선택한 가로축·세로축 항목에 유효한 기록값이 있는지 확인하세요.'}`)); return;
   }
-  const width = Math.max(280, graph.clientWidth), height = graph.clientHeight, left = 50, right = 18, top = 15, bottom = 33;
-  const values = points.map(record => reviews.get(record.measurementId).viscosity);
-  const minValue = Math.min(criteria.viscosityMin, ...values), maxValue = Math.max(criteria.viscosityMax, ...values);
-  const padding = Math.max(100, (maxValue - minValue) * 0.18), low = Math.max(0, minValue - padding), high = maxValue + padding;
+  const minValue = Math.min(...values, ...(viscosityAxis ? [criteria.viscosityMin] : []));
+  const maxValue = Math.max(...values, ...(viscosityAxis ? [criteria.viscosityMax] : []));
+  const padding = viscosityAxis ? Math.max(100, (maxValue - minValue) * 0.18)
+    : maxValue === minValue ? Math.max(1, Math.abs(minValue) * 0.05) : (maxValue - minValue) * 0.18;
+  const low = viscosityAxis ? Math.max(0, minValue - padding) : minValue - padding, high = maxValue + padding;
+  const tickDisplay = value => Number(value.toPrecision(12)).toLocaleString('ko-KR', {maximumFractionDigits: 12});
+  const yTickValues = !viscosityAxis && minValue === maxValue ? [minValue] : [0,1,2,3].map(i => low + (high-low) * i / 3);
+  const yTickLabels = yTickValues.map(value => viscosityAxis ? Math.round(value).toLocaleString('ko-KR') : tickDisplay(value));
+  const width = Math.max(280, graph.clientWidth), height = graph.clientHeight;
+  const left = Math.max(50, Math.min(110, Math.max(...yTickLabels.map(label => label.length)) * 6 + 12)), right = 18, top = 15, bottom = 33;
   const y = value => top + (high - value) / (high - low) * (height - top - bottom);
   const batchIndex = new Map(batchIds.map((id, i) => [id, i]));
   let xForRecord, xTicks;
   if (definition?.type === 'number') {
     const observedLow = Math.min(...conditionValues), observedHigh = Math.max(...conditionValues);
-    let axisLow = condition.mode === 'range' ? Number(condition.center) - Number(condition.tolerance) : observedLow;
-    let axisHigh = condition.mode === 'range' ? Number(condition.center) + Number(condition.tolerance) : observedHigh;
+    let axisLow = range ? Number(range.center) - Number(range.tolerance) : observedLow;
+    let axisHigh = range ? Number(range.center) + Number(range.tolerance) : observedHigh;
     if (axisLow === axisHigh) { const padding = Math.max(1, Math.abs(axisLow) * 0.05); axisLow -= padding; axisHigh += padding; }
     const x = value => left + (value - axisLow) / (axisHigh - axisLow) * (width - left - right);
-    xForRecord = record => x(conditionValue(record, condition.field));
+    xForRecord = record => x(conditionValue(record, xField));
     const tickValues = conditionValues.length === 1 ? [observedLow] : [axisLow, axisLow + (axisHigh-axisLow)/2, axisHigh];
-    xTicks = tickValues.map(value => [x(value), `${Number(value.toPrecision(12)).toLocaleString('ko-KR', {maximumFractionDigits: 12})}${definition.unit ? ` ${definition.unit}` : ''}`]);
+    xTicks = tickValues.map(value => [x(value), `${tickDisplay(value)}${definition.unit ? ` ${definition.unit}` : ''}`]);
   } else {
-    const labels = condition ? conditionValues.sort((a,b) => a.localeCompare(b,'ko-KR')) : batchIds;
-    const index = condition ? new Map(labels.map((value, i) => [value, i])) : batchIndex;
+    const labels = definition ? conditionValues.sort((a,b) => a.localeCompare(b,'ko-KR')) : batchIds;
+    const index = definition ? new Map(labels.map((value, i) => [value, i])) : batchIndex;
     const x = value => left + (value + 0.5) / labels.length * (width - left - right);
-    xForRecord = record => x(index.get(condition ? conditionValue(record, condition.field) : record.batchId));
+    xForRecord = record => x(index.get(definition ? conditionValue(record, xField) : record.batchId));
     xTicks = [...new Set([0, Math.floor((labels.length-1)/2), labels.length-1])].map(i => [x(i), String(labels[i])]);
   }
-  const svg = svgElement('svg', {viewBox: `0 0 ${width} ${height}`, role: 'group', 'aria-label': `${batchIds.length}개 배치의 개별 점도 ${points.length}건. 가로축은 ${definition?.label ?? '배치 순서'}, 세로축은 점도 mPa·s. 점선은 가상 규격 상한과 하한.`, 'aria-describedby': condition ? 'chart-hint chart-condition-hint' : 'chart-hint'});
-  svg.append(svgElement('rect', {x: left, y: y(criteria.viscosityMax), width: width-left-right, height: y(criteria.viscosityMin)-y(criteria.viscosityMax), fill:'#eff6ec'}));
-  for (let i = 0; i <= 3; i++) {
-    const value = low + (high-low) * i / 3, ypos = y(value);
+  const svg = svgElement('svg', {viewBox: `0 0 ${width} ${height}`, role: 'group', 'aria-label': `${batchIds.length}개 배치의 개별 ${yName} ${points.length}건. 가로축은 ${definition ? chartFieldLabel(definition) : '배치 순서'}, 세로축은 ${yLabel}.${viscosityAxis ? ' 점선은 가상 점도 규격 상한과 하한.' : ' 점 색은 기존 검토 판정.'}`, 'aria-describedby': $('chart-condition-hint').hidden ? 'chart-hint' : 'chart-hint chart-condition-hint'});
+  if (viscosityAxis) svg.append(svgElement('rect', {x: left, y: y(criteria.viscosityMax), width: width-left-right, height: y(criteria.viscosityMin)-y(criteria.viscosityMax), fill:'#eff6ec', class:'chart-spec-band'}));
+  for (const [i, value] of yTickValues.entries()) {
+    const ypos = y(value);
     svg.append(svgElement('line', {x1:left, x2:width-right, y1:ypos, y2:ypos, stroke:'#e9eee6', 'stroke-width':1}));
-    svg.append(svgElement('text', {x:left-9, y:ypos+3, 'text-anchor':'end', fill:'#93a28f', 'font-size':10}, Math.round(value).toLocaleString('ko-KR')));
+    svg.append(svgElement('text', {x:left-9, y:ypos+3, 'text-anchor':'end', fill:'#93a28f', 'font-size':10}, yTickLabels[i]));
   }
-  for (const [value, label] of [[criteria.viscosityMax,'상한'],[criteria.viscosityMin,'하한']]) {
-    svg.append(svgElement('line', {x1:left, x2:width-right, y1:y(value), y2:y(value), stroke:'#b8cbb1', 'stroke-dasharray':'4 4'}));
+  for (const [value, label] of viscosityAxis ? [[criteria.viscosityMax,'상한'],[criteria.viscosityMin,'하한']] : []) {
+    svg.append(svgElement('line', {x1:left, x2:width-right, y1:y(value), y2:y(value), stroke:'#b8cbb1', 'stroke-dasharray':'4 4', class:'chart-spec-limit'}));
     svg.append(svgElement('text', {x:width-right-2, y:y(value)-5, 'text-anchor':'end', fill:'#93a687','font-size':9}, `${label} ${format(value)}`));
   }
   for (const record of points) {
     const review = reviews.get(record.measurementId);
-    const conditionDescription = condition ? `${definition.label} ${conditionDisplay(record, condition.field)} / ` : '';
-    const circle = svgElement('circle', {cx:xForRecord(record), cy:y(review.viscosity), r:points.length > 500 ? 2 : 3, fill:review.numericStatus === '수치상 범위 외' ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3', class:'chart-point', 'data-measurement-id':record.measurementId, role:'button', tabindex:0, 'aria-label':`${record.measurementId} · ${conditionDescription}${viscosityDisplay(record)} · 상세 기록 열기`});
+    const conditionDescription = definition ? `${definition.label} ${conditionDisplay(record, xField)} / ` : '';
+    const resultDescription = viscosityAxis ? viscosityDisplay(record) : `${yLabel} ${conditionDisplay(record, yField)}`;
+    const warning = viscosityAxis ? review.numericStatus === '수치상 범위 외' : review.issues.length > 0;
+    const circle = svgElement('circle', {cx:xForRecord(record), cy:y(conditionValue(record, yField)), r:points.length > 500 ? 2 : 3, fill:warning ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3', class:'chart-point', 'data-measurement-id':record.measurementId, role:'button', tabindex:0, 'aria-label':`${record.measurementId} · ${conditionDescription}${resultDescription} · 상세 기록 열기`});
     circle.addEventListener('click', () => openChartRecord(record.measurementId));
     circle.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openChartRecord(record.measurementId); }
     });
-    circle.append(svgElement('title', {}, `${record.measurementId}: ${conditionDescription}${viscosityDisplay(record)} / ${review.conclusion}`)); svg.append(circle);
+    circle.append(svgElement('title', {}, `${record.measurementId}: ${conditionDescription}${resultDescription} / ${review.conclusion}`)); svg.append(circle);
   }
   for (const [x, label] of xTicks) {
     const tick = svgElement('text', {x, y:height-8, 'text-anchor':'middle', fill:'#8c9b86', 'font-size':10}, label.length > 18 ? label.slice(0,17) + '…' : label);
@@ -662,6 +704,7 @@ $('clear-condition').addEventListener('click', () => {
   updateConditionStatus(); applyFilters();
 });
 $('chart-axis').addEventListener('change', renderChart);
+$('chart-y-field').addEventListener('change', renderChart);
 let resizeTimer;
 window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(renderChart, 100); });
 $('previous-page').addEventListener('click', () => { page--; renderRows(); });

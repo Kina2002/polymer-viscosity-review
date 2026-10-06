@@ -132,6 +132,15 @@ const { pathToFileURL } = require('node:url');
     assert.ok((await page.locator('#chart svg').getAttribute('aria-label')).includes('가로축은 제조 온도 (℃)'));
     assert.ok((await page.locator('.record-condition-value').first().innerText()).includes('45 ℃'));
     assert.equal(await page.locator('.detail-top .badge').innerText(),'검토 필요');
+    await page.locator('#chart-y-field').selectOption('rpm');
+    await page.locator('#chart-axis').selectOption('field:sampleTemperature');
+    assert.equal(await page.locator('#filtered-count').innerText(),'현재 216건 / 전체 1,080건');
+    assert.equal(await page.locator('#chart circle').count(),108);
+    assert.ok((await page.locator('#chart svg').getAttribute('aria-label')).includes('가로축은 실제 측정 온도 (℃), 세로축은 측정 속도 (rpm)'));
+    await page.locator('#condition-form [type="submit"]').click();
+    assert.equal(await page.locator('#chart-y-field').inputValue(),'rpm');
+    assert.equal(await page.locator('#chart-axis').inputValue(),'condition');
+    await page.locator('#chart-y-field').selectOption('viscosity');
     const conditionReportEvent = page.waitForEvent('download'); await page.locator('#export-report').click();
     const conditionReport = await conditionReportEvent;
     const conditionText = await fs.readFile(await conditionReport.path(),'utf8');
@@ -183,10 +192,47 @@ const { pathToFileURL } = require('node:url');
     await page.locator('#clear-condition').click();
     assert.equal(await page.locator('#filtered-count').innerText(),'현재 1,080건 / 전체 1,080건');
     assert.equal(await page.locator('.record-condition-value').count(),0);
-    assert.equal(await page.locator('#chart-axis-controls').isVisible(),false);
+    assert.equal(await page.locator('#chart-axis-controls').isVisible(),true);
+    assert.equal(await page.locator('#chart-axis option[value="condition"]').evaluate(option=>option.disabled),true);
     await page.locator('#comparable-only').check(); await page.locator('#reset-filter').click();
     await conditionSummary.click();
     pass('조건 종류: 교반 속도 전체 값·동일 값 안내·측정 속도와 비교 조건 숨김·기존 필터 교집합·문자 스핀들·해제');
+
+    await page.locator('#search').fill('PA-006'); await page.locator('.record-link').first().click();
+    await page.locator('#comparable-only').uncheck();
+    const previousMemo = await page.locator('#review-note').inputValue();
+    await page.locator('#review-note').fill('축 변경 중 메모 보존 확인');
+    await page.locator('.report-record-check').first().check();
+    const axisDetail = await page.locator('#detail').innerText();
+    const axisPoint = id => page.locator(`.chart-point[data-measurement-id="${id}"]`);
+    await page.locator('#chart-axis').selectOption('field:rpm');
+    await page.locator('#chart-y-field').selectOption('sampleTemperature');
+    assert.equal(await page.locator('#chart-title').innerText(),'조건별 실제 측정 온도 기록');
+    assert.equal(await page.locator('#chart circle').count(),4);
+    assert.equal(await page.locator('#filtered-count').innerText(),'현재 4건 / 전체 1,080건');
+    assert.equal(await page.locator('#detail').innerText(),axisDetail);
+    assert.equal(await page.locator('#review-note').inputValue(),'축 변경 중 메모 보존 확인');
+    assert.equal(await page.locator('#report-selection-count').innerText(),'보고서에 담을 기록 1건 체크');
+    assert.ok(Number(await axisPoint('PA-006-M2').getAttribute('cx')) < Number(await axisPoint('PA-006-M1').getAttribute('cx')));
+    assert.ok(Number(await axisPoint('PA-006-M1').getAttribute('cy')) < Number(await axisPoint('PA-006-M2').getAttribute('cy')));
+    assert.ok((await axisPoint('PA-006-M1').getAttribute('aria-label')).includes('28 ℃'));
+    assert.equal(await page.locator('.chart-spec-limit, .chart-spec-band').count(),0);
+    assert.ok((await page.locator('#chart-legend').innerText()).includes('기준 충족'));
+    assert.ok((await page.locator('#chart-legend').innerText()).includes('검토 필요'));
+    await page.locator('.chart-panel').screenshot({path:path.join(output,'chart-axes-desktop.png')});
+    await axisPoint('PA-006-M2').press('Enter'); await assertChartSelection('PA-006-M2',1);
+    await page.locator('#chart-axis').selectOption('field:spindle');
+    assert.ok((await page.locator('#chart svg').getAttribute('aria-label')).includes('가로축은 스핀들'));
+    assert.equal(await page.locator('#chart circle').count(),4);
+    await page.locator('#chart-y-field').selectOption('viscosity');
+    assert.equal(await page.locator('.chart-spec-limit').count(),2);
+    await page.locator('#comparable-only').check();
+    await page.locator('.record-link').first().click(); await page.locator('#review-note').fill(previousMemo);
+    await page.locator('#clear-report-selection').click(); await page.locator('#report-scope').selectOption('filtered');
+    await page.locator('#reset-filter').click();
+    assert.equal(await page.locator('#chart-axis').inputValue(),'batch');
+    assert.equal(await page.locator('#chart-y-field').inputValue(),'viscosity');
+    pass('독립 축 선택: 측정 속도×측정 온도 좌표·문자 가로축·점 이동·점도 기준선 전환·판정/메모/선택 보존');
 
     await page.locator('#search').fill('PA-006');
     await page.locator('.record-link').first().click();
@@ -509,6 +555,37 @@ const { pathToFileURL } = require('node:url');
     pass('실제 CSV 입력·중복 ID 거부·기존 데이터 유지');
 
     const headers = Object.keys(data[0]);
+    const axisData = [
+      {...data[0],measurementId:'AX-A',manufacturingTemperature:-5,sampleTemperature:0,concentration:0.95,viscosity:1200,unit:'cP'},
+      {...data[0],measurementId:'AX-B',manufacturingTemperature:5,sampleTemperature:25,concentration:1.05,viscosity:''},
+      {...data[0],measurementId:'AX-C',manufacturingTemperature:10,sampleTemperature:'',concentration:1.1,unit:'Pa·s'},
+      {...data[0],measurementId:'AX-D',manufacturingTemperature:15,sampleTemperature:'숫자 오류',concentration:1.2,unit:'Pa·s'},
+      {...data[0],measurementId:'AX-E',manufacturingTemperature:0,sampleTemperature:-2,concentration:0,viscosity:0,unit:'cP'}
+    ];
+    const axisQuote = value => `"${String(value).replaceAll('"','""')}"`;
+    await page.locator('#csv-file').setInputFiles({name:'축값검증.csv',mimeType:'text/csv',buffer:Buffer.from(headers.join(',')+'\n'+axisData.map(record=>headers.map(key=>axisQuote(record[key])).join(',')).join('\n'))});
+    await page.waitForFunction(()=>document.querySelector('#total-count').textContent==='5');
+    await page.locator('#comparable-only').uncheck();
+    await page.locator('#chart-axis').selectOption('field:manufacturingTemperature');
+    await page.locator('#chart-y-field').selectOption('sampleTemperature');
+    assert.equal(await page.locator('#chart circle').count(),3);
+    assert.equal(await page.locator('#filtered-count').innerText(),'현재 5건 / 전체 5건');
+    assert.ok(Number(await axisPoint('AX-B').getAttribute('cy')) < Number(await axisPoint('AX-A').getAttribute('cy')));
+    assert.ok(Number(await axisPoint('AX-A').getAttribute('cy')) < Number(await axisPoint('AX-E').getAttribute('cy')));
+    assert.equal(await axisPoint('AX-C').count(),0); assert.equal(await axisPoint('AX-D').count(),0);
+    assert.equal(await page.locator('.chart-spec-limit').count(),0);
+    await page.locator('#chart-y-field').selectOption('concentration');
+    assert.equal(await page.locator('#chart circle').count(),5);
+    assert.ok((await axisPoint('AX-A').getAttribute('aria-label')).includes('0.95 wt%'));
+    await page.locator('#chart-axis').selectOption('field:viscosity');
+    assert.equal(await page.locator('#chart circle').count(),2);
+    await page.locator('#chart-y-field').selectOption('viscosity');
+    assert.equal(await page.locator('#chart circle').count(),2);
+    assert.equal(await page.locator('.chart-spec-limit').count(),2);
+    const coordinateValues=await page.locator('#chart circle').evaluateAll(nodes=>nodes.flatMap(node=>[node.cx.baseVal.value,node.cy.baseVal.value]));
+    assert.ok(coordinateValues.every(Number.isFinite));
+    await page.locator('#comparable-only').check();
+    pass('축 항목별 결측 제외·점도 없는 측정 온도 표시·0/음수/소수 좌표·cP/미지원 단위·파일 전체 건수 유지');
     const malicious = {...data[0], sourceNote:'<img src=x onerror="window.__injected=true">'};
     const quote = value => `"${String(value).replaceAll('"','""')}"`;
     await page.locator('#csv-file').setInputFiles({name:'문자검증.csv', mimeType:'text/csv', buffer:Buffer.from(headers.join(',')+'\n'+headers.map(key=>quote(malicious[key])).join(','))});
@@ -579,6 +656,15 @@ const { pathToFileURL } = require('node:url');
       assert.ok(conditionBounds.x >= 0 && conditionBounds.x + conditionBounds.width <= width);
       await page.locator('#condition-explorer').screenshot({path:path.join(output,`condition-filter-mobile-${width}.png`)});
       await page.locator('#clear-condition').click(); await conditionSummary.click();
+      await page.locator('#chart-axis').selectOption('field:manufacturingTemperature');
+      await page.locator('#chart-y-field').selectOption('sampleTemperature');
+      assert.equal(await page.locator('#chart-axis-controls').isVisible(),true);
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),true);
+      for (const id of ['chart-axis','chart-y-field']) {
+        const bounds=await page.locator(`#${id}`).boundingBox(); assert.ok(bounds.x>=0&&bounds.x+bounds.width<=width);
+      }
+      await page.locator('.chart-panel').screenshot({path:path.join(output,`chart-axes-mobile-${width}.png`)});
+      await page.locator('#reset-filter').click();
     }
     pass('390px·320px 화면에 가로 넘침 없음·기준 창 사용 가능');
     await page.locator('#search').fill('PA-006'); await page.locator('.record-link').nth(1).click();
