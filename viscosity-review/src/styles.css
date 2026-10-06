@@ -183,6 +183,7 @@
 .condition-plusminus,#condition-unit{padding-bottom:12px}
 .condition-preview{font-size:11px;color:#52745c;line-height:1.8;margin:12px 0;overflow-wrap:anywhere}
 .condition-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.condition-result-count{display:flex;align-items:center;padding:8px 11px;border-radius:5px;background:#edf5ec;color:#38694b;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.7}
 .condition-explorer [hidden],#chart-axis-controls[hidden]{display:none!important}
 .chart-axis-label{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:11px;color:#54705a;flex-wrap:wrap}
 .chart-axis-label select{padding:7px;border:1px solid var(--border);border-radius:5px;background:white;max-width:100%;color:var(--ink);font-size:11px}

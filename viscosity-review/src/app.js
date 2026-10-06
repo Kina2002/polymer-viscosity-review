@@ -148,6 +148,8 @@ function applyFilters() {
   page = Math.min(page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
   if (!filtered.some(record => record.measurementId === selectedId)) selectedId = filtered[0]?.measurementId ?? null;
   $('filtered-count').textContent = `현재 ${filtered.length.toLocaleString('ko-KR')}건 / 전체 ${records.length.toLocaleString('ko-KR')}건`;
+  $('condition-result-count').hidden = !activeCondition;
+  $('condition-result-count').textContent = `결과 ${filtered.length.toLocaleString('ko-KR')} / ${records.length.toLocaleString('ko-KR')}건`;
   $('export-csv').disabled = !filtered.length;
   renderRows(); renderDetail(); renderChart();
 }
