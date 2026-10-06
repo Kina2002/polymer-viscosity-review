@@ -1,4 +1,4 @@
-import { DEFAULT_CRITERIA, CONDITION_FIELDS, conditionValue, validateConditionFilter, matchesConditionFilter, describeConditionFilter, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, FOLLOW_UP_EXPLANATION_NOTE, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from './core.js';
+import { DEFAULT_CRITERIA, CONDITION_FIELDS, conditionValue, validateConditionFilter, matchesConditionFilter, describeConditionFilter, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, FOLLOW_UP_EXPLANATION_NOTE, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, completedEntries, removeReasonCategory, unavailableReasonCSV, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from './core.js';
 
 const $ = id => document.getElementById(id);
 const format = value => numeric(value) === null ? '—' : Number(value).toLocaleString('ko-KR', {maximumFractionDigits: 2});
@@ -39,6 +39,7 @@ for (const value of Array.isArray(savedReasonCategories) ? savedReasonCategories
   if (!validateReasonCategory(name, reasonCategories)) reasonCategories.push(name);
 }
 let unavailableCache = [], unavailablePage = 0, reasonCategoryTarget = null;
+let completedCache = [], completedPage = 0;
 const REASON_PAGE_SIZE = 20;
 const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
@@ -149,6 +150,7 @@ function recalculate() {
   $('review-count').textContent = (records.length - pass).toLocaleString('ko-KR');
   $('criteria-version').textContent = criteria.version;
   unavailableCache = unavailableEntries(records, criteria, checklists); unavailablePage = 0; renderUnavailableSummary();
+  completedCache = completedEntries(records, criteria, checklists); completedPage = 0; renderCompletedSummary();
   renderCategoryCounts(); applyFilters();
 }
 function resetFilters() {
@@ -377,14 +379,14 @@ function renderFollowUps(record) {
   const tasks = followUpProgress(record, criteria, checklists);
   const section = element('section', 'detail-section follow-up-section');
   section.append(element('h3', '', '다음 확인 질문 · 체크리스트'));
-  section.append(element('p', 'follow-up-intro', '자료를 확인했다면 체크하세요. 자료가 없거나 확인할 수 없다면 아래 「확인 불가」를 누르고 이유를 남기세요.'));
+  section.append(element('p', 'follow-up-intro', '질문에서 요구한 원본 기록·시험 방법·점검 자료를 실제로 확인했다면 체크하세요. 기준과의 차이가 해결됐다는 뜻은 아니에요. 자료가 없거나 확인할 수 없다면 아래 「확인 불가」를 누르고 이유를 남기세요.'));
   const progress = element('p', 'follow-up-progress'); progress.setAttribute('role', 'status');
   const update = () => { progress.textContent = `확인 완료 ${tasks.filter(task => task.status === 'done').length}개 · 확인 불가 ${tasks.filter(task => task.status === 'unavailable').length}개 · 미확인 ${tasks.filter(task => task.status === 'pending').length}개`; progress.hidden = !tasks.length; };
   const save = () => {
     checklists[record.measurementId] = {signature: followUpSignature(record, criteria),
       checked: tasks.filter(task => task.status === 'done').map(task => task.id),
       outcomes: Object.fromEntries(tasks.map(task => [task.id, {status: task.status, reason: task.status === 'unavailable' ? task.reason : '', reasonCategory: task.status === 'unavailable' ? task.reasonCategory : '', completionNote: task.completionNote}]))};
-    store(`poly-checklists-${datasetKey}`, checklists); update(); updateUnavailableRecord(record);
+    store(`poly-checklists-${datasetKey}`, checklists); update(); updateFollowUpSummaries(record);
   };
   update(); section.append(progress);
   const list = element('div', 'follow-up-list');
@@ -461,9 +463,52 @@ function renderFollowUps(record) {
   return section;
 }
 
-function updateUnavailableRecord(record) {
+function updateFollowUpSummaries(record) {
   unavailableCache = unavailableCache.filter(task => task.measurementId !== record.measurementId).concat(unavailableEntries([record], criteria, checklists));
+  completedCache = completedCache.filter(task => task.measurementId !== record.measurementId).concat(completedEntries([record], criteria, checklists));
   renderUnavailableSummary();
+  renderCompletedSummary();
+}
+function renderCompletedSummary() {
+  const measurementCount = entries => new Set(entries.map(task => task.measurementId)).size;
+  const countText = entries => `${entries.length}개 항목 · ${measurementCount(entries)}건 측정`;
+  $('completed-count').textContent = countText(completedCache);
+  const filter = $('completed-filter'), selected = filter.value, groups = new Map();
+  for (const task of completedCache) {
+    if (!groups.has(task.field)) groups.set(task.field, {label: task.label, count: 0});
+    groups.get(task.field).count++;
+  }
+  const fields = [...groups.keys()].sort((a, b) => groups.get(a).label.localeCompare(groups.get(b).label, 'ko'));
+  const all = element('option', '', `전체 항목 (${completedCache.length}개)`); all.value = ''; filter.replaceChildren(all);
+  for (const field of fields) {
+    const group = groups.get(field), option = element('option', '', `${group.label} (${group.count}개)`);
+    option.value = field; filter.append(option);
+  }
+  filter.value = groups.has(selected) ? selected : '';
+  const entries = completedCache.filter(task => !filter.value || task.field === filter.value)
+    .sort((a, b) => a.label.localeCompare(b.label, 'ko') || String(a.measurementId).localeCompare(String(b.measurementId), 'ko') || a.id.localeCompare(b.id));
+  const pages = Math.max(1, Math.ceil(entries.length / REASON_PAGE_SIZE));
+  completedPage = Math.max(0, Math.min(completedPage, pages - 1));
+  $('completed-page-label').textContent = `${countText(entries)} · ${completedPage + 1} / ${pages} 페이지`;
+  $('completed-previous').disabled = completedPage === 0; $('completed-next').disabled = completedPage + 1 >= pages;
+  const list = $('completed-list'); list.replaceChildren();
+  if (!$('completed-summary').open) return;
+  let previousField = null;
+  for (const task of entries.slice(completedPage * REASON_PAGE_SIZE, (completedPage + 1) * REASON_PAGE_SIZE)) {
+    if (task.field !== previousField) { list.append(element('h3', 'unavailable-group-title', `${task.label} · ${groups.get(task.field).count}개`)); previousField = task.field; }
+    const card = element('article', 'unavailable-entry completed-entry'); card.dataset.measurement = task.measurementId; card.dataset.task = task.id;
+    card.append(element('h4', '', `${task.measurementId} · ${task.label}`),
+      element('p', 'unavailable-entry-evidence', `배치 ${task.batchId} · 실험 기록: ${task.actual} / 기준: ${task.expected}`),
+      element('p', 'unavailable-entry-evidence', `확인한 질문: ${task.question}`));
+    const review = reviews.get(task.measurementId);
+    card.append(element('span', `badge${review?.issues.length ? ' warning' : ''}`, `현재 검토 상태: ${review?.status || '미확인'}`),
+      element('p', 'unavailable-entry-note', `확인 완료 메모: ${task.completionNote.trim() || '남긴 메모가 없어요. (선택 항목)'}`));
+    const open = element('button', 'text-button completed-open-record', '측정 기록 열기'); open.type = 'button';
+    open.setAttribute('aria-label', `${task.measurementId} ${task.label} 완료한 측정 기록 열기`);
+    open.addEventListener('click', () => { resetFilters(); $('search').value = task.measurementId; applyFilters(); select(task.measurementId); $('detail').scrollIntoView({behavior: 'instant', block: 'start'}); });
+    card.append(open); list.append(card);
+  }
+  if (!entries.length) list.append(element('p', 'empty-detail', '자료 확인 완료로 체크한 항목이 아직 없어요. 질문에서 요구한 자료를 확인한 뒤 체크하면 이곳에 모여요.'));
 }
 function renderUnavailableSummary() {
   $('unavailable-count').textContent = `${unavailableCache.length}개 항목`;
@@ -727,6 +772,10 @@ function openUnavailableSummary() {
   $('unavailable-summary').open = true;
   renderUnavailableSummary();
 }
+function openCompletedSummary() {
+  $('completed-summary').open = true;
+  renderCompletedSummary();
+}
 function syncSidebarNavigation() {
   const hash = window.location.hash || '#top';
   for (const link of document.querySelectorAll('.sidebar nav a.nav-link')) {
@@ -736,10 +785,15 @@ function syncSidebarNavigation() {
     else link.removeAttribute('aria-current');
   }
   if (hash === '#unavailable-summary') openUnavailableSummary();
+  if (hash === '#completed-summary') openCompletedSummary();
 }
 $('open-unavailable-nav').addEventListener('click', () => {
   openUnavailableSummary();
   $('unavailable-summary').querySelector('summary').focus({preventScroll: true});
+});
+$('open-completed-nav').addEventListener('click', () => {
+  openCompletedSummary();
+  $('completed-summary').querySelector('summary').focus({preventScroll: true});
 });
 window.addEventListener('hashchange', syncSidebarNavigation);
 syncSidebarNavigation();
@@ -747,6 +801,10 @@ $('unavailable-summary').addEventListener('toggle', renderUnavailableSummary);
 $('unavailable-filter').addEventListener('change', () => { unavailablePage = 0; renderUnavailableSummary(); });
 $('unavailable-previous').addEventListener('click', () => { unavailablePage--; renderUnavailableSummary(); });
 $('unavailable-next').addEventListener('click', () => { unavailablePage++; renderUnavailableSummary(); });
+$('completed-summary').addEventListener('toggle', renderCompletedSummary);
+$('completed-filter').addEventListener('change', () => { completedPage = 0; renderCompletedSummary(); });
+$('completed-previous').addEventListener('click', () => { completedPage--; renderCompletedSummary(); });
+$('completed-next').addEventListener('click', () => { completedPage++; renderCompletedSummary(); });
 $('manage-reason-categories').addEventListener('click', () => openReasonCategories());
 $('close-reason-categories').addEventListener('click', () => $('reason-category-dialog').close());
 $('reason-category-form').addEventListener('submit', event => {
@@ -761,7 +819,7 @@ $('reason-category-form').addEventListener('submit', event => {
   const task = record && followUpProgress(record, criteria, checklists).find(task => task.id === target.taskId && task.status === 'unavailable');
   if (task) {
     checklists[record.measurementId].outcomes[task.id] = {status: 'unavailable', reason: task.reason, reasonCategory: name, completionNote: task.completionNote};
-    store(`poly-checklists-${datasetKey}`, checklists); updateUnavailableRecord(record);
+    store(`poly-checklists-${datasetKey}`, checklists); updateFollowUpSummaries(record);
   }
   renderDetail(); renderReasonCategoryManager();
   if (target) $('reason-category-dialog').close();
@@ -849,5 +907,6 @@ try {
   await demo();
   // 데이터로 측정 목록·상세 높이가 바뀐 뒤 하단 바로가기 위치를 맞춘다.
   if (window.location.hash === '#unavailable-summary') $('unavailable-summary').scrollIntoView({behavior: 'instant', block: 'start'});
+  if (window.location.hash === '#completed-summary') $('completed-summary').scrollIntoView({behavior: 'instant', block: 'start'});
 }
 catch (error) { message(`시작 실패: ${error.message} npm start로 서버를 실행했는지 확인하세요.`, true); }

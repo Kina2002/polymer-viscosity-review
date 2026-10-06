@@ -356,6 +356,11 @@ export function unavailableEntries(records, criteria, checklists = {}) {
     .filter(task => task.status === 'unavailable')
     .map(task => ({...task, measurementId: record.measurementId, batchId: record.batchId})));
 }
+export function completedEntries(records, criteria, checklists = {}) {
+  return records.flatMap(record => followUpProgress(record, criteria, checklists)
+    .filter(task => task.status === 'done')
+    .map(task => ({...task, measurementId: record.measurementId, batchId: record.batchId})));
+}
 export function removeReasonCategory(checklists, category) {
   const name = reasonCategoryName(category);
   if (!name) return checklists;
