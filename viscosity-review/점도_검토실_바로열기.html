@@ -320,6 +320,10 @@ function comparisonRows(record, criteria = DEFAULT_CRITERIA) {
   }));
 }
 
+function onlyViscosityIssue(review) {
+  return review.issues.length > 0 && review.issues.every(issue => issue.category === 'specification' && issue.field === 'viscosity');
+}
+
 // 사용자가 합의한 검토 원칙을 질문으로 연결한다. 원인이나 재측정 필요를 확정하지 않는다.
 function followUpPlan(record, criteria = DEFAULT_CRITERIA) {
   const review = reviewRecord(record, criteria);
@@ -349,14 +353,16 @@ function followUpPlan(record, criteria = DEFAULT_CRITERIA) {
       : issue.category === 'data' ? `${row.label}의 원본 표기와 숫자·단위·일시 형식을 확인했나요? 확인한 값을 원본 자료와 대조하세요.`
       : issue.category === 'measurement' ? methodQuestion ?? '사용한 시험 방법과 실제 설정 기록을 확인하고 재측정 필요 여부를 검토하세요.'
       : issue.category === 'manufacturing' ? `${row.label}의 배치 제조 기록과 작업 지시를 확인했나요? 차이의 발생 경위를 기록하고 점도 변화의 원인이라고 단정하지 마세요.`
-      : '측정 조건을 먼저 확인한 뒤, 같은 배치의 반복 측정값과 제조 기록을 함께 검토했나요? 원인이나 배치 불량을 수치만으로 확정하지 마세요.';
+      : onlyViscosityIssue(review)
+        ? '점도는 기준 범위를 벗어났지만, 현재 비교 기준에서 제조·측정 조건 차이는 발견되지 않았어요. 현재 기록만으로 원인을 알 수 없어 추가 자료가 필요해요. 원본 측정 기록과 같은 배치의 반복 측정값을 확인했나요? 필요한 자료를 확인할 수 없다면 「확인 불가」를 누르고 이유를 남기세요.'
+        : '측정 조건을 먼저 확인한 뒤, 같은 배치의 반복 측정값과 제조 기록을 함께 검토했나요? 원인이나 배치 불량을 수치만으로 확정하지 마세요.';
     return {id: `${issue.category}:${issue.field}`, category: issue.category, field: issue.field,
       label: row.label, actual: row.actual, expected: row.expected, question};
   }).sort((a, b) => priority[a.category] - priority[b.category]);
 }
 
 function followUpSignature(record, criteria) {
-  return JSON.stringify({policy: 'POLY-A-follow-up-v1',
+  return JSON.stringify({policy: onlyViscosityIssue(reviewRecord(record, criteria)) ? 'POLY-A-follow-up-viscosity-only-v2' : 'POLY-A-follow-up-v1',
     criteria: Object.keys(DEFAULT_CRITERIA).map(key => [key, criteria[key]]),
     record: FIELDS.map(([key]) => [key, record[key] ?? ''])});
 }

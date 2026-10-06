@@ -92,6 +92,12 @@ const { pathToFileURL } = require('node:url');
     pass('확인 불가 상태·이유·저장·완료와 전환·판정 유지·보고서와 CSV 보존');
     await page.locator('#search').fill('PA-008');
     assert.equal(await page.locator('.comparison-row[data-field="viscosity"] .badge').innerText(), '범위 이탈');
+    assert.equal(await page.locator('.follow-up-task').count(), 1);
+    assert.ok((await page.locator('.follow-up-question').innerText()).includes('조건 차이는 발견되지 않았어요'));
+    assert.ok((await page.locator('.follow-up-question').innerText()).includes('원인을 알 수 없어 추가 자료가 필요'));
+    assert.equal(await page.locator('.follow-up-status').innerText(), '미확인');
+    await page.locator('.follow-up-section').screenshot({path:path.join(output,'unexplained-viscosity-desktop.png')});
+    pass('점도만 이탈: 기록상 조건 차이 없음·원인 판단 보류·추가 자료 안내');
     await page.locator('#search').fill('PA-006'); await page.locator('.record-link').nth(1).click();
     pass('40항목 비교표·차이 필터·기록 전용·누락·범위 이탈 구분');
 
