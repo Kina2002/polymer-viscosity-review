@@ -351,7 +351,7 @@ function renderComparisonGuide(record) {
   guide.append(element('h3', '', warnings.length ? '먼저 이 값을 비교하세요' : '이 값을 기준과 비교하세요'));
   guide.append(element('p', 'guide-intro', warnings.length
     ? `확인이 필요한 ${warnings.length}개 항목의 실험 기록과 기준입니다.`
-    : '표시 점도의 범위와 측정 조건을 함께 확인하세요.'));
+    : '표시 점도의 범위와 점도 측정 조건을 함께 확인하세요.'));
   const units = {viscosity: record.unit, sampleTemperature: '℃', manufacturingTemperature: '℃', rpm: 'rpm', mixingRpm: 'rpm', elapsedSeconds: '초', mixingMinutes: '분', sampleVolume: 'mL', torquePercent: '%', concentration: 'wt%'};
   const item = row => {
     const wrapper = element('li', 'guide-item'); wrapper.dataset.field = row.field;
