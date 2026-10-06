@@ -68,6 +68,11 @@
 .guide-pair small{display:block;font-size:10px;font-weight:400;color:#728977;margin-bottom:3px}
 .guide-pair span{overflow-wrap:anywhere}
 .guide-actual{font-weight:650;color:#234d3a;font-variant-numeric:tabular-nums}
+.guide-unit-note{font-size:11px;color:#47674f;line-height:1.8;margin-top:12px;overflow-wrap:anywhere}
+.reading{flex-wrap:wrap}
+.number-cell{overflow-wrap:anywhere}
+.repeat-row{gap:8px}
+.repeat-value{text-align:right;overflow-wrap:anywhere}
 .guide-expected{color:#48674f;font-variant-numeric:tabular-nums}
 .guide-arrow{color:#72977c;text-align:center}
 .guide-footnote{font-size:10px;color:#718974;line-height:1.8;margin-top:12px;overflow-wrap:anywhere}

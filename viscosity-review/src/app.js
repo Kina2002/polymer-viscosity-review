@@ -2,6 +2,14 @@ import { DEFAULT_CRITERIA, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, DEFAULT_REA
 
 const $ = id => document.getElementById(id);
 const format = value => numeric(value) === null ? '—' : Number(value).toLocaleString('ko-KR', {maximumFractionDigits: 2});
+const formatViscosity = value => numeric(value) === null ? '—' : Number(value).toLocaleString('ko-KR', {maximumFractionDigits: 20});
+function viscosityDisplay(record) {
+  const value = numeric(record.viscosity);
+  if (value === null) return String(record.viscosity ?? '').trim() ? String(record.viscosity) : '미기재';
+  const amount = formatViscosity(value);
+  const original = `${amount} ${record.unit || '(단위 미기재)'}`;
+  return record.unit === 'cP' && value >= 0 ? `${original} (= ${amount} mPa·s)` : original;
+}
 const element = (tag, className, text) => {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -115,7 +123,7 @@ function renderRows() {
     button.addEventListener('click', () => select(record.measurementId));
     name.append(button);
     const status = element('td'); status.append(element('span', `badge${review.issues.length ? ' warning' : ''}`, review.status));
-    tr.append(selectCell, name, element('td', 'number-cell', format(review.viscosity)), element('td', '', format(record.sampleTemperature)), status);
+    tr.append(selectCell, name, element('td', 'number-cell', review.viscosity === null ? '—' : viscosityDisplay(record)), element('td', '', format(record.sampleTemperature)), status);
     tbody.append(tr);
   }
   if (!filtered.length) {
@@ -227,7 +235,7 @@ function renderComparison(record) {
       for (const row of rows) {
         const tr = element('tr', `comparison-row${row.warning ? ' needs-review' : ''}`); tr.dataset.field = row.field;
         const name = element('th', 'comparison-name', row.label); name.scope = 'row';
-        const actual = element('td', 'comparison-actual', row.actual); actual.dataset.label = '실험 기록';
+        const actual = element('td', 'comparison-actual', row.field === 'viscosity' ? viscosityDisplay(record) : row.actual); actual.dataset.label = '실험 기록';
         const expected = element('td', 'comparison-expected', row.expected); expected.dataset.label = '검토 기준';
         const status = element('td', 'comparison-status'); status.dataset.label = '확인 결과';
         status.append(element('span', `badge${row.warning ? ' warning' : !row.hasRule ? ' muted-badge' : ''}`, row.status));
@@ -265,7 +273,8 @@ function renderComparisonGuide(record) {
     const wrapper = element('li', 'guide-item'); wrapper.dataset.field = row.field;
     wrapper.append(element('strong', 'guide-label', row.label));
     const pair = element('div', 'guide-pair');
-    const actual = units[row.field] && numeric(record[row.field]) !== null ? `${row.actual} ${units[row.field]}` : row.actual;
+    const actual = row.field === 'viscosity' ? viscosityDisplay(record)
+      : units[row.field] && numeric(record[row.field]) !== null ? `${row.actual} ${units[row.field]}` : row.actual;
     const actualValue = element('span', 'guide-actual'); actualValue.append(element('small', '', '실험 기록'), element('span', '', actual));
     const expected = element('span', 'guide-expected'); expected.append(element('small', '', '비교할 기준'), element('span', '', row.expected));
     const arrow = element('span', 'guide-arrow', '↔'); arrow.setAttribute('aria-hidden', 'true');
@@ -276,6 +285,9 @@ function renderComparisonGuide(record) {
   if (targets.length > 4) {
     const more = element('details', 'guide-more'); more.append(element('summary', '', `나머지 ${targets.length - 4}개 비교할 값 보기`));
     const rest = element('ul', 'guide-list'); targets.slice(4).forEach(row => rest.append(item(row))); more.append(rest); guide.append(more);
+  }
+  if (record.unit === 'cP' && numeric(record.viscosity) !== null && Number(record.viscosity) >= 0) {
+    guide.append(element('p', 'guide-unit-note', '1 cP = 1 mPa·s로, 단위 이름만 다르고 숫자는 같아요. 괄호 안의 mPa·s 값을 기준과 비교하세요.'));
   }
   guide.append(element('p', 'guide-footnote', `적용 기준: ${criteria.version} · 아래 비교표에서 확인 결과와 이유를 볼 수 있어요.`));
   return guide;
@@ -424,7 +436,8 @@ function renderDetail() {
   name.append(element('p', 'eyebrow muted', 'SELECTED MEASUREMENT'), element('h3', '', record.measurementId));
   top.append(name, element('span', `badge${review.issues.length ? ' warning' : ''}`, review.status)); panel.append(top);
   panel.append(element('p', 'detail-subtitle', `${record.batchId} · 시료 ${record.sampleId || '미기재'} · 반복 ${record.repeat || '?'}회차`));
-  const reading = element('div', 'reading'); reading.append(element('strong', '', format(review.viscosity)), element('span', '', review.viscosity === null ? '비교 불가' : 'mPa·s'));
+  const reading = element('div', 'reading'); reading.append(element('strong', '', formatViscosity(review.viscosity)), element('span', '', review.viscosity === null ? '비교 불가' : record.unit));
+  if (review.viscosity !== null && record.unit === 'cP') reading.append(element('span', 'reading-conversion', `(= ${formatViscosity(review.viscosity)} mPa·s)`));
   panel.append(reading, element('p', `conclusion${!review.comparable || review.numericStatus === '수치상 범위 외' ? ' attention' : ''}`, review.conclusion));
   panel.append(renderComparisonGuide(record));
   panel.append(renderComparison(record));
@@ -435,7 +448,7 @@ function renderDetail() {
   for (const sibling of siblings.slice(0, 30)) {
     const result = reviews.get(sibling.measurementId);
     const row = element('button', `repeat-row${sibling.measurementId === selectedId ? ' current' : ''}`);
-    row.append(element('span', '', sibling.measurementId), element('span', 'repeat-value', `${format(result.viscosity)} mPa·s`));
+    row.append(element('span', '', sibling.measurementId), element('span', 'repeat-value', result.viscosity === null ? '비교 불가' : viscosityDisplay(sibling)));
     row.title = `${result.status} / ${result.conclusion}`;
     row.addEventListener('click', () => {
       if (!filtered.some(item => item.measurementId === sibling.measurementId)) { resetFilters(); $('search').value = sibling.batchId; applyFilters(); }
@@ -486,12 +499,12 @@ function renderChart() {
   const batchIndex = new Map(batchIds.map((id, i) => [id, i]));
   for (const record of points) {
     const review = reviews.get(record.measurementId);
-    const circle = svgElement('circle', {cx:x(batchIndex.get(record.batchId)), cy:y(review.viscosity), r:points.length > 500 ? 2 : 3, fill:review.numericStatus === '수치상 범위 외' ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3', class:'chart-point', 'data-measurement-id':record.measurementId, role:'button', tabindex:0, 'aria-label':`${record.measurementId} · ${format(review.viscosity)} mPa·s · 상세 기록 열기`});
+    const circle = svgElement('circle', {cx:x(batchIndex.get(record.batchId)), cy:y(review.viscosity), r:points.length > 500 ? 2 : 3, fill:review.numericStatus === '수치상 범위 외' ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3', class:'chart-point', 'data-measurement-id':record.measurementId, role:'button', tabindex:0, 'aria-label':`${record.measurementId} · ${viscosityDisplay(record)} · 상세 기록 열기`});
     circle.addEventListener('click', () => openChartRecord(record.measurementId));
     circle.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openChartRecord(record.measurementId); }
     });
-    circle.append(svgElement('title', {}, `${record.measurementId}: ${format(review.viscosity)} mPa·s / ${review.conclusion}`)); svg.append(circle);
+    circle.append(svgElement('title', {}, `${record.measurementId}: ${viscosityDisplay(record)} / ${review.conclusion}`)); svg.append(circle);
   }
   const ticks = [...new Set([0, Math.floor((batchIds.length - 1)/2), batchIds.length-1])];
   for (const index of ticks) svg.append(svgElement('text', {x:x(index), y:height-8, 'text-anchor':'middle', fill:'#8c9b86', 'font-size':10}, batchIds[index]));
