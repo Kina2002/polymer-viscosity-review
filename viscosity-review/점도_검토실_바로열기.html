@@ -90,6 +90,7 @@
 .follow-up-intro,.follow-up-note{font-size:11px;line-height:1.8;color:#708575}
 .follow-up-progress{font-size:12px;color:#38694b;margin:10px 0;font-weight:600}
 .follow-up-list{display:grid;gap:9px;max-height:480px;overflow:auto;padding:2px}
+.follow-up-list.single-task{max-height:none;overflow:visible}
 .follow-up-category{margin:8px 0 0;font-size:11px;font-weight:600;color:#6e826e}
 .follow-up-completion-label{display:block;margin-top:10px;font-size:11px;color:#45634d;line-height:1.8}
 .follow-up-completion-note{display:block;width:100%;min-height:70px;margin-top:5px;padding:9px;border:1px solid #d8e3d4;border-radius:5px;background:white;color:#48634f;font-size:11px;line-height:1.7;resize:vertical}
@@ -97,6 +98,12 @@
 .follow-up-label{font-size:12px;color:#3f6049}
 .follow-up-evidence{font-size:11px;color:#7a8b78;line-height:1.8;margin-top:6px}
 .follow-up-question{font-size:12px;line-height:1.85;color:#45634d;margin-top:7px}
+.follow-up-explanation-note{font-size:11px;line-height:1.8;color:#708575;margin:8px 0 12px}
+.follow-up-explanation{margin-top:10px;padding:10px 12px;border-left:3px solid #b4cdb4;background:#f0f5ec;font-size:11px;line-height:1.8;color:#48634f}
+.follow-up-explanation p{margin:0}
+.follow-up-explanation p+p{margin-top:7px}
+.follow-up-explanation strong{display:block;font-weight:600;color:#365f47;margin-bottom:2px}
+.follow-up-source{display:inline-block;font-size:10px;line-height:1.7;color:#5d7964;margin-top:8px;text-underline-offset:2px;overflow-wrap:anywhere}
 .follow-up-check{display:flex;align-items:center;gap:7px;font-size:11px;color:#3c7050;margin-top:10px;cursor:pointer;min-height:28px}
 .follow-up-check input{accent-color:var(--green)}
 .follow-up-actions{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
@@ -537,6 +544,45 @@ function onlyViscosityIssue(review) {
   return review.issues.length > 0 && review.issues.every(issue => issue.category === 'specification' && issue.field === 'viscosity');
 }
 
+const FOLLOW_UP_EXPLANATION_NOTE = '아래 설명은 일반적인 가능성이에요. 시료에 따라 변화 방향이 다르거나 변화가 없을 수 있어요. 이 가상 기록의 원인이나 변화량을 예측한 결과는 아니에요. 기록이 없으면 실제 조건도 추정하지 않아요.';
+const EXPLANATION_SOURCES = {
+  flow: {title: 'Brookfield · 온도와 회전 속도의 영향', url: 'https://www.brookfieldengineering.com/brookfield-university/viscosityrheology/impact-of-temperature-and-shear-rate'},
+  method: {title: 'Brookfield DV2T · 측정 준비·변수·교정', url: 'https://www.brookfieldengineering.com/-/media/ametekbrookfield/manuals/lab%20viscometers/dv2t%20instructions.pdf'},
+  preparation: {title: 'Brookfield · 정확한 점도 측정 안내', url: 'https://www.brookfieldengineering.com/-/media/ametekbrookfield/application-notes-2024/viscosity-rheology/guide-to-accurate-viscosity-measurement-_-best-practices-and-advanced-techniques_ametek_brookfield_tech_guide_released_january_2025.pdf?hash=CF3B7DB11DA28F8751839F026D9D62EE&la=en&revision=36d30653-1260-4587-929a-a35a070736b6'},
+  history: {title: 'Brookfield · 시간·시료 이력·조성 (§4.8)', url: 'https://www.brookfieldengineering.cn/-/media/ametekbrookfield/tech-sheets/more-solutions-2017.pdf?hash=09090D1ACADC9DABF6013D1D56D1310C&la=zh-cn&revision=84a81556-8cb8-4667-b3ca-821becc69ab6'}
+};
+const explanation = (why, effect, source) => Object.freeze({why, effect, source: EXPLANATION_SOURCES[source] ?? null});
+const compositionExplanation = explanation('같은 원료와 배합비로 만든 시료를 비교하기 위해 확인해요.', '조성이나 배합비가 달라지면 점도도 달라질 수 있어요. 변화 방향은 원료와 시료 특성에 따라 달라요.', 'history');
+const historyExplanation = explanation('측정 전 시료가 겪은 온도·시간·교반 이력을 맞추기 위해 기록해요.', '이력에 민감한 시료는 보관·교반·대기 과정에 따라 점도가 달라질 수 있어요. 이력만으로 높아질지 낮아질지 정하지 않아요.', 'history');
+const traceExplanation = explanation('어떤 시료를 어떤 장비로 언제 측정했는지 원본과 결과를 연결하기 위해 확인해요.', '기록이 빠지거나 잘못 연결되면 다른 시료나 시험 방법의 결과를 비교할 수 있어요. 이 정보만으로 점도의 상승·하락을 예측하지 않아요.');
+const FOLLOW_UP_EXPLANATIONS = {
+  sampleTemperature: explanation('온도의 영향을 배치 차이로 오해하지 않도록 같은 온도에서 비교해요.', '많은 액체는 측정 온도가 높아지면 점도가 낮아질 수 있어요. 열에 의해 구조가 달라지는 시료 등은 다른 반응을 보일 수 있어요.', 'flow'),
+  thermalEquilibrium: explanation('시료와 스핀들 등 측정 부품이 목표 측정 온도에서 안정돼야 비교하기 쉬워요.', '온도가 계속 변하면 측정 중 점도 값도 달라질 수 있어요. 한 번 목표 온도가 나왔다고 평형이 확인된 것은 아니에요.', 'method'),
+  rpm: explanation('회전 속도는 시료를 얼마나 빠르게 변형시키는지에 영향을 주므로 같은 속도로 비교해요.', '빠르게 돌릴수록 묽게 측정되는 성질(전단박화)이 있는 시료라면 속도가 높을 때 점도가 낮아질 수 있어요. 반대 성질의 시료는 높아지고, 속도의 영향이 없는 시료도 있어요.', 'flow'),
+  elapsedSeconds: explanation('회전 시작 후 같은 시점의 값을 비교하기 위해 읽는 시간을 맞춰요.', '시간에 민감한 시료는 같은 속도로 돌려도 점도가 낮아지거나 높아질 수 있어요. 더 오래 돌렸다고 항상 같은 값이 되지는 않아요.', 'history'),
+  spindle: explanation('스핀들의 모양·크기가 측정 범위와 시료의 흐름에 영향을 주기 때문에 맞춰요.', '다른 스핀들에서는 토크나 시료가 변형되는 방식이 달라져 점도 값이 달라질 수 있어요. 큰 스핀들이라고 항상 점도가 높지는 않아요.', 'method'),
+  vessel: explanation('용기 벽과 스핀들 사이의 공간을 시험 방법과 맞추기 위해 확인해요.', '용기 형태·크기가 달라지면 시료의 흐름이 바뀌어 측정값에 영향을 줄 수 있어요. 변화 방향은 측정 구성에 따라 달라요.', 'method'),
+  sampleVolume: explanation('요구된 시료량으로 스핀들 주변의 측정 구성을 맞춰요.', '시료량이 달라지면 액면과 잠기는 상태가 달라져 측정값에 영향을 줄 수 있어요. 양이 많다고 항상 점도가 높지는 않아요.', 'method'),
+  immersion: explanation('시험 방법이 정한 깊이에 스핀들을 넣어 같은 접촉 상태로 측정해요.', '너무 얕거나 깊으면 시료와 접촉하는 상태가 달라져 값이 달라질 수 있어요. 깊이만으로 점도의 변화 방향을 정하지 않아요.', 'method'),
+  bubbleState: explanation('액체 대신 기포가 측정에 영향을 주지 않도록 시료 준비 상태를 확인해요.', '기포가 있으면 점도 값이 달라지거나 불안정해질 수 있어요. 항상 낮아진다고 단정하지 않고, 육안으로 안 보여도 미세 기포가 있을 수 있어요.', 'preparation'),
+  torquePercent: explanation('장비가 신뢰할 수 있는 범위에서 힘을 읽었는지 확인해요.', '토크가 너무 낮으면 상대오차가 커지고 너무 높으면 측정 범위를 넘을 수 있어요. 허용 범위는 실제 장비와 시험 방법에서 확인해야 해요.', 'method'),
+  calibrationStatus: explanation('장비의 측정이 정해진 정확도를 유지하는지 교정 기록으로 확인해요.', '교정 상태에 문제가 있으면 측정값이 실제와 어긋날 수 있어요. 기록이 없다는 사실만으로 장비 고장이나 점도의 변화 방향을 확정하지 않아요.', 'preparation'),
+  standardCheck: explanation('알려진 점도의 표준액으로 측정 상태를 점검한 근거를 확인해요.', '표준액 점검이 부적합하면 장비·온도·설정 등의 확인이 필요해요. 표준액의 차이만큼 시료 값을 임의로 보정하지 않아요.', 'preparation'),
+  levelCheck: explanation('장비가 수평인 상태에서 올바르게 작동하도록 확인해요.', '기울어진 장비는 정상 측정 상태를 벗어날 수 있어요. 이 기록만으로 점도가 높게 나왔는지 낮게 나왔는지는 알 수 없어요.', 'method'),
+  zeroCheck: explanation('측정 전에 장비의 기준점을 맞췄는지 확인해요.', '영점에 문제가 있으면 값에 오차가 생길 수 있어요. 오차 방향과 크기는 별도로 확인해야 해요.', 'method'),
+  manufacturingTemperature: explanation('시료를 만들 때의 열 이력을 맞춰 같은 제조 과정을 비교해요. 점도를 읽을 때의 온도와는 별개예요.', '열 이력에 민감한 시료는 제조 온도가 달라지면 나중에 같은 온도로 측정해도 점도가 달라질 수 있어요. 높고 낮은 방향은 시료마다 달라요.', 'history'),
+  mixingRpm: explanation('시료가 제조 중 받은 교반 이력을 맞추기 위해 속도를 확인해요.', '교반에 민감한 시료는 속도가 달라지면 이후 점도가 달라질 수 있어요. 빠르게 섞었다고 항상 점도가 낮아지는 것은 아니에요.', 'history'),
+  mixingMinutes: explanation('얼마나 오래 교반했는지 맞춰 같은 준비 과정을 비교해요.', '교반 시간의 영향이 있는 시료는 더 오래 섞으면 이후 점도가 달라질 수 있어요. 충분히 균일하고 이력 영향이 없다면 차이가 없을 수도 있어요.', 'history'),
+  ...Object.fromEntries(['polymerGrade', 'solvent', 'polymerMass', 'solventMass', 'concentration'].map(field => [field, compositionExplanation])),
+  ...Object.fromEntries(['additionOrder', 'storageTemperature', 'ageHours', 'preMixing', 'restMinutes'].map(field => [field, historyExplanation])),
+  uniformity: explanation('어느 부분을 덜어도 비슷한 시료를 측정할 수 있도록 균일성을 확인해요.', '시료가 균일하지 않으면 채취한 위치에 따라 측정값이 달라질 수 있어요. 육안 확인만으로 완전한 용해나 미세한 균일성을 확정하지 않아요.', 'history'),
+  uniformityMethod: explanation('어떤 방법으로 균일성을 확인했는지 알아야 확인 범위를 이해할 수 있어요.', '방법이 다르면 확인할 수 있는 범위도 달라요. 확인 방법의 이름만으로 점도의 변화 방향을 예측하지 않아요.', 'history'),
+  viscosity: explanation('조건이 맞는 점도 결과를 정한 범위와 비교하기 위해 확인해요.', '점도 값이 범위를 벗어나도 제조·측정·기록 중 무엇이 원인인지는 이 수치만으로 알 수 없어요. 조건과 반복값·원본 자료를 함께 검토해요.'),
+  unit: explanation('같은 종류의 점도를 같은 단위로 비교해야 해요. 이 앱에서 1 cP는 1 mPa·s와 같아요.', '단위를 잘못 읽으면 같은 결과를 다른 크기의 값으로 해석할 수 있어요. 단위 표기 변경 자체가 시료의 물성을 바꾸지는 않아요.', 'method'),
+  product: explanation('이 시료에 맞는 제품 기준과 시험 방법을 적용했는지 확인해요.', '다른 제품의 기준을 적용하면 검토 결과가 달라질 수 있어요. 제품 코드만으로 점도 변화의 원인을 알 수는 없어요.')
+};
+const reportExplanationSources = (records, criteria) => [...new Map(records.flatMap(record => followUpPlan(record, criteria))
+  .map(task => task.explanation.source).filter(Boolean).map(source => [source.url, source])).values()];
 // 사용자가 합의한 검토 원칙을 질문으로 연결한다. 원인이나 재측정 필요를 확정하지 않는다.
 function followUpPlan(record, criteria = DEFAULT_CRITERIA) {
   const review = reviewRecord(record, criteria);
@@ -570,7 +616,8 @@ function followUpPlan(record, criteria = DEFAULT_CRITERIA) {
         ? '점도는 기준 범위를 벗어났지만, 현재 비교 기준에서 제조·점도 측정 조건 차이는 발견되지 않았어요. 현재 기록만으로 원인을 알 수 없어 추가 자료가 필요해요. 원본 측정 기록과 같은 배치의 반복 측정값을 확인했나요? 필요한 자료를 확인할 수 없다면 「확인 불가」를 누르고 이유를 남기세요.'
         : '점도 측정 조건을 먼저 확인한 뒤, 같은 배치의 반복 측정값과 제조 기록을 함께 검토했나요? 원인이나 배치 불량을 수치만으로 확정하지 마세요.';
     return {id: `${issue.category}:${issue.field}`, category: issue.category, field: issue.field,
-      label: row.label, actual: row.actual, expected: row.expected, question};
+      label: row.label, actual: row.actual, expected: row.expected, question,
+      explanation: FOLLOW_UP_EXPLANATIONS[issue.field] ?? traceExplanation};
   }).sort((a, b) => priority[a.category] - priority[b.category]);
 }
 
@@ -724,6 +771,7 @@ function reportText(records, criteria, notes = {}, source = '합성 시연 데�
     ...[...groups].flatMap(([category, tasks]) => [`${category} (${tasks.length}개)`, ...tasks.flatMap(task => [
       `  측정: ${task.measurementId} / 항목: ${task.label}`, indented(task.reason.trim() || '메모 미기재')
     ]), '']),
+    '[조건 설명]', FOLLOW_UP_EXPLANATION_NOTE, '',
     '[측정별 결과]', ''
   ];
   for (const [index, record] of records.entries()) {
@@ -742,7 +790,9 @@ function reportText(records, criteria, notes = {}, source = '합성 시연 데�
     const tasks = followUpProgress(record, criteria, checklists);
     for (const task of tasks) {
       lines.push(`  항목: ${task.label} / 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}`,
-        `  기록: ${task.actual} / 기준: ${task.expected}`, indented(task.question));
+        `  기록: ${task.actual} / 기준: ${task.expected}`, indented(task.question),
+        `  이 항목을 확인하는 이유: ${task.explanation.why}`,
+        `  달라지면 생길 수 있는 변화: ${task.explanation.effect}`);
       if (task.status === 'unavailable') lines.push(`  확인 불가 이유 분류: ${task.reasonCategory || '미분류'}`,
         '  확인 불가 이유:', indented(task.reason.trim() || '미기재'));
       if (task.status === 'done') lines.push('  확인 완료 메모:', indented(task.completionNote.trim() || '미기재 (선택 항목)'));
@@ -750,6 +800,8 @@ function reportText(records, criteria, notes = {}, source = '합성 시연 데�
     if (!tasks.length) lines.push('  규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.');
     lines.push('');
   }
+  const explanationSources = reportExplanationSources(records, criteria);
+  if (explanationSources.length) lines.push('[설명 근거]', ...explanationSources.map(item => `${item.title}: ${item.url}`), '');
   lines.push('[원본 기록]', `이 보고서는 ${scope}의 검토 결과입니다. 원본 CSV와 함께 보관하세요.`,
     '자료 확인 상태는 원인 확정, 판정 변경 또는 출하 승인을 뜻하지 않습니다.');
   return text(lines.join('\n'));
@@ -782,10 +834,18 @@ function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 �
       return `| ${md(record.batchId)} | ${md(record.measurementId)} | ${md(result.viscosity ?? '비교 불가')} | ${result.status} | ${result.numericStatus} | ${result.comparable ? '확인됨' : '확인 필요'} | ${md(result.issues.map(issue => `${LABELS[issue.field]}: 실제 ${issue.actual === '' ? '미기재' : issue.actual}, 기준 ${issue.expected}`).join('; ') || '가상 기준과 일치')} | ${md(notes[record.measurementId] ?? '')} |`;
     }), '', '## 추가 확인 질문과 체크리스트', '',
     '확인 상태는 사용자가 선택한 자료 확인 결과입니다. 확인 불가는 자료를 확인할 수 없었다는 뜻이며, 원인 확정·판정 변경·출하 승인을 뜻하지 않습니다.', '',
+    md(FOLLOW_UP_EXPLANATION_NOTE), '',
     ...records.flatMap(record => {
       const tasks = followUpProgress(record, criteria, checklists);
-      return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}. 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}${task.status === 'unavailable' ? ` 확인 불가 이유 분류: ${md(task.reasonCategory || '미분류')}. 확인 불가 이유: ${md(task.reason.trim() || '미기재')}` : ''}${task.status === 'done' ? ` 확인 완료 메모: ${md(task.completionNote.trim() || '미기재 (선택 항목)')}` : ''}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
-    }), '## 원본 기록', '', `원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 ${md(scope)}의 검토 결과입니다.`, ''
+      return [`### ${md(record.measurementId)}`, '', ...tasks.flatMap(task => [
+        `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}. 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}${task.status === 'unavailable' ? ` 확인 불가 이유 분류: ${md(task.reasonCategory || '미분류')}. 확인 불가 이유: ${md(task.reason.trim() || '미기재')}` : ''}${task.status === 'done' ? ` 확인 완료 메모: ${md(task.completionNote.trim() || '미기재 (선택 항목)')}` : ''}`,
+        '', `  **이 항목을 확인하는 이유:** ${md(task.explanation.why)}`,
+        '', `  **달라지면 생길 수 있는 변화:** ${md(task.explanation.effect)}`, ''
+      ]), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
+    }), ...(() => {
+      const sources = reportExplanationSources(records, criteria);
+      return sources.length ? ['## 설명 근거', '', ...sources.map(item => `- [${md(item.title)}](${item.url})`), ''] : [];
+    })(), '## 원본 기록', '', `원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 ${md(scope)}의 검토 결과입니다.`, ''
   ].join('\n');
 }
 
@@ -1178,6 +1238,8 @@ function renderFollowUps(record) {
   };
   update(); section.append(progress);
   const list = element('div', 'follow-up-list');
+  list.classList.toggle('single-task', tasks.length === 1);
+  if (tasks.length) section.append(element('p', 'follow-up-explanation-note', FOLLOW_UP_EXPLANATION_NOTE));
   let previousCategory = null;
   for (const task of tasks) {
     if (task.category !== previousCategory) {
@@ -1185,6 +1247,18 @@ function renderFollowUps(record) {
     }
     const card = element('div', 'follow-up-task'); card.dataset.task = task.id;
     card.append(element('strong', 'follow-up-label', task.label), element('p', 'follow-up-evidence', `실험 기록: ${task.actual} / 검토 기준: ${task.expected}`), element('p', 'follow-up-question', task.question));
+    const context = element('div', 'follow-up-explanation');
+    const why = element('p', 'follow-up-why');
+    why.append(element('strong', '', '이 항목을 확인하는 이유'), document.createTextNode(task.explanation.why));
+    const effect = element('p', 'follow-up-effect');
+    effect.append(element('strong', '', '달라지면 생길 수 있는 변화'), document.createTextNode(task.explanation.effect));
+    context.append(why, effect);
+    if (task.explanation.source) {
+      const source = element('a', 'follow-up-source', `설명 근거: ${task.explanation.source.title}`);
+      source.href = task.explanation.source.url; source.target = '_blank'; source.rel = 'noopener noreferrer';
+      context.append(source);
+    }
+    card.append(context);
     const label = element('label', 'follow-up-check');
     const checkbox = element('input'); checkbox.type = 'checkbox'; checkbox.checked = task.checked;
     checkbox.setAttribute('aria-label', `${record.measurementId} ${task.label} 자료 확인`);
