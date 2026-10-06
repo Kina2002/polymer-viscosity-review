@@ -132,16 +132,16 @@
 .chart-point:hover,.chart-point:focus-visible{r:4px;outline:none}
 .detail-panel{scroll-margin-top:20px}
 .report-download-actions{display:flex;align-items:stretch;gap:1px;min-width:0}
-.report-download-actions>#export-txt{border-radius:6px 0 0 6px}
+.report-download-actions>#export-report{border-radius:6px 0 0 6px}
 .report-formats{position:relative;margin:0;padding:0;border:0}
 .report-formats>summary{list-style:none;min-height:44px;min-width:44px;height:100%;border-radius:0 6px 6px 0;cursor:pointer}
 .report-formats>summary::-webkit-details-marker{display:none}
-.report-formats>summary[aria-disabled=true]{opacity:.45;cursor:default}
 .report-formats>summary:focus-visible,.report-format-options button:focus-visible{outline:3px solid #7dbfa0;outline-offset:3px}
 .report-format-options{position:absolute;right:0;top:calc(100% + 7px);z-index:4;width:220px;max-width:calc(100vw - 30px);padding:8px;border:1px solid var(--border);border-radius:8px;background:white;box-shadow:0 5px 24px #153e4026}
 .report-format-options>p{font-size:11px;color:#708575;margin:7px 10px 9px}
 .report-format-options button{display:block;width:100%;text-align:left;padding:12px 10px;border:0;border-radius:5px;background:white;font-size:13px;line-height:1.6;color:var(--ink);min-height:44px}
 .report-format-options button:hover{background:#edf5ec}
+.report-format-options button[aria-pressed=true]{background:#edf5ec;font-weight:600}
 .report-format-options small{display:block;font-size:11px;color:#708575}
 .report-export-controls{display:flex;flex-direction:column;align-items:flex-end;gap:8px;max-width:100%;min-width:0}
 .actions{align-items:flex-end}
@@ -155,7 +155,7 @@
 .report-select-cell input{accent-color:var(--green);width:17px;height:17px;margin:0}
 .table-panel th:not(.report-select-cell),.table-panel td:not(.report-select-cell){padding-left:9px;padding-right:9px}
 tr.report-selected{background:#edf5ec}
-@media(max-width:650px){.actions{grid-template-columns:repeat(3,minmax(0,1fr))}.report-export-controls{grid-column:1 / -1;justify-self:stretch}.report-scope-label{width:100%;justify-content:space-between}.report-download-actions>#export-txt{font-size:12px;min-height:44px;padding:11px 15px}.report-select-cell{padding:0 4px}.report-selection-toolbar{font-size:11px}}
+@media(max-width:650px){.actions{grid-template-columns:repeat(3,minmax(0,1fr))}.report-export-controls{grid-column:1 / -1;justify-self:stretch}.report-scope-label{width:100%;justify-content:space-between}.report-download-actions>#export-report{font-size:12px;min-height:44px;padding:11px 15px}.report-select-cell{padding:0 4px}.report-selection-toolbar{font-size:11px}}
 @media(prefers-reduced-motion:no-preference){button,.button,a{transition:background .15s ease,color .15s ease}.hero-sample svg{animation:appear .7s ease-out}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
 </style>
 
@@ -191,13 +191,13 @@ tr.report-selected{background:#edf5ec}
         <div class="report-export-controls">
           <label class="report-scope-label" for="report-scope">보고서에 담을 기록<select id="report-scope"><option value="filtered">검색·필터 결과 0건</option><option value="selected">체크한 기록 0건</option></select></label>
           <div class="report-download-actions">
-          <button id="export-txt" class="button primary" disabled>TXT 내려받기 <span aria-hidden="true">↓</span></button>
+          <button id="export-report" class="button primary" disabled><span id="report-download-label">TXT 내려받기</span> <span aria-hidden="true">↓</span></button>
           <details id="report-formats" class="report-formats">
             <summary class="button primary" aria-label="보고서 형식 선택" aria-controls="report-format-options"><span aria-hidden="true">▾</span></summary>
             <div id="report-format-options" class="report-format-options">
               <p>보고서 형식 선택</p>
-              <button id="export-txt-menu" type="button" disabled>텍스트 (.txt)<small>메모장에서 보기</small></button>
-              <button id="export-report" type="button" disabled>Markdown (.md)<small>GitHub 문서로 보기</small></button>
+              <button id="report-format-txt" type="button" data-report-format="txt" aria-pressed="true">텍스트 (.txt)<small>메모장에서 보기</small></button>
+              <button id="report-format-md" type="button" data-report-format="md" aria-pressed="false">Markdown (.md)<small>GitHub 문서로 보기</small></button>
             </div>
           </details>
           </div>
@@ -714,6 +714,8 @@ const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
 let comparisonExpanded = false;
 const selectedReportIds = new Set();
+const REPORT_FORMAT_LABELS = {txt: 'TXT', md: 'Markdown'};
+let reportFormat = 'txt';
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
@@ -823,10 +825,7 @@ function updateReportControls() {
   $('select-visible-records').indeterminate = checkedCount > 0 && checkedCount < visible.length;
   $('select-visible-records').disabled = !visible.length;
   const hasReport = reportRecords().length > 0;
-  for (const id of ['export-report', 'export-txt', 'export-txt-menu']) $(id).disabled = !hasReport;
-  const summary = $('report-formats').querySelector('summary');
-  summary.setAttribute('aria-disabled', String(!hasReport)); summary.tabIndex = hasReport ? 0 : -1;
-  if (!hasReport) $('report-formats').open = false;
+  $('export-report').disabled = !hasReport;
 }
 function select(id) {
   selectedId = id;
@@ -1258,10 +1257,17 @@ $('export-csv').addEventListener('click', () => {
   download(recordsCSV(filtered, criteria, notes, true, checklists), '점도_검토결과.csv', 'text/csv;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 검토 결과 CSV를 저장했습니다.`);
 });
-function exportReport(format) {
+function selectReportFormat(format) {
+  reportFormat = format;
+  $('report-download-label').textContent = `${REPORT_FORMAT_LABELS[format]} 내려받기`;
+  for (const button of document.querySelectorAll('[data-report-format]')) button.setAttribute('aria-pressed', String(button.dataset.reportFormat === format));
+  $('report-formats').open = false;
+  ($('export-report').disabled ? $('report-formats').querySelector('summary') : $('export-report')).focus();
+}
+function exportReport() {
   const targetRecords = reportRecords();
   if (!targetRecords.length) return;
-  const plain = format === 'txt';
+  const plain = reportFormat === 'txt';
   const scope = $('report-scope').value === 'selected' ? `체크한 기록 ${targetRecords.length}건 (검색·필터 밖의 선택 포함)` : `현재 검색·필터 결과 ${targetRecords.length}건`;
   const report = (plain ? reportText : reportMarkdown)(targetRecords, criteria, notes, source, undefined, checklists, scope);
   // UTF-8 BOM과 CRLF로 Windows 메모장에서도 한글과 줄바꿈을 읽을 수 있게 한다.
@@ -1275,12 +1281,8 @@ function exportReport(format) {
 $('report-scope').addEventListener('change', updateReportControls);
 $('select-visible-records').addEventListener('change', event => changeReportSelection(filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(record => record.measurementId), event.target.checked));
 $('clear-report-selection').addEventListener('click', () => { selectedReportIds.clear(); updateReportControls(); });
-$('export-txt').addEventListener('click', () => exportReport('txt'));
-$('export-txt-menu').addEventListener('click', () => exportReport('txt'));
-$('export-report').addEventListener('click', () => exportReport('md'));
-$('report-formats').querySelector('summary').addEventListener('click', event => {
-  if (!reportRecords().length) event.preventDefault();
-});
+$('export-report').addEventListener('click', exportReport);
+for (const button of document.querySelectorAll('[data-report-format]')) button.addEventListener('click', () => selectReportFormat(button.dataset.reportFormat));
 document.addEventListener('click', event => {
   if (!$('report-formats').contains(event.target)) $('report-formats').open = false;
 });
