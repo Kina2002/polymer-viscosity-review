@@ -14,8 +14,16 @@
 .mobile-break{display:none}.template-link{display:inline-block;font-size:10px;color:#3a715e;margin-top:6px;text-underline-offset:3px}.record-link,table,.category-button,.conclusion,.note-input{font-size:12px}.record-link span,th,.badge{font-size:10px}.record-fields,.issue{font-size:11px}.detail-section h3,.note-label{font-size:12px}.detail-panel{scroll-margin-top:15px}
 .record-grid{grid-template-columns:minmax(315px,.85fr) minmax(0,1.65fr)}
 .detail-panel{position:static}
-.comparison-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.comparison-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--border);border-radius:6px;background:#f6f9f3;color:var(--ink)}
 .comparison-heading h3{font-size:16px;margin:0}
+.comparison-heading:hover{background:#edf5ec}
+.comparison-heading:focus-visible{outline:3px solid #7dbfa0;outline-offset:3px}
+.comparison-toggle-label{font-size:11px;color:#54705a;flex-shrink:0}
+.comparison-collapse-label,.comparison-section[open] .comparison-expand-label{display:none}
+.comparison-section[open] .comparison-collapse-label{display:inline}
+.comparison-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px}
+.comparison-tools .comparison-intro{margin:0;min-width:0}
+.comparison-tools .text-button{flex-shrink:0}
 .comparison-intro{font-size:11px;color:#617b70;line-height:1.7;margin-top:9px;overflow-wrap:anywhere}
 .comparison-filter{display:flex;align-items:center;gap:7px;font-size:12px;margin:13px 0;color:#486956}
 .comparison-filter input{accent-color:var(--green)}
@@ -596,6 +604,7 @@ let unavailableCache = [], unavailablePage = 0, reasonCategoryTarget = null;
 const REASON_PAGE_SIZE = 20;
 const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
+let comparisonExpanded = false;
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
@@ -696,12 +705,17 @@ function updateChartSelection() {
   }
 }
 function renderComparison(record) {
-  const section = element('section', 'detail-section comparison-section');
-  const heading = element('div', 'comparison-heading');
+  const section = element('details', 'detail-section comparison-section'); section.open = comparisonExpanded;
+  section.addEventListener('toggle', () => { if (section.isConnected) comparisonExpanded = section.open; });
+  const heading = element('summary', 'comparison-heading');
   heading.append(element('h3', '', '실험 기록 ↔ 검토 기준'));
+  const toggleLabel = element('span', 'comparison-toggle-label'); toggleLabel.setAttribute('aria-hidden', 'true');
+  toggleLabel.append(element('span', 'comparison-expand-label', '펼치기'), element('span', 'comparison-collapse-label', '접기'));
+  heading.append(toggleLabel); section.append(heading);
   const edit = element('button', 'text-button', '기준 수정 ↗'); edit.type = 'button';
-  edit.addEventListener('click', openCriteria); heading.append(edit);
-  section.append(heading, element('p', 'comparison-intro', `적용 기준: ${criteria.version} · 교육용 가상 기준`));
+  edit.addEventListener('click', openCriteria);
+  const tools = element('div', 'comparison-tools');
+  tools.append(element('p', 'comparison-intro', `적용 기준: ${criteria.version} · 교육용 가상 기준`), edit); section.append(tools);
   const label = element('label', 'comparison-filter');
   const filter = element('input'); filter.type = 'checkbox'; filter.id = 'comparison-only-issues'; filter.checked = comparisonOnlyIssues;
   label.append(filter, document.createTextNode('확인할 항목만 보기'));
@@ -903,7 +917,9 @@ function deleteReasonCategory(name) {
   message(fullySaved ? `「${name}」 분류를 삭제했어요. 해당 메모는 미분류로 옮겼고 내용은 보존했어요.` : '분류는 삭제했지만 일부 파일의 저장 내용을 갱신하지 못했습니다. 기존 메모는 보존되어 있습니다.', !fullySaved);
 }
 function renderDetail() {
-  const panel = $('detail'); panel.replaceChildren();
+  const panel = $('detail'), previousComparison = panel.querySelector('.comparison-section');
+  if (previousComparison) comparisonExpanded = previousComparison.open;
+  panel.replaceChildren();
   const record = records.find(row => row.measurementId === selectedId);
   if (!record) { panel.append(element('p', 'empty-detail', '선택할 기록이 없습니다. 필터를 바꿔보세요.')); return; }
   const review = reviews.get(record.measurementId);
