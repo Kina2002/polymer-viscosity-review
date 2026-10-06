@@ -80,7 +80,17 @@ function applyFilters() {
   $('filtered-count').textContent = `현재 ${filtered.length.toLocaleString('ko-KR')}건 / 전체 ${records.length.toLocaleString('ko-KR')}건`;
   $('export-csv').disabled = !$('export-report') || !filtered.length;
   $('export-report').disabled = !filtered.length;
+  renderReportSaveBar();
   renderRows(); renderDetail(); renderChart();
+}
+function updateReportSaveVisibility() {
+  $('report-save-bar').hidden = $('export-report').getBoundingClientRect().bottom > 0;
+}
+function renderReportSaveBar() {
+  $('export-report-floating').disabled = !filtered.length;
+  $('report-save-scope').textContent = filtered.length
+    ? `현재 검색·필터 ${filtered.length.toLocaleString('ko-KR')}건` : '저장할 기록이 없어요';
+  updateReportSaveVisibility();
 }
 function renderCategoryCounts() {
   const container = $('category-counts'); container.replaceChildren();
@@ -544,9 +554,18 @@ $('export-csv').addEventListener('click', () => {
   download(recordsCSV(filtered, criteria, notes, true, checklists), '점도_검토결과.csv', 'text/csv;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 검토 결과 CSV를 저장했습니다.`);
 });
-$('export-report').addEventListener('click', () => {
+function exportReport() {
+  if (!filtered.length) return;
   download(reportMarkdown(filtered, criteria, notes, source, undefined, checklists), '점도_검토보고서.md', 'text/markdown;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 보고서를 저장했습니다. 원본 CSV와 함께 보관하세요.`);
-});
+}
+for (const id of ['export-report', 'export-report-floating']) $(id).addEventListener('click', exportReport);
+let reportScrollFrame = null;
+function scheduleReportSaveVisibility() {
+  if (reportScrollFrame !== null) return;
+  reportScrollFrame = requestAnimationFrame(() => { reportScrollFrame = null; updateReportSaveVisibility(); });
+}
+window.addEventListener('scroll', scheduleReportSaveVisibility, {passive: true});
+window.addEventListener('resize', scheduleReportSaveVisibility);
 try { await demo(); }
 catch (error) { message(`시작 실패: ${error.message} npm start로 서버를 실행했는지 확인하세요.`, true); }

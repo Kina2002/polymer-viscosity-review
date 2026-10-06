@@ -131,6 +131,16 @@
 .chart-point.selected,.chart-point:hover,.chart-point:focus-visible{stroke:var(--ink);stroke-width:2;opacity:1}
 .chart-point:hover,.chart-point:focus-visible{r:4px;outline:none}
 .detail-panel{scroll-margin-top:20px}
+main{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+html{scroll-padding-bottom:120px}
+.report-save-bar{position:fixed;right:38px;bottom:18px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:18px;width:min(430px,calc(100vw - 280px));padding:13px 16px;border:1px solid #bed4c4;border-radius:10px;background:#fff;box-shadow:0 5px 24px #153e4026}
+.report-save-bar[hidden]{display:none}
+.report-save-info{min-width:0;line-height:1.6}
+.report-save-info strong{display:block;font-size:13px;font-weight:600;color:var(--ink);overflow-wrap:anywhere}
+.report-save-info small{display:block;font-size:11px;color:#718079;margin-top:2px}
+.report-save-bar .button{min-height:44px;font-size:13px;padding:11px 15px;flex-shrink:0}
+@media(max-width:1180px){.report-save-bar{right:23px;width:min(430px,calc(100vw - 231px))}}
+@media(max-width:900px){.report-save-bar{left:15px;right:15px;bottom:calc(12px + env(safe-area-inset-bottom));width:auto;padding:10px 12px;gap:10px}}
 @media(prefers-reduced-motion:no-preference){button,.button,a{transition:background .15s ease,color .15s ease}.hero-sample svg{animation:appear .7s ease-out}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
 </style>
 
@@ -189,6 +199,10 @@
     </section>
     <footer>점도 검토실 <span>·</span> 교육용 가상 제품 POLY-A <span>·</span> 첫 버전은 규칙에 따른 검토를 제공합니다.</footer>
   </main>
+  <div id="report-save-bar" class="report-save-bar" role="region" aria-label="보고서 저장" hidden>
+    <div class="report-save-info"><strong id="report-save-scope">현재 검색·필터 0건</strong><small>보고서 파일(.md)로 내려받아요</small></div>
+    <button id="export-report-floating" type="button" class="button primary" disabled>보고서 저장</button>
+  </div>
   <dialog id="criteria-dialog" aria-labelledby="criteria-title"><form id="criteria-form"><div class="dialog-heading"><div><p class="eyebrow muted">REVIEW METHOD</p><h2 id="criteria-title">시연용 검토 기준</h2></div><button type="button" id="close-criteria" class="page-button" aria-label="기준 설정 닫기">×</button></div><p class="dialog-intro">실제 SOP가 확정되기 전의 가상 초안입니다. 변경하면 모든 기록을 다시 검토하고 새 기준 버전을 남깁니다.</p><div id="criteria-fields"></div><p class="small-note">고정 확인 요건: 온도 평형·수평·영점 완료, 침지 표시 준수, 기포 육안 미관찰, 유효한 교정·적합한 표준액 점검 기록. 이 요건도 이번 시연을 위한 가정입니다.</p><p id="criteria-error" role="alert" class="form-error" hidden></p><div class="dialog-actions"><button type="button" id="reset-criteria" class="button secondary">가상 초안으로 되돌리기</button><button type="submit" class="button primary">기준 적용</button></div></form></dialog>
   <dialog id="reason-category-dialog" aria-labelledby="reason-category-title">
     <form id="reason-category-form">
@@ -648,7 +662,17 @@ function applyFilters() {
   $('filtered-count').textContent = `현재 ${filtered.length.toLocaleString('ko-KR')}건 / 전체 ${records.length.toLocaleString('ko-KR')}건`;
   $('export-csv').disabled = !$('export-report') || !filtered.length;
   $('export-report').disabled = !filtered.length;
+  renderReportSaveBar();
   renderRows(); renderDetail(); renderChart();
+}
+function updateReportSaveVisibility() {
+  $('report-save-bar').hidden = $('export-report').getBoundingClientRect().bottom > 0;
+}
+function renderReportSaveBar() {
+  $('export-report-floating').disabled = !filtered.length;
+  $('report-save-scope').textContent = filtered.length
+    ? `현재 검색·필터 ${filtered.length.toLocaleString('ko-KR')}건` : '저장할 기록이 없어요';
+  updateReportSaveVisibility();
 }
 function renderCategoryCounts() {
   const container = $('category-counts'); container.replaceChildren();
@@ -1112,10 +1136,19 @@ $('export-csv').addEventListener('click', () => {
   download(recordsCSV(filtered, criteria, notes, true, checklists), '점도_검토결과.csv', 'text/csv;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 검토 결과 CSV를 저장했습니다.`);
 });
-$('export-report').addEventListener('click', () => {
+function exportReport() {
+  if (!filtered.length) return;
   download(reportMarkdown(filtered, criteria, notes, source, undefined, checklists), '점도_검토보고서.md', 'text/markdown;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 보고서를 저장했습니다. 원본 CSV와 함께 보관하세요.`);
-});
+}
+for (const id of ['export-report', 'export-report-floating']) $(id).addEventListener('click', exportReport);
+let reportScrollFrame = null;
+function scheduleReportSaveVisibility() {
+  if (reportScrollFrame !== null) return;
+  reportScrollFrame = requestAnimationFrame(() => { reportScrollFrame = null; updateReportSaveVisibility(); });
+}
+window.addEventListener('scroll', scheduleReportSaveVisibility, {passive: true});
+window.addEventListener('resize', scheduleReportSaveVisibility);
 try { await demo(); }
 catch (error) { message(`시작 실패: ${error.message} npm start로 서버를 실행했는지 확인하세요.`, true); }
 </script>
