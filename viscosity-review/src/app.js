@@ -37,6 +37,7 @@ const REASON_PAGE_SIZE = 20;
 const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
 let comparisonExpanded = false;
+const comparisonGroupExpanded = new Map();
 const selectedReportIds = new Set();
 const REPORT_FORMAT_LABELS = {txt: 'TXT', md: 'Markdown'};
 let reportFormat = 'txt';
@@ -187,41 +188,67 @@ function renderComparison(record) {
   const label = element('label', 'comparison-filter');
   const filter = element('input'); filter.type = 'checkbox'; filter.id = 'comparison-only-issues'; filter.checked = comparisonOnlyIssues;
   label.append(filter, document.createTextNode('확인할 항목만 보기'));
-  section.append(label);
-  const scroll = element('div', 'comparison-scroll'); scroll.tabIndex = 0;
-  scroll.setAttribute('role', 'region'); scroll.setAttribute('aria-label', '실험 기록과 검토 기준 비교표');
-  const table = element('table', 'comparison-table');
-  table.append(element('caption', 'sr-only', `${record.measurementId}의 40개 기록과 현재 검토 기준 비교`));
-  const head = element('thead'), header = element('tr');
-  for (const title of ['항목', '실험 기록', '검토 기준', '확인 결과']) {
-    const cell = element('th', '', title); cell.scope = 'col'; header.append(cell);
+  const displayTools = element('div', 'comparison-display-tools'), groupActions = element('div', 'comparison-group-actions');
+  const expandAll = element('button', 'text-button', '모두 펼치기'), collapseAll = element('button', 'text-button', '모두 접기');
+  expandAll.type = collapseAll.type = 'button'; expandAll.id = 'expand-comparison-groups'; collapseAll.id = 'collapse-comparison-groups';
+  groupActions.append(expandAll, collapseAll); displayTools.append(label, groupActions); section.append(displayTools);
+  const groups = element('div', 'comparison-groups'); section.append(groups);
+  const allRows = comparisonRows(record, criteria);
+  const rowsByGroup = new Map();
+  for (const row of allRows) {
+    if (!rowsByGroup.has(row.group)) rowsByGroup.set(row.group, []);
+    rowsByGroup.get(row.group).push(row);
   }
-  head.append(header); const body = element('tbody'); table.append(head, body); scroll.append(table); section.append(scroll);
   const draw = () => {
-    body.replaceChildren(); let previousGroup = null;
-    const rows = comparisonRows(record, criteria).filter(row => !comparisonOnlyIssues || row.warning);
-    for (const row of rows) {
-      if (row.group !== previousGroup) {
-        const group = element('tr', 'comparison-group'), cell = element('th', '', row.group);
-        cell.colSpan = 4; cell.scope = 'rowgroup'; group.append(cell); body.append(group); previousGroup = row.group;
+    rememberComparisonGroups(groups); groups.replaceChildren();
+    for (const [name, fullRows] of rowsByGroup) {
+      const rows = fullRows.filter(row => !comparisonOnlyIssues || row.warning);
+      if (!rows.length) continue;
+      const group = element('details', 'comparison-category'); group.dataset.group = name;
+      group.open = comparisonGroupExpanded.get(name) ?? false;
+      group.addEventListener('toggle', () => { if (group.isConnected) comparisonGroupExpanded.set(name, group.open); });
+      const summary = element('summary', 'comparison-category-heading'), title = element('span', 'comparison-category-title');
+      title.append(element('strong', '', name));
+      const warningCount = fullRows.filter(row => row.warning).length;
+      title.append(element('small', warningCount ? 'comparison-category-attention' : '',
+        `${fullRows.length}항목 · ${warningCount ? `확인할 항목 ${warningCount}개` : '확인할 항목 없음'}`));
+      const toggle = element('span', 'comparison-category-toggle'); toggle.setAttribute('aria-hidden', 'true');
+      toggle.append(element('span', 'category-expand-label', '펼치기'), element('span', 'category-collapse-label', '접기'));
+      summary.append(title, toggle); group.append(summary);
+      const scroll = element('div', 'comparison-scroll'); scroll.tabIndex = 0;
+      scroll.setAttribute('role', 'region'); scroll.setAttribute('aria-label', `${name}의 실험 기록과 검토 기준 비교표`);
+      const table = element('table', 'comparison-table');
+      table.append(element('caption', 'sr-only', `${record.measurementId} / ${name} / ${rows.length}개 기록과 현재 검토 기준 비교`));
+      const head = element('thead'), header = element('tr');
+      for (const label of ['항목', '실험 기록', '검토 기준', '확인 결과']) {
+        const cell = element('th', '', label); cell.scope = 'col'; header.append(cell);
       }
-      const tr = element('tr', `comparison-row${row.warning ? ' needs-review' : ''}`); tr.dataset.field = row.field;
-      const name = element('th', 'comparison-name', row.label); name.scope = 'row';
-      const actual = element('td', 'comparison-actual', row.actual); actual.dataset.label = '실험 기록';
-      const expected = element('td', 'comparison-expected', row.expected); expected.dataset.label = '검토 기준';
-      const status = element('td', 'comparison-status'); status.dataset.label = '확인 결과';
-      status.append(element('span', `badge${row.warning ? ' warning' : !row.hasRule ? ' muted-badge' : ''}`, row.status));
-      for (const issue of row.issues) status.append(element('small', 'comparison-reason', issue.reason));
-      tr.append(name, actual, expected, status); body.append(tr);
+      head.append(header); const body = element('tbody'); table.append(head, body); scroll.append(table); group.append(scroll); groups.append(group);
+      for (const row of rows) {
+        const tr = element('tr', `comparison-row${row.warning ? ' needs-review' : ''}`); tr.dataset.field = row.field;
+        const name = element('th', 'comparison-name', row.label); name.scope = 'row';
+        const actual = element('td', 'comparison-actual', row.actual); actual.dataset.label = '실험 기록';
+        const expected = element('td', 'comparison-expected', row.expected); expected.dataset.label = '검토 기준';
+        const status = element('td', 'comparison-status'); status.dataset.label = '확인 결과';
+        status.append(element('span', `badge${row.warning ? ' warning' : !row.hasRule ? ' muted-badge' : ''}`, row.status));
+        for (const issue of row.issues) status.append(element('small', 'comparison-reason', issue.reason));
+        tr.append(name, actual, expected, status); body.append(tr);
+      }
     }
-    if (!rows.length) {
-      const tr = element('tr'), cell = element('td', 'comparison-empty', '이 측정에서 확인할 차이·누락이 없습니다. 전체 항목을 보려면 체크를 해제하세요.');
-      cell.colSpan = 4; tr.append(cell); body.append(tr);
-    }
+    expandAll.disabled = collapseAll.disabled = !groups.childElementCount;
+    if (!groups.childElementCount) groups.append(element('p', 'comparison-empty', '이 측정에서 확인할 차이·누락이 없습니다. 전체 항목을 보려면 체크를 해제하세요.'));
   };
+  const setAll = open => {
+    for (const name of rowsByGroup.keys()) comparisonGroupExpanded.set(name, open);
+    for (const group of groups.querySelectorAll('.comparison-category')) group.open = open;
+  };
+  expandAll.addEventListener('click', () => setAll(true)); collapseAll.addEventListener('click', () => setAll(false));
   filter.addEventListener('change', () => { comparisonOnlyIssues = filter.checked; draw(); }); draw();
   section.append(element('p', 'comparison-footnote', '「기록 있음」은 값이 기록되었다는 뜻이에요. 비교 기준이 없는 항목까지 적합하다고 판정한 것은 아닙니다.'));
   return section;
+}
+function rememberComparisonGroups(container) {
+  for (const group of container.querySelectorAll('.comparison-category')) comparisonGroupExpanded.set(group.dataset.group, group.open);
 }
 function renderComparisonGuide(record) {
   const rows = comparisonRows(record, criteria);
@@ -388,6 +415,7 @@ function deleteReasonCategory(name) {
 function renderDetail() {
   const panel = $('detail'), previousComparison = panel.querySelector('.comparison-section');
   if (previousComparison) comparisonExpanded = previousComparison.open;
+  rememberComparisonGroups(panel);
   panel.replaceChildren();
   const record = records.find(row => row.measurementId === selectedId);
   if (!record) { panel.append(element('p', 'empty-detail', '선택할 기록이 없습니다. 필터를 바꿔보세요.')); return; }
