@@ -28,6 +28,33 @@ const { pathToFileURL } = require('node:url');
     pass('1,080건 로딩과 실제 화면 집계·그래프');
     await page.screenshot({path:path.join(output,'desktop.png'), fullPage:true});
 
+    const chartPoint = id => page.locator('.chart-point').filter({has:page.locator('title', {hasText:id+':'})});
+    const assertChartSelection = async (id, pageNumber) => {
+      assert.equal(await page.locator('.detail-top h3').innerText(), id);
+      assert.ok((await page.locator('#page-label').innerText()).startsWith(pageNumber+' /'));
+      assert.ok((await page.locator('#record-rows tr.selected').innerText()).includes(id));
+      assert.equal(await chartPoint(id).getAttribute('aria-pressed'), 'true');
+      assert.equal(await page.evaluate(() => document.activeElement.id), 'detail');
+      const bounds = await page.locator('#detail').boundingBox();
+      assert.ok(bounds.y >= 0 && bounds.y < page.viewportSize().height);
+    };
+    await chartPoint('PA-008-M4').click();
+    await assertChartSelection('PA-008-M4',4);
+    await page.locator('#detail').screenshot({path:path.join(output,'chart-navigation-detail.png')});
+    await page.locator('#search').fill('PA-008');
+    await page.locator('#status-filter').selectOption('review');
+    await page.locator('#category-filter').selectOption('specification');
+    await chartPoint('PA-008-M1').press('Enter');
+    await assertChartSelection('PA-008-M1',1);
+    assert.equal(await page.locator('#search').inputValue(),'PA-008');
+    assert.equal(await page.locator('#status-filter').inputValue(),'review');
+    assert.equal(await page.locator('#category-filter').inputValue(),'specification');
+    await chartPoint('PA-008-M3').press('Space');
+    await assertChartSelection('PA-008-M3',1);
+    await page.locator('.chart-panel').screenshot({path:path.join(output,'chart-navigation-desktop.png')});
+    await page.locator('#reset-filter').click();
+    pass('그래프 점 클릭·Enter·Space로 정확한 반복값 선택·페이지 이동·검색 필터 유지');
+
     await page.locator('#search').fill('PA-006');
     assert.equal(await page.locator('#record-rows tr').count(), 4);
     assert.ok((await page.locator('#detail').innerText()).includes('비교 조건 확인 필요'));
@@ -253,6 +280,10 @@ const { pathToFileURL } = require('node:url');
       assert.equal(await page.evaluate(() => document.querySelector('dialog').getBoundingClientRect().width <= innerWidth), true);
       await page.locator('#close-criteria').click();
       await page.screenshot({path:path.join(output,`mobile-${width}.png`), fullPage:true});
+      await page.locator('#search').fill('PA-008');
+      await chartPoint('PA-008-M4').click();
+      await assertChartSelection('PA-008-M4',1);
+      await page.locator('#reset-filter').click();
     }
     pass('390px·320px 화면에 가로 넘침 없음·기준 창 사용 가능');
     await page.locator('#search').fill('PA-006'); await page.locator('.record-link').nth(1).click();
