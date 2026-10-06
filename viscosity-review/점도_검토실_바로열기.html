@@ -128,6 +128,11 @@
 .unavailable-group-title{font-size:13px;color:#6d7450;margin:12px 0 0;overflow-wrap:anywhere}
 .unavailable-entry{border:1px solid #e4d7bc;background:#fffbf3;border-radius:7px;padding:15px;min-width:0;overflow-wrap:anywhere}
 .unavailable-entry h4{font-size:13px;color:#516344}
+.nav-link .nav-copy{display:block;font-size:inherit;width:auto;text-align:left;line-height:1.6}
+@media(max-width:900px){.nav-link .nav-copy br{display:none}}
+.nav-link>span[aria-hidden]{flex-shrink:0}
+.completed-entry{border-color:#d7e6d8;background:#f7fbf6}
+.completed-entry .badge{margin:7px 0}
 .unavailable-entry-evidence{font-size:11px;color:#8a876b;margin:7px 0;line-height:1.8}
 .unavailable-entry-note{font-size:12px;color:#52644b;white-space:pre-wrap;line-height:1.8;margin-bottom:10px}
 .unavailable-open-record{font-size:11px}
@@ -208,7 +213,7 @@
 @media(max-width:650px){.condition-explorer>summary{align-items:flex-start;flex-wrap:wrap;gap:6px}.condition-explorer>summary::after{position:absolute;right:13px;top:13px}.condition-explorer>summary{position:relative;padding-right:35px}#condition-summary{width:100%}.condition-explorer form{padding-left:12px;padding-right:12px}.condition-actions .button{min-height:44px}}
 .report-select-cell{width:44px;padding:0 4px}
 .sidebar nav .nav-link{line-height:1.6}
-#unavailable-summary{scroll-margin-top:15px}
+#unavailable-summary,#completed-summary{scroll-margin-top:15px}
 @media(max-width:900px){.sidebar{flex-wrap:wrap;gap:10px}.sidebar nav{flex-wrap:wrap;min-width:0}}
 @media(max-width:650px){.sidebar nav{width:100%}.sidebar nav .nav-link{min-height:40px}}
 .report-select-cell label{display:flex;align-items:center;justify-content:center;min-height:44px;min-width:36px;cursor:pointer}
@@ -229,6 +234,7 @@ tr.report-selected{background:#edf5ec}
       <a class="nav-link active" href="#top" aria-current="location"><span aria-hidden="true">▦</span> 배치 검토</a>
       <a class="nav-link" href="#records"><span aria-hidden="true">≡</span> 측정 기록</a>
       <a class="nav-link" id="open-unavailable-nav" href="#unavailable-summary"><span aria-hidden="true">▤</span> 확인 불가 모아보기</a>
+      <a class="nav-link" id="open-completed-nav" href="#completed-summary"><span aria-hidden="true">☑</span><span class="nav-copy">자료 확인 완료 <br>모아보기</span></a>
       <button class="nav-link" id="open-criteria-nav"><span aria-hidden="true">⚙</span> 검토 기준</button>
     </nav>
     <div class="sidebar-note"><span class="tiny-dot"></span> 첫 번째 실험실<strong>가상 고분자 수용액 A</strong><p>숫자와 조건을 함께 살펴보는<br>품질 검토 연습</p><span class="version">PORTFOLIO · v0.1</span></div>
@@ -304,6 +310,14 @@ tr.report-selected{background:#edf5ec}
       </div>
       <div id="unavailable-list" class="unavailable-list"></div>
       <div class="pagination"><span id="unavailable-page-label"></span><div><button type="button" id="unavailable-previous" class="page-button" aria-label="확인 불가 이전 페이지">←</button><button type="button" id="unavailable-next" class="page-button" aria-label="확인 불가 다음 페이지">→</button></div></div>
+    </details>
+    <details id="completed-summary" class="panel unavailable-summary">
+      <summary>자료 확인 완료 모아보기 <span id="completed-count" class="count-label">0개 항목 · 0건 측정</span></summary>
+      <p class="subtle unavailable-scope">자료 확인 완료는 해당 질문에서 요구한 원본 기록·시험 방법·점검 자료를 실제로 확인했다는 뜻이에요. 기준과의 차이가 해결됐거나 원인이 밝혀졌다는 뜻은 아니며, 출하 승인도 아니에요.</p>
+      <p class="subtle unavailable-scope">현재 데이터 전체에서 완료 체크한 질문과 메모를 모아요. 측정 기록의 검색·필터와 별도로 표시하며, 현재 기준과 원본에 유효한 체크만 포함해요. 한 측정에 여러 완료 항목이 있을 수 있어요.</p>
+      <div class="unavailable-toolbar"><label class="filter-label">확인한 항목<select id="completed-filter"><option value="">전체 항목</option></select></label></div>
+      <div id="completed-list" class="unavailable-list"></div>
+      <div class="pagination"><span id="completed-page-label"></span><div><button type="button" id="completed-previous" class="page-button" aria-label="자료 확인 완료 이전 페이지">←</button><button type="button" id="completed-next" class="page-button" aria-label="자료 확인 완료 다음 페이지">→</button></div></div>
     </details>
     <footer>점도 검토실 <span>·</span> 교육용 가상 제품 POLY-A <span>·</span> 첫 버전은 규칙에 따른 검토를 제공합니다.</footer>
   </main>
@@ -678,6 +692,11 @@ function unavailableEntries(records, criteria, checklists = {}) {
     .filter(task => task.status === 'unavailable')
     .map(task => ({...task, measurementId: record.measurementId, batchId: record.batchId})));
 }
+function completedEntries(records, criteria, checklists = {}) {
+  return records.flatMap(record => followUpProgress(record, criteria, checklists)
+    .filter(task => task.status === 'done')
+    .map(task => ({...task, measurementId: record.measurementId, batchId: record.batchId})));
+}
 function removeReasonCategory(checklists, category) {
   const name = reasonCategoryName(category);
   if (!name) return checklists;
@@ -907,6 +926,7 @@ for (const value of Array.isArray(savedReasonCategories) ? savedReasonCategories
   if (!validateReasonCategory(name, reasonCategories)) reasonCategories.push(name);
 }
 let unavailableCache = [], unavailablePage = 0, reasonCategoryTarget = null;
+let completedCache = [], completedPage = 0;
 const REASON_PAGE_SIZE = 20;
 const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
@@ -1017,6 +1037,7 @@ function recalculate() {
   $('review-count').textContent = (records.length - pass).toLocaleString('ko-KR');
   $('criteria-version').textContent = criteria.version;
   unavailableCache = unavailableEntries(records, criteria, checklists); unavailablePage = 0; renderUnavailableSummary();
+  completedCache = completedEntries(records, criteria, checklists); completedPage = 0; renderCompletedSummary();
   renderCategoryCounts(); applyFilters();
 }
 function resetFilters() {
@@ -1245,14 +1266,14 @@ function renderFollowUps(record) {
   const tasks = followUpProgress(record, criteria, checklists);
   const section = element('section', 'detail-section follow-up-section');
   section.append(element('h3', '', '다음 확인 질문 · 체크리스트'));
-  section.append(element('p', 'follow-up-intro', '자료를 확인했다면 체크하세요. 자료가 없거나 확인할 수 없다면 아래 「확인 불가」를 누르고 이유를 남기세요.'));
+  section.append(element('p', 'follow-up-intro', '질문에서 요구한 원본 기록·시험 방법·점검 자료를 실제로 확인했다면 체크하세요. 기준과의 차이가 해결됐다는 뜻은 아니에요. 자료가 없거나 확인할 수 없다면 아래 「확인 불가」를 누르고 이유를 남기세요.'));
   const progress = element('p', 'follow-up-progress'); progress.setAttribute('role', 'status');
   const update = () => { progress.textContent = `확인 완료 ${tasks.filter(task => task.status === 'done').length}개 · 확인 불가 ${tasks.filter(task => task.status === 'unavailable').length}개 · 미확인 ${tasks.filter(task => task.status === 'pending').length}개`; progress.hidden = !tasks.length; };
   const save = () => {
     checklists[record.measurementId] = {signature: followUpSignature(record, criteria),
       checked: tasks.filter(task => task.status === 'done').map(task => task.id),
       outcomes: Object.fromEntries(tasks.map(task => [task.id, {status: task.status, reason: task.status === 'unavailable' ? task.reason : '', reasonCategory: task.status === 'unavailable' ? task.reasonCategory : '', completionNote: task.completionNote}]))};
-    store(`poly-checklists-${datasetKey}`, checklists); update(); updateUnavailableRecord(record);
+    store(`poly-checklists-${datasetKey}`, checklists); update(); updateFollowUpSummaries(record);
   };
   update(); section.append(progress);
   const list = element('div', 'follow-up-list');
@@ -1329,9 +1350,52 @@ function renderFollowUps(record) {
   return section;
 }
 
-function updateUnavailableRecord(record) {
+function updateFollowUpSummaries(record) {
   unavailableCache = unavailableCache.filter(task => task.measurementId !== record.measurementId).concat(unavailableEntries([record], criteria, checklists));
+  completedCache = completedCache.filter(task => task.measurementId !== record.measurementId).concat(completedEntries([record], criteria, checklists));
   renderUnavailableSummary();
+  renderCompletedSummary();
+}
+function renderCompletedSummary() {
+  const measurementCount = entries => new Set(entries.map(task => task.measurementId)).size;
+  const countText = entries => `${entries.length}개 항목 · ${measurementCount(entries)}건 측정`;
+  $('completed-count').textContent = countText(completedCache);
+  const filter = $('completed-filter'), selected = filter.value, groups = new Map();
+  for (const task of completedCache) {
+    if (!groups.has(task.field)) groups.set(task.field, {label: task.label, count: 0});
+    groups.get(task.field).count++;
+  }
+  const fields = [...groups.keys()].sort((a, b) => groups.get(a).label.localeCompare(groups.get(b).label, 'ko'));
+  const all = element('option', '', `전체 항목 (${completedCache.length}개)`); all.value = ''; filter.replaceChildren(all);
+  for (const field of fields) {
+    const group = groups.get(field), option = element('option', '', `${group.label} (${group.count}개)`);
+    option.value = field; filter.append(option);
+  }
+  filter.value = groups.has(selected) ? selected : '';
+  const entries = completedCache.filter(task => !filter.value || task.field === filter.value)
+    .sort((a, b) => a.label.localeCompare(b.label, 'ko') || String(a.measurementId).localeCompare(String(b.measurementId), 'ko') || a.id.localeCompare(b.id));
+  const pages = Math.max(1, Math.ceil(entries.length / REASON_PAGE_SIZE));
+  completedPage = Math.max(0, Math.min(completedPage, pages - 1));
+  $('completed-page-label').textContent = `${countText(entries)} · ${completedPage + 1} / ${pages} 페이지`;
+  $('completed-previous').disabled = completedPage === 0; $('completed-next').disabled = completedPage + 1 >= pages;
+  const list = $('completed-list'); list.replaceChildren();
+  if (!$('completed-summary').open) return;
+  let previousField = null;
+  for (const task of entries.slice(completedPage * REASON_PAGE_SIZE, (completedPage + 1) * REASON_PAGE_SIZE)) {
+    if (task.field !== previousField) { list.append(element('h3', 'unavailable-group-title', `${task.label} · ${groups.get(task.field).count}개`)); previousField = task.field; }
+    const card = element('article', 'unavailable-entry completed-entry'); card.dataset.measurement = task.measurementId; card.dataset.task = task.id;
+    card.append(element('h4', '', `${task.measurementId} · ${task.label}`),
+      element('p', 'unavailable-entry-evidence', `배치 ${task.batchId} · 실험 기록: ${task.actual} / 기준: ${task.expected}`),
+      element('p', 'unavailable-entry-evidence', `확인한 질문: ${task.question}`));
+    const review = reviews.get(task.measurementId);
+    card.append(element('span', `badge${review?.issues.length ? ' warning' : ''}`, `현재 검토 상태: ${review?.status || '미확인'}`),
+      element('p', 'unavailable-entry-note', `확인 완료 메모: ${task.completionNote.trim() || '남긴 메모가 없어요. (선택 항목)'}`));
+    const open = element('button', 'text-button completed-open-record', '측정 기록 열기'); open.type = 'button';
+    open.setAttribute('aria-label', `${task.measurementId} ${task.label} 완료한 측정 기록 열기`);
+    open.addEventListener('click', () => { resetFilters(); $('search').value = task.measurementId; applyFilters(); select(task.measurementId); $('detail').scrollIntoView({behavior: 'instant', block: 'start'}); });
+    card.append(open); list.append(card);
+  }
+  if (!entries.length) list.append(element('p', 'empty-detail', '자료 확인 완료로 체크한 항목이 아직 없어요. 질문에서 요구한 자료를 확인한 뒤 체크하면 이곳에 모여요.'));
 }
 function renderUnavailableSummary() {
   $('unavailable-count').textContent = `${unavailableCache.length}개 항목`;
@@ -1595,6 +1659,10 @@ function openUnavailableSummary() {
   $('unavailable-summary').open = true;
   renderUnavailableSummary();
 }
+function openCompletedSummary() {
+  $('completed-summary').open = true;
+  renderCompletedSummary();
+}
 function syncSidebarNavigation() {
   const hash = window.location.hash || '#top';
   for (const link of document.querySelectorAll('.sidebar nav a.nav-link')) {
@@ -1604,10 +1672,15 @@ function syncSidebarNavigation() {
     else link.removeAttribute('aria-current');
   }
   if (hash === '#unavailable-summary') openUnavailableSummary();
+  if (hash === '#completed-summary') openCompletedSummary();
 }
 $('open-unavailable-nav').addEventListener('click', () => {
   openUnavailableSummary();
   $('unavailable-summary').querySelector('summary').focus({preventScroll: true});
+});
+$('open-completed-nav').addEventListener('click', () => {
+  openCompletedSummary();
+  $('completed-summary').querySelector('summary').focus({preventScroll: true});
 });
 window.addEventListener('hashchange', syncSidebarNavigation);
 syncSidebarNavigation();
@@ -1615,6 +1688,10 @@ $('unavailable-summary').addEventListener('toggle', renderUnavailableSummary);
 $('unavailable-filter').addEventListener('change', () => { unavailablePage = 0; renderUnavailableSummary(); });
 $('unavailable-previous').addEventListener('click', () => { unavailablePage--; renderUnavailableSummary(); });
 $('unavailable-next').addEventListener('click', () => { unavailablePage++; renderUnavailableSummary(); });
+$('completed-summary').addEventListener('toggle', renderCompletedSummary);
+$('completed-filter').addEventListener('change', () => { completedPage = 0; renderCompletedSummary(); });
+$('completed-previous').addEventListener('click', () => { completedPage--; renderCompletedSummary(); });
+$('completed-next').addEventListener('click', () => { completedPage++; renderCompletedSummary(); });
 $('manage-reason-categories').addEventListener('click', () => openReasonCategories());
 $('close-reason-categories').addEventListener('click', () => $('reason-category-dialog').close());
 $('reason-category-form').addEventListener('submit', event => {
@@ -1629,7 +1706,7 @@ $('reason-category-form').addEventListener('submit', event => {
   const task = record && followUpProgress(record, criteria, checklists).find(task => task.id === target.taskId && task.status === 'unavailable');
   if (task) {
     checklists[record.measurementId].outcomes[task.id] = {status: 'unavailable', reason: task.reason, reasonCategory: name, completionNote: task.completionNote};
-    store(`poly-checklists-${datasetKey}`, checklists); updateUnavailableRecord(record);
+    store(`poly-checklists-${datasetKey}`, checklists); updateFollowUpSummaries(record);
   }
   renderDetail(); renderReasonCategoryManager();
   if (target) $('reason-category-dialog').close();
@@ -1717,6 +1794,7 @@ try {
   await demo();
   // 데이터로 측정 목록·상세 높이가 바뀐 뒤 하단 바로가기 위치를 맞춘다.
   if (window.location.hash === '#unavailable-summary') $('unavailable-summary').scrollIntoView({behavior: 'instant', block: 'start'});
+  if (window.location.hash === '#completed-summary') $('completed-summary').scrollIntoView({behavior: 'instant', block: 'start'});
 }
 catch (error) { message(`시작 실패: ${error.message} npm start로 서버를 실행했는지 확인하세요.`, true); }
 </script>

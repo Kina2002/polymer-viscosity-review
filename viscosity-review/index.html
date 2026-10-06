@@ -18,6 +18,7 @@
       <a class="nav-link active" href="#top" aria-current="location"><span aria-hidden="true">▦</span> 배치 검토</a>
       <a class="nav-link" href="#records"><span aria-hidden="true">≡</span> 측정 기록</a>
       <a class="nav-link" id="open-unavailable-nav" href="#unavailable-summary"><span aria-hidden="true">▤</span> 확인 불가 모아보기</a>
+      <a class="nav-link" id="open-completed-nav" href="#completed-summary"><span aria-hidden="true">☑</span><span class="nav-copy">자료 확인 완료 <br>모아보기</span></a>
       <button class="nav-link" id="open-criteria-nav"><span aria-hidden="true">⚙</span> 검토 기준</button>
     </nav>
     <div class="sidebar-note"><span class="tiny-dot"></span> 첫 번째 실험실<strong>가상 고분자 수용액 A</strong><p>숫자와 조건을 함께 살펴보는<br>품질 검토 연습</p><span class="version">PORTFOLIO · v0.1</span></div>
@@ -93,6 +94,14 @@
       </div>
       <div id="unavailable-list" class="unavailable-list"></div>
       <div class="pagination"><span id="unavailable-page-label"></span><div><button type="button" id="unavailable-previous" class="page-button" aria-label="확인 불가 이전 페이지">←</button><button type="button" id="unavailable-next" class="page-button" aria-label="확인 불가 다음 페이지">→</button></div></div>
+    </details>
+    <details id="completed-summary" class="panel unavailable-summary">
+      <summary>자료 확인 완료 모아보기 <span id="completed-count" class="count-label">0개 항목 · 0건 측정</span></summary>
+      <p class="subtle unavailable-scope">자료 확인 완료는 해당 질문에서 요구한 원본 기록·시험 방법·점검 자료를 실제로 확인했다는 뜻이에요. 기준과의 차이가 해결됐거나 원인이 밝혀졌다는 뜻은 아니며, 출하 승인도 아니에요.</p>
+      <p class="subtle unavailable-scope">현재 데이터 전체에서 완료 체크한 질문과 메모를 모아요. 측정 기록의 검색·필터와 별도로 표시하며, 현재 기준과 원본에 유효한 체크만 포함해요. 한 측정에 여러 완료 항목이 있을 수 있어요.</p>
+      <div class="unavailable-toolbar"><label class="filter-label">확인한 항목<select id="completed-filter"><option value="">전체 항목</option></select></label></div>
+      <div id="completed-list" class="unavailable-list"></div>
+      <div class="pagination"><span id="completed-page-label"></span><div><button type="button" id="completed-previous" class="page-button" aria-label="자료 확인 완료 이전 페이지">←</button><button type="button" id="completed-next" class="page-button" aria-label="자료 확인 완료 다음 페이지">→</button></div></div>
     </details>
     <footer>점도 검토실 <span>·</span> 교육용 가상 제품 POLY-A <span>·</span> 첫 버전은 규칙에 따른 검토를 제공합니다.</footer>
   </main>

@@ -1,11 +1,43 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { DEFAULT_CRITERIA as C, CONDITION_FIELDS, conditionValue, validateConditionFilter, matchesConditionFilter, describeConditionFilter, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, reviewRecord, comparisonRows, followUpPlan, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from '../src/core.js';
+import { DEFAULT_CRITERIA as C, CONDITION_FIELDS, conditionValue, validateConditionFilter, matchesConditionFilter, describeConditionFilter, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, completedEntries, removeReasonCategory, unavailableReasonCSV, reviewRecord, comparisonRows, followUpPlan, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from '../src/core.js';
 
 const data = JSON.parse(await readFile(new URL('../data/demo-records.json', import.meta.url), 'utf8'));
 const expected = JSON.parse(await readFile(new URL('../data/expected-results.json', import.meta.url), 'utf8'));
 const base = data[0];
+
+test('완료 모아보기: 질문별 집계·메모와 원본 연결·기존 체크 호환·유효한 완료만 포함', () => {
+  const first = {...base, measurementId: 'done-1', sampleTemperature: 28, rpm: 30, mixingMinutes: 30};
+  const second = {...base, measurementId: 'done-2', spindle: '다른 스핀들'};
+  const stale = {...base, measurementId: 'old', sampleTemperature: 28};
+  const records = [first, second, stale, base];
+  const checks = {
+    'done-1': {signature: followUpSignature(first, C), outcomes: {
+      'measurement:sampleTemperature': {status: 'done', completionNote: '원본 28℃ 확인\n차이는 남아 있음'},
+      'measurement:rpm': {status: 'unavailable', reason: '설정 자료 없음'},
+      'manufacturing:mixingMinutes': {status: 'pending', completionNote: '이전 메모'}
+    }},
+    'done-2': {signature: followUpSignature(second, C), checked: ['measurement:spindle', 'unknown']},
+    old: {signature: followUpSignature({...stale, sourceNote: '이전 원본'}, C), checked: ['measurement:sampleTemperature']}
+  };
+  const snapshot = JSON.stringify({records, checks}), entries = completedEntries(records, C, checks);
+  assert.deepEqual(entries.map(task => [task.measurementId, task.field]), [['done-1', 'sampleTemperature'], ['done-2', 'spindle']]);
+  assert.equal(entries[0].completionNote, '원본 28℃ 확인\n차이는 남아 있음');
+  assert.equal(entries[0].batchId, first.batchId);
+  assert.equal(entries[0].actual, '28'); assert.ok(entries[0].expected.includes('25'));
+  assert.equal(entries[1].completionNote, '');
+  assert.equal(reviewRecord(first, C).status, '검토 필요');
+  assert.equal(JSON.stringify({records, checks}), snapshot);
+  assert.deepEqual(completedEntries(records, {...C, temperature: 26}, checks), []);
+  assert.deepEqual(completedEntries([], C, checks), []);
+  checks['done-1'].outcomes['measurement:sampleTemperature'].status = 'unavailable';
+  assert.equal(completedEntries([first], C, checks).length, 0);
+  assert.equal(unavailableEntries([first], C, checks).length, 2);
+  checks['done-1'].outcomes['measurement:sampleTemperature'].status = 'done';
+  checks['done-1'].outcomes['manufacturing:mixingMinutes'].status = 'done';
+  assert.equal(completedEntries([first], C, checks).length, 2);
+});
 
 test('조건 범위: 경계 포함·소수 오차·0·누락과 숫자 오류·잘못된 범위 거부', () => {
   const filter = {field: 'manufacturingTemperature', mode: 'range', center: 45, tolerance: 2};
