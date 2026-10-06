@@ -38,6 +38,8 @@ const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
 let comparisonExpanded = false;
 const selectedReportIds = new Set();
+const REPORT_FORMAT_LABELS = {txt: 'TXT', md: 'Markdown'};
+let reportFormat = 'txt';
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
@@ -147,10 +149,7 @@ function updateReportControls() {
   $('select-visible-records').indeterminate = checkedCount > 0 && checkedCount < visible.length;
   $('select-visible-records').disabled = !visible.length;
   const hasReport = reportRecords().length > 0;
-  for (const id of ['export-report', 'export-txt', 'export-txt-menu']) $(id).disabled = !hasReport;
-  const summary = $('report-formats').querySelector('summary');
-  summary.setAttribute('aria-disabled', String(!hasReport)); summary.tabIndex = hasReport ? 0 : -1;
-  if (!hasReport) $('report-formats').open = false;
+  $('export-report').disabled = !hasReport;
 }
 function select(id) {
   selectedId = id;
@@ -582,10 +581,17 @@ $('export-csv').addEventListener('click', () => {
   download(recordsCSV(filtered, criteria, notes, true, checklists), '점도_검토결과.csv', 'text/csv;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 검토 결과 CSV를 저장했습니다.`);
 });
-function exportReport(format) {
+function selectReportFormat(format) {
+  reportFormat = format;
+  $('report-download-label').textContent = `${REPORT_FORMAT_LABELS[format]} 내려받기`;
+  for (const button of document.querySelectorAll('[data-report-format]')) button.setAttribute('aria-pressed', String(button.dataset.reportFormat === format));
+  $('report-formats').open = false;
+  ($('export-report').disabled ? $('report-formats').querySelector('summary') : $('export-report')).focus();
+}
+function exportReport() {
   const targetRecords = reportRecords();
   if (!targetRecords.length) return;
-  const plain = format === 'txt';
+  const plain = reportFormat === 'txt';
   const scope = $('report-scope').value === 'selected' ? `체크한 기록 ${targetRecords.length}건 (검색·필터 밖의 선택 포함)` : `현재 검색·필터 결과 ${targetRecords.length}건`;
   const report = (plain ? reportText : reportMarkdown)(targetRecords, criteria, notes, source, undefined, checklists, scope);
   // UTF-8 BOM과 CRLF로 Windows 메모장에서도 한글과 줄바꿈을 읽을 수 있게 한다.
@@ -599,12 +605,8 @@ function exportReport(format) {
 $('report-scope').addEventListener('change', updateReportControls);
 $('select-visible-records').addEventListener('change', event => changeReportSelection(filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(record => record.measurementId), event.target.checked));
 $('clear-report-selection').addEventListener('click', () => { selectedReportIds.clear(); updateReportControls(); });
-$('export-txt').addEventListener('click', () => exportReport('txt'));
-$('export-txt-menu').addEventListener('click', () => exportReport('txt'));
-$('export-report').addEventListener('click', () => exportReport('md'));
-$('report-formats').querySelector('summary').addEventListener('click', event => {
-  if (!reportRecords().length) event.preventDefault();
-});
+$('export-report').addEventListener('click', exportReport);
+for (const button of document.querySelectorAll('[data-report-format]')) button.addEventListener('click', () => selectReportFormat(button.dataset.reportFormat));
 document.addEventListener('click', event => {
   if (!$('report-formats').contains(event.target)) $('report-formats').open = false;
 });

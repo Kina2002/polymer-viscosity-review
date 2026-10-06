@@ -40,13 +40,13 @@
         <div class="report-export-controls">
           <label class="report-scope-label" for="report-scope">보고서에 담을 기록<select id="report-scope"><option value="filtered">검색·필터 결과 0건</option><option value="selected">체크한 기록 0건</option></select></label>
           <div class="report-download-actions">
-          <button id="export-txt" class="button primary" disabled>TXT 내려받기 <span aria-hidden="true">↓</span></button>
+          <button id="export-report" class="button primary" disabled><span id="report-download-label">TXT 내려받기</span> <span aria-hidden="true">↓</span></button>
           <details id="report-formats" class="report-formats">
             <summary class="button primary" aria-label="보고서 형식 선택" aria-controls="report-format-options"><span aria-hidden="true">▾</span></summary>
             <div id="report-format-options" class="report-format-options">
               <p>보고서 형식 선택</p>
-              <button id="export-txt-menu" type="button" disabled>텍스트 (.txt)<small>메모장에서 보기</small></button>
-              <button id="export-report" type="button" disabled>Markdown (.md)<small>GitHub 문서로 보기</small></button>
+              <button id="report-format-txt" type="button" data-report-format="txt" aria-pressed="true">텍스트 (.txt)<small>메모장에서 보기</small></button>
+              <button id="report-format-md" type="button" data-report-format="md" aria-pressed="false">Markdown (.md)<small>GitHub 문서로 보기</small></button>
             </div>
           </details>
           </div>
