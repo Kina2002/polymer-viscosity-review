@@ -173,6 +173,29 @@
 .report-scope-label select{max-width:100%;min-width:0;border:1px solid var(--border);border-radius:5px;background:white;color:var(--ink);padding:8px;font-size:12px}
 .report-selection-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px 15px;margin:0 0 13px;font-size:12px;color:#54705a;line-height:1.8}
 .report-selection-toolbar p{width:100%;font-size:11px;color:#708575}
+.condition-explorer{margin:0 0 15px;padding:0;border:1px solid var(--border);border-radius:7px;background:white}
+.condition-explorer>summary{display:flex;align-items:center;gap:12px;padding:13px 15px;font-size:12px;min-height:48px;list-style:none}
+.condition-explorer>summary::after{content:'⌄';margin-left:auto;font-size:17px}
+.condition-explorer[open]>summary::after{content:'⌃'}
+.condition-explorer>summary strong{flex-shrink:0}
+#condition-summary{font-size:11px;color:#6e8372;overflow-wrap:anywhere}
+.condition-explorer form{padding:0 15px 16px;max-width:650px}
+.condition-intro{font-size:11px;line-height:1.8;color:#708575;margin-bottom:13px}
+.condition-field-label{display:block;font-size:11px;color:#45634d;line-height:1.8}
+.condition-field-label select{display:block;width:100%;padding:9px;margin-top:5px;border:1px solid var(--border);border-radius:5px;background:white;color:var(--ink);min-height:40px}
+.condition-limit-label{display:flex;align-items:center;gap:7px;margin:13px 0;font-size:11px;color:#45634d;min-height:32px}
+.condition-limit-label input{accent-color:var(--green)}
+.condition-number-fields{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto;gap:10px;align-items:end;font-size:12px;color:#45634d}
+.condition-number-fields label{font-size:11px;line-height:1.8;min-width:0}
+.condition-number-fields input{display:block;width:100%;min-width:0;padding:9px;margin-top:5px;border:1px solid var(--border);border-radius:5px;color:var(--ink);min-height:40px}
+.condition-plusminus,#condition-unit{padding-bottom:12px}
+.condition-preview{font-size:11px;color:#52745c;line-height:1.8;margin:12px 0;overflow-wrap:anywhere}
+.condition-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.condition-explorer [hidden],#chart-axis-controls[hidden]{display:none!important}
+.chart-axis-label{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:11px;color:#54705a;flex-wrap:wrap}
+.chart-axis-label select{padding:7px;border:1px solid var(--border);border-radius:5px;background:white;max-width:100%;color:var(--ink);font-size:11px}
+.record-condition-value{display:block;color:#52745c;font-size:9px;font-weight:400;line-height:1.6;margin-top:4px;overflow-wrap:anywhere}
+@media(max-width:650px){.condition-explorer>summary{align-items:flex-start;flex-wrap:wrap;gap:6px}.condition-explorer>summary::after{position:absolute;right:13px;top:13px}.condition-explorer>summary{position:relative;padding-right:35px}#condition-summary{width:100%}.condition-explorer form{padding-left:12px;padding-right:12px}.condition-actions .button{min-height:44px}}
 .report-select-cell{width:44px;padding:0 4px}
 .report-select-cell label{display:flex;align-items:center;justify-content:center;min-height:44px;min-width:36px;cursor:pointer}
 .report-select-cell input{accent-color:var(--green);width:17px;height:17px;margin:0}
@@ -229,7 +252,7 @@ tr.report-selected{background:#edf5ec}
     </section>
     <p id="message" role="status" aria-live="polite" class="message" hidden></p>
     <section class="chart-grid">
-      <div class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow muted">BATCH OVERVIEW</p><h2>배치별 점도 기록</h2></div><label class="check-label"><input type="checkbox" id="comparable-only" checked> 비교 조건이 맞는 값만</label></div><div id="chart" class="chart" aria-live="polite"></div><div class="chart-footer"><span><i class="legend-dot green-dot"></i> 수치상 범위 내 <i class="legend-dot amber-dot"></i> 수치상 범위 외</span><span id="chart-note">개별 측정값 · 평균으로 합치지 않음</span></div><p id="chart-hint" class="chart-hint">점을 누르면 해당 측정 기록으로 이동해요.</p></div>
+      <div class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow muted">MEASUREMENT OVERVIEW</p><h2 id="chart-title">배치별 점도 기록</h2></div><label class="check-label"><input type="checkbox" id="comparable-only" checked> 비교 조건이 맞는 값만</label></div><label id="chart-axis-controls" class="chart-axis-label" hidden>그래프 가로축<select id="chart-axis"><option value="batch">배치 순서</option><option value="condition">선택한 조건</option></select></label><div id="chart" class="chart" aria-live="polite"></div><div class="chart-footer"><span><i class="legend-dot green-dot"></i> 수치상 범위 내 <i class="legend-dot amber-dot"></i> 수치상 범위 외</span><span id="chart-note">개별 측정값 · 평균으로 합치지 않음</span></div><p id="chart-hint" class="chart-hint">점을 누르면 해당 측정 기록으로 이동해요.</p><p id="chart-condition-hint" class="chart-hint" hidden></p></div>
       <div class="panel findings-panel"><p class="eyebrow muted">REVIEW SIGNALS</p><h2>확인할 기록</h2><p class="subtle">범주를 눌러 해당 기록을 살펴보세요.</p><div id="category-counts"></div><p class="small-note">한 측정에 여러 항목이 표시될 수 있어요.<br>조건 차이는 원인 확정이나 불량 판정이 아닙니다.</p></div>
     </section>
     <details id="unavailable-summary" class="panel unavailable-summary">
@@ -246,6 +269,21 @@ tr.report-selected{background:#edf5ec}
     <section id="records" class="record-section" aria-labelledby="records-title">
       <div class="section-heading"><div><p class="eyebrow muted">MEASUREMENT RECORDS</p><h2 id="records-title">측정 기록</h2></div><span id="filtered-count" class="count-label"></span></div>
       <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="배치·측정·시료 번호 검색" aria-label="배치 측정 시료 번호 검색"></label><label class="filter-label">검토 상태<select id="status-filter"><option value="all">전체 상태</option><option value="pass">기준 충족</option><option value="review">검토 필요</option></select></label><label class="filter-label">확인 항목<select id="category-filter"><option value="all">전체 항목</option><option value="missing">기록 누락</option><option value="data">입력 확인</option><option value="manufacturing">제조 조건 차이</option><option value="measurement">측정 조건 차이</option><option value="specification">점도 규격 이탈</option></select></label><button id="reset-filter" class="text-button">초기화</button></div>
+      <details id="condition-explorer" class="condition-explorer">
+        <summary><strong>조건으로 골라보기</strong><span id="condition-summary">조건 미적용</span></summary>
+        <form id="condition-form" novalidate>
+          <p class="condition-intro">보고 싶은 항목을 골라 기록을 좁혀보세요. 검색·검토 필터와 함께 적용되며, 검토 기준은 바뀌지 않아요.</p>
+          <label class="condition-field-label">보고 싶은 항목<select id="condition-field"></select></label>
+          <label class="condition-limit-label"><input id="condition-limit" type="checkbox" checked> 특정 범위나 값으로 좁히기</label>
+          <div id="condition-number-fields" class="condition-number-fields">
+            <label>중심값<input id="condition-center" type="number" step="any" value="45"></label><span class="condition-plusminus" aria-hidden="true">±</span><label>범위<input id="condition-tolerance" type="number" step="any" min="0" value="2"></label><span id="condition-unit"></span>
+          </div>
+          <label id="condition-text-fields" class="condition-field-label" hidden>보고 싶은 기록값<select id="condition-value"></select></label>
+          <p id="condition-preview" class="condition-preview" aria-live="polite"></p>
+          <p id="condition-error" class="form-error" role="alert" hidden></p>
+          <div class="condition-actions"><button type="submit" class="button primary">조건 적용</button><button id="clear-condition" type="button" class="button secondary" disabled>조건 해제</button></div>
+        </form>
+      </details>
       <div class="report-selection-toolbar"><strong id="report-selection-count" role="status" aria-live="polite">보고서에 담을 기록 0건 체크</strong><button id="clear-report-selection" type="button" class="text-button" disabled>선택 해제</button><p>앞의 체크박스로 골라 담으세요. 페이지나 검색을 바꿔도 선택은 유지돼요.</p></div>
       <div class="record-grid">
         <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">체크박스로 보고서에 담을 기록을 고르세요. 표 머리의 체크박스는 현재 페이지 전체를 선택합니다. 측정 번호를 누르면 상세 정보를 확인할 수 있습니다.</caption><thead><tr><th scope="col" class="report-select-cell"><label><input id="select-visible-records" type="checkbox" aria-label="현재 페이지 기록 전체 선택"><span class="sr-only">보고서 선택</span></label></th><th scope="col">배치 / 측정</th><th scope="col" class="viscosity-heading">점도<small>기록값 · 환산값</small><small class="unit-conversion-note">1 cP (= 1 mPa·s)</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>
@@ -319,6 +357,50 @@ function numeric(value) {
   return Number.isFinite(number) && Math.abs(number) <= Number.MAX_SAFE_INTEGER ? number : null;
 }
 const close = (a, b, tolerance = 0) => Math.abs(a - b) <= tolerance + 1e-9;
+
+const CONDITION_FIELDS = FIELDS.filter(([field]) => !['batchId', 'measurementId', 'sampleId', 'measuredAt', 'sourceNote'].includes(field))
+  .map(([field, label]) => ({field, label, type: NUMERIC_FIELDS.has(field) ? 'number' : 'text',
+    unit: field === 'viscosity' ? 'mPa·s' : label.match(/\(([^)]+)\)$/)?.[1] ?? ''}));
+function conditionValue(record, field) {
+  const definition = CONDITION_FIELDS.find(item => item.field === field);
+  if (!definition) return null;
+  if (definition.type === 'text') return missing(record[field]) ? null : String(record[field]);
+  const value = numeric(record[field]);
+  if (field === 'viscosity' && (!['mPa·s', 'cP'].includes(record.unit) || value < 0)) return null;
+  return value;
+}
+function validateConditionFilter(filter) {
+  if (filter === null) return null;
+  const definition = CONDITION_FIELDS.find(item => item.field === filter?.field);
+  if (!definition) return '보고 싶은 항목을 선택하세요.';
+  if (filter.mode === 'all') return null;
+  if (definition.type === 'text') return filter.mode === 'value' && typeof filter.value === 'string' ? null : '보고 싶은 기록값을 선택하세요.';
+  const center = numeric(filter.center), tolerance = numeric(filter.tolerance);
+  if (filter.mode !== 'range' || center === null || tolerance === null) return '중심값과 ± 범위를 숫자로 입력하세요.';
+  if (tolerance < 0) return '± 범위는 0 이상이어야 합니다.';
+  if (numeric(center - tolerance) === null || numeric(center + tolerance) === null) return '범위가 너무 큽니다. 더 작은 값을 입력하세요.';
+  return null;
+}
+function matchesConditionFilter(record, filter) {
+  if (filter === null) return true;
+  if (validateConditionFilter(filter)) return false;
+  if (filter.mode === 'all') return true;
+  if (filter.mode === 'value') return String(record[filter.field] ?? '') === filter.value;
+  const value = conditionValue(record, filter.field);
+  if (value === null) return false;
+  const center = Number(filter.center), tolerance = Number(filter.tolerance);
+  const epsilon = Number.EPSILON * Math.max(1, Math.abs(value), Math.abs(center), tolerance) * 4;
+  return Math.abs(value - center) <= tolerance + epsilon;
+}
+function describeConditionFilter(filter) {
+  if (!filter || validateConditionFilter(filter)) return '조건 미적용';
+  const label = LABELS[filter.field];
+  if (filter.mode === 'all') return `${label} · 전체 값`;
+  if (filter.mode === 'value') return `${label}: ${filter.value.trim() ? filter.value : '미기재'}`;
+  const center = Number(filter.center), tolerance = Number(filter.tolerance);
+  const display = value => value.toLocaleString('ko-KR', {maximumFractionDigits: 20});
+  return `${label}: ${display(center)} ± ${display(tolerance)} (${display(Number((center-tolerance).toPrecision(15)))}~${display(Number((center+tolerance).toPrecision(15)))})`;
+}
 
 function validateCriteria(criteria) {
   const errors = [];
@@ -748,6 +830,62 @@ const comparisonGroupExpanded = new Map();
 const selectedReportIds = new Set();
 const REPORT_FORMAT_LABELS = {txt: 'TXT', md: 'Markdown'};
 let reportFormat = 'txt';
+let activeCondition = null;
+
+function conditionDisplay(record, field) {
+  const definition = CONDITION_FIELDS.find(item => item.field === field), value = conditionValue(record, field);
+  if (value === null) return String(record[field] ?? '').trim() || '미기재';
+  if (definition.type === 'text') return value;
+  if (field === 'viscosity') return viscosityDisplay(record);
+  return `${formatViscosity(value)}${definition.unit ? ` ${definition.unit}` : ''}`;
+}
+function draftCondition() {
+  const field = $('condition-field').value, definition = CONDITION_FIELDS.find(item => item.field === field);
+  if (!$('condition-limit').checked) return {field, mode: 'all'};
+  return definition?.type === 'number' ? {field, mode: 'range', center: $('condition-center').value, tolerance: $('condition-tolerance').value}
+    : {field, mode: 'value', value: $('condition-value').value};
+}
+function updateConditionPreview() {
+  const filter = draftCondition(), error = validateConditionFilter(filter);
+  $('condition-error').hidden = true;
+  const limited = $('condition-limit').checked;
+  for (const id of ['condition-center', 'condition-tolerance', 'condition-value']) $(id).disabled = !limited;
+  $('condition-preview').textContent = error || `적용하면 볼 기록: ${describeConditionFilter(filter)}`;
+}
+function fillConditionDraft() {
+  const definition = CONDITION_FIELDS.find(item => item.field === $('condition-field').value);
+  if (!definition) return;
+  $('condition-number-fields').hidden = definition.type !== 'number'; $('condition-text-fields').hidden = definition.type !== 'text';
+  $('condition-unit').textContent = definition.unit;
+  if (definition.type === 'number') {
+    $('condition-center').value = definition.field === 'manufacturingTemperature' ? 45 : conditionValue(records[0] ?? {}, definition.field) ?? 0;
+    $('condition-tolerance').value = ({mixingRpm: 30, rpm: 0, concentration: 0.05, viscosity: 100, sampleVolume: 10})[definition.field] ?? 2;
+  } else {
+    const select = $('condition-value'); select.replaceChildren();
+    const values = [...new Set(records.map(record => String(record[definition.field] ?? '')))];
+    for (const value of values.sort((a,b) => a.localeCompare(b,'ko-KR'))) {
+      const option = element('option', '', value.trim() ? value : '미기재'); option.value = value; select.append(option);
+    }
+  }
+  updateConditionPreview();
+}
+function prepareConditionControls() {
+  const select = $('condition-field'); select.replaceChildren();
+  for (const [type, name] of [['number','숫자로 기록하는 항목'],['text','종류·상태로 기록하는 항목']]) {
+    const group = element('optgroup'); group.label = name;
+    for (const definition of CONDITION_FIELDS.filter(item => item.type === type)) {
+      const option = element('option', '', definition.label); option.value = definition.field; group.append(option);
+    }
+    select.append(group);
+  }
+  select.value = 'manufacturingTemperature'; $('condition-limit').checked = true; fillConditionDraft();
+}
+function updateConditionStatus() {
+  $('condition-summary').textContent = describeConditionFilter(activeCondition);
+  $('clear-condition').disabled = !activeCondition;
+  $('chart-axis-controls').hidden = !activeCondition;
+  if (activeCondition) $('chart-axis').querySelector('[value="condition"]').textContent = CONDITION_FIELDS.find(item => item.field === activeCondition.field).label;
+}
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
@@ -762,7 +900,7 @@ function loadRecords(next, name, key) {
   selectedId = records[0]?.measurementId ?? null;
   $('source-name').textContent = name;
   $('source-description').textContent = key === 'demo-20261002' ? '270개 배치 × 4회 측정 · 모든 수치는 합성된 가상 값입니다.' : '업로드 파일을 브라우저에서 검토합니다. 원본 파일은 수정하지 않습니다.';
-  resetFilters(); recalculate();
+  prepareConditionControls(); resetFilters(); recalculate();
 }
 function recalculate() {
   reviews = new Map(records.map(record => [record.measurementId, reviewRecord(record, criteria)]));
@@ -777,6 +915,8 @@ function recalculate() {
 }
 function resetFilters() {
   $('search').value = ''; $('status-filter').value = 'all'; $('category-filter').value = 'all'; page = 0;
+  activeCondition = null; $('chart-axis').value = 'batch'; updateConditionStatus();
+  $('condition-error').hidden = true;
 }
 function applyFilters() {
   const query = $('search').value.trim().toLowerCase();
@@ -785,7 +925,8 @@ function applyFilters() {
     const review = reviews.get(record.measurementId);
     return (!query || [record.batchId, record.measurementId, record.sampleId].some(value => String(value ?? '').toLowerCase().includes(query)))
       && (status === 'all' || (status === 'pass' ? !review.issues.length : !!review.issues.length))
-      && (category === 'all' || review.categories.includes(category));
+      && (category === 'all' || review.categories.includes(category))
+      && matchesConditionFilter(record, activeCondition);
   });
   page = Math.min(page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
   if (!filtered.some(record => record.measurementId === selectedId)) selectedId = filtered[0]?.measurementId ?? null;
@@ -817,6 +958,10 @@ function renderRows() {
     selectLabel.append(checkbox); selectCell.append(selectLabel);
     const name = element('td'), button = element('button', 'record-link', record.batchId);
     button.append(element('span', '', `${record.measurementId} · ${record.repeat || '?'}회차`));
+    if (activeCondition) {
+      const definition = CONDITION_FIELDS.find(item => item.field === activeCondition.field);
+      button.append(element('small', 'record-condition-value', `${definition.label.replace(/ \([^)]+\)$/, '')}: ${conditionDisplay(record, definition.field)}`));
+    }
     button.setAttribute('aria-label', `${record.measurementId} 상세 기록`);
     button.setAttribute('aria-pressed', String(record.measurementId === selectedId));
     button.addEventListener('click', () => select(record.measurementId));
@@ -1177,19 +1322,45 @@ function svgElement(tag, attrs = {}, text) {
 function renderChart() {
   const graph = $('chart'); graph.replaceChildren();
   const onlyComparable = $('comparable-only').checked;
+  const condition = activeCondition && $('chart-axis').value === 'condition' ? activeCondition : null;
+  const definition = condition && CONDITION_FIELDS.find(item => item.field === condition.field);
+  $('chart-title').textContent = condition ? '조건별 점도 기록' : '배치별 점도 기록';
+  $('chart-condition-hint').hidden = !condition;
   const points = filtered.filter(record => {
-    const review = reviews.get(record.measurementId); return review.viscosity !== null && (!onlyComparable || review.comparable);
+    const review = reviews.get(record.measurementId);
+    return review.viscosity !== null && (!onlyComparable || review.comparable) && (!condition || conditionValue(record, condition.field) !== null);
   });
   const batchIds = [...new Set(filtered.map(record => record.batchId))];
-  $('chart-note').textContent = `${points.length.toLocaleString('ko-KR')}개 개별 값 · 평균으로 합치지 않음`;
-  if (!points.length) { graph.append(element('p', 'empty-detail', '표시할 점도 기록이 없습니다. 필터나 비교 조건 설정을 확인하세요.')); return; }
+  const conditionValues = condition ? [...new Set(points.map(record => conditionValue(record, condition.field)))] : [];
+  $('chart-note').textContent = `${points.length.toLocaleString('ko-KR')}개 개별 값 · 목록 ${filtered.length.toLocaleString('ko-KR')}건 · 평균으로 합치지 않음`;
+  if (condition) $('chart-condition-hint').textContent = `가로축: ${definition.label} · 세로축: 점도 (mPa·s). 가상 기록의 분포이며, 다른 조건도 함께 확인하세요.${conditionValues.length === 1 ? ` 현재 표시된 ${definition.label} 기록값은 모두 ${conditionDisplay(points[0], condition.field)}입니다.` : ''}`;
+  if (!points.length) {
+    graph.append(element('p', 'empty-detail', `표시할 점도 기록이 없습니다.${onlyComparable ? ' 「비교 조건이 맞는 값만」을 해제해 다른 기록도 살펴보세요.' : ' 선택한 항목과 점도에 유효한 기록값이 있는지 확인하세요.'}`)); return;
+  }
   const width = Math.max(280, graph.clientWidth), height = graph.clientHeight, left = 50, right = 18, top = 15, bottom = 33;
   const values = points.map(record => reviews.get(record.measurementId).viscosity);
   const minValue = Math.min(criteria.viscosityMin, ...values), maxValue = Math.max(criteria.viscosityMax, ...values);
   const padding = Math.max(100, (maxValue - minValue) * 0.18), low = Math.max(0, minValue - padding), high = maxValue + padding;
   const y = value => top + (high - value) / (high - low) * (height - top - bottom);
-  const x = index => left + (index + 0.5) / batchIds.length * (width - left - right);
-  const svg = svgElement('svg', {viewBox: `0 0 ${width} ${height}`, role: 'group', 'aria-label': `${batchIds.length}개 배치의 개별 점도 ${points.length}건. 가로축은 배치 순서, 세로축은 점도 mPa·s. 점선은 가상 규격 상한과 하한.`, 'aria-describedby': 'chart-hint'});
+  const batchIndex = new Map(batchIds.map((id, i) => [id, i]));
+  let xForRecord, xTicks;
+  if (definition?.type === 'number') {
+    const observedLow = Math.min(...conditionValues), observedHigh = Math.max(...conditionValues);
+    let axisLow = condition.mode === 'range' ? Number(condition.center) - Number(condition.tolerance) : observedLow;
+    let axisHigh = condition.mode === 'range' ? Number(condition.center) + Number(condition.tolerance) : observedHigh;
+    if (axisLow === axisHigh) { const padding = Math.max(1, Math.abs(axisLow) * 0.05); axisLow -= padding; axisHigh += padding; }
+    const x = value => left + (value - axisLow) / (axisHigh - axisLow) * (width - left - right);
+    xForRecord = record => x(conditionValue(record, condition.field));
+    const tickValues = conditionValues.length === 1 ? [observedLow] : [axisLow, axisLow + (axisHigh-axisLow)/2, axisHigh];
+    xTicks = tickValues.map(value => [x(value), `${Number(value.toPrecision(12)).toLocaleString('ko-KR', {maximumFractionDigits: 12})}${definition.unit ? ` ${definition.unit}` : ''}`]);
+  } else {
+    const labels = condition ? conditionValues.sort((a,b) => a.localeCompare(b,'ko-KR')) : batchIds;
+    const index = condition ? new Map(labels.map((value, i) => [value, i])) : batchIndex;
+    const x = value => left + (value + 0.5) / labels.length * (width - left - right);
+    xForRecord = record => x(index.get(condition ? conditionValue(record, condition.field) : record.batchId));
+    xTicks = [...new Set([0, Math.floor((labels.length-1)/2), labels.length-1])].map(i => [x(i), String(labels[i])]);
+  }
+  const svg = svgElement('svg', {viewBox: `0 0 ${width} ${height}`, role: 'group', 'aria-label': `${batchIds.length}개 배치의 개별 점도 ${points.length}건. 가로축은 ${definition?.label ?? '배치 순서'}, 세로축은 점도 mPa·s. 점선은 가상 규격 상한과 하한.`, 'aria-describedby': condition ? 'chart-hint chart-condition-hint' : 'chart-hint'});
   svg.append(svgElement('rect', {x: left, y: y(criteria.viscosityMax), width: width-left-right, height: y(criteria.viscosityMin)-y(criteria.viscosityMax), fill:'#eff6ec'}));
   for (let i = 0; i <= 3; i++) {
     const value = low + (high-low) * i / 3, ypos = y(value);
@@ -1200,18 +1371,20 @@ function renderChart() {
     svg.append(svgElement('line', {x1:left, x2:width-right, y1:y(value), y2:y(value), stroke:'#b8cbb1', 'stroke-dasharray':'4 4'}));
     svg.append(svgElement('text', {x:width-right-2, y:y(value)-5, 'text-anchor':'end', fill:'#93a687','font-size':9}, `${label} ${format(value)}`));
   }
-  const batchIndex = new Map(batchIds.map((id, i) => [id, i]));
   for (const record of points) {
     const review = reviews.get(record.measurementId);
-    const circle = svgElement('circle', {cx:x(batchIndex.get(record.batchId)), cy:y(review.viscosity), r:points.length > 500 ? 2 : 3, fill:review.numericStatus === '수치상 범위 외' ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3', class:'chart-point', 'data-measurement-id':record.measurementId, role:'button', tabindex:0, 'aria-label':`${record.measurementId} · ${viscosityDisplay(record)} · 상세 기록 열기`});
+    const conditionDescription = condition ? `${definition.label} ${conditionDisplay(record, condition.field)} / ` : '';
+    const circle = svgElement('circle', {cx:xForRecord(record), cy:y(review.viscosity), r:points.length > 500 ? 2 : 3, fill:review.numericStatus === '수치상 범위 외' ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3', class:'chart-point', 'data-measurement-id':record.measurementId, role:'button', tabindex:0, 'aria-label':`${record.measurementId} · ${conditionDescription}${viscosityDisplay(record)} · 상세 기록 열기`});
     circle.addEventListener('click', () => openChartRecord(record.measurementId));
     circle.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openChartRecord(record.measurementId); }
     });
-    circle.append(svgElement('title', {}, `${record.measurementId}: ${viscosityDisplay(record)} / ${review.conclusion}`)); svg.append(circle);
+    circle.append(svgElement('title', {}, `${record.measurementId}: ${conditionDescription}${viscosityDisplay(record)} / ${review.conclusion}`)); svg.append(circle);
   }
-  const ticks = [...new Set([0, Math.floor((batchIds.length - 1)/2), batchIds.length-1])];
-  for (const index of ticks) svg.append(svgElement('text', {x:x(index), y:height-8, 'text-anchor':'middle', fill:'#8c9b86', 'font-size':10}, batchIds[index]));
+  for (const [x, label] of xTicks) {
+    const tick = svgElement('text', {x, y:height-8, 'text-anchor':'middle', fill:'#8c9b86', 'font-size':10}, label.length > 18 ? label.slice(0,17) + '…' : label);
+    tick.append(svgElement('title', {}, label)); svg.append(tick);
+  }
   graph.append(svg); updateChartSelection();
 }
 
@@ -1254,6 +1427,22 @@ $('search').addEventListener('input', () => { page = 0; applyFilters(); });
 for (const id of ['status-filter', 'category-filter']) $(id).addEventListener('change', () => { page = 0; applyFilters(); });
 $('reset-filter').addEventListener('click', () => { resetFilters(); applyFilters(); });
 $('comparable-only').addEventListener('change', renderChart);
+$('condition-field').addEventListener('change', fillConditionDraft);
+for (const id of ['condition-center', 'condition-tolerance', 'condition-value']) $(id).addEventListener('input', updateConditionPreview);
+$('condition-limit').addEventListener('change', updateConditionPreview);
+$('condition-form').addEventListener('submit', event => {
+  event.preventDefault();
+  const filter = draftCondition(), error = validateConditionFilter(filter);
+  $('condition-error').hidden = !error;
+  if (error) { $('condition-error').textContent = error; return; }
+  activeCondition = filter; $('chart-axis').value = 'condition'; page = 0;
+  updateConditionStatus(); applyFilters();
+});
+$('clear-condition').addEventListener('click', () => {
+  activeCondition = null; $('chart-axis').value = 'batch'; $('condition-error').hidden = true; page = 0;
+  updateConditionStatus(); applyFilters();
+});
+$('chart-axis').addEventListener('change', renderChart);
 let resizeTimer;
 window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(renderChart, 100); });
 $('previous-page').addEventListener('click', () => { page--; renderRows(); });
@@ -1275,7 +1464,7 @@ $('reason-category-form').addEventListener('submit', event => {
   const target = reasonCategoryTarget, record = target && records.find(record => record.measurementId === target.measurementId);
   const task = record && followUpProgress(record, criteria, checklists).find(task => task.id === target.taskId && task.status === 'unavailable');
   if (task) {
-    checklists[record.measurementId].outcomes[task.id] = {status: 'unavailable', reason: task.reason, reasonCategory: name};
+    checklists[record.measurementId].outcomes[task.id] = {status: 'unavailable', reason: task.reason, reasonCategory: name, completionNote: task.completionNote};
     store(`poly-checklists-${datasetKey}`, checklists); updateUnavailableRecord(record);
   }
   renderDetail(); renderReasonCategoryManager();
@@ -1337,7 +1526,7 @@ function exportReport() {
   const targetRecords = reportRecords();
   if (!targetRecords.length) return;
   const plain = reportFormat === 'txt';
-  const scope = $('report-scope').value === 'selected' ? `체크한 기록 ${targetRecords.length}건 (검색·필터 밖의 선택 포함)` : `현재 검색·필터 결과 ${targetRecords.length}건`;
+  const scope = $('report-scope').value === 'selected' ? `체크한 기록 ${targetRecords.length}건 (검색·필터 밖의 선택 포함)` : `현재 검색·필터 결과 ${targetRecords.length}건${activeCondition ? ` · ${describeConditionFilter(activeCondition)}` : ''}`;
   const report = (plain ? reportText : reportMarkdown)(targetRecords, criteria, notes, source, undefined, checklists, scope);
   // UTF-8 BOM과 CRLF로 Windows 메모장에서도 한글과 줄바꿈을 읽을 수 있게 한다.
   download(plain ? '\uFEFF' + report.replaceAll('\n', '\r\n') : report,

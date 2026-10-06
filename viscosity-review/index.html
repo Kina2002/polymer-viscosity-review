@@ -55,7 +55,7 @@
     </section>
     <p id="message" role="status" aria-live="polite" class="message" hidden></p>
     <section class="chart-grid">
-      <div class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow muted">BATCH OVERVIEW</p><h2>배치별 점도 기록</h2></div><label class="check-label"><input type="checkbox" id="comparable-only" checked> 비교 조건이 맞는 값만</label></div><div id="chart" class="chart" aria-live="polite"></div><div class="chart-footer"><span><i class="legend-dot green-dot"></i> 수치상 범위 내 <i class="legend-dot amber-dot"></i> 수치상 범위 외</span><span id="chart-note">개별 측정값 · 평균으로 합치지 않음</span></div><p id="chart-hint" class="chart-hint">점을 누르면 해당 측정 기록으로 이동해요.</p></div>
+      <div class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow muted">MEASUREMENT OVERVIEW</p><h2 id="chart-title">배치별 점도 기록</h2></div><label class="check-label"><input type="checkbox" id="comparable-only" checked> 비교 조건이 맞는 값만</label></div><label id="chart-axis-controls" class="chart-axis-label" hidden>그래프 가로축<select id="chart-axis"><option value="batch">배치 순서</option><option value="condition">선택한 조건</option></select></label><div id="chart" class="chart" aria-live="polite"></div><div class="chart-footer"><span><i class="legend-dot green-dot"></i> 수치상 범위 내 <i class="legend-dot amber-dot"></i> 수치상 범위 외</span><span id="chart-note">개별 측정값 · 평균으로 합치지 않음</span></div><p id="chart-hint" class="chart-hint">점을 누르면 해당 측정 기록으로 이동해요.</p><p id="chart-condition-hint" class="chart-hint" hidden></p></div>
       <div class="panel findings-panel"><p class="eyebrow muted">REVIEW SIGNALS</p><h2>확인할 기록</h2><p class="subtle">범주를 눌러 해당 기록을 살펴보세요.</p><div id="category-counts"></div><p class="small-note">한 측정에 여러 항목이 표시될 수 있어요.<br>조건 차이는 원인 확정이나 불량 판정이 아닙니다.</p></div>
     </section>
     <details id="unavailable-summary" class="panel unavailable-summary">
@@ -72,6 +72,21 @@
     <section id="records" class="record-section" aria-labelledby="records-title">
       <div class="section-heading"><div><p class="eyebrow muted">MEASUREMENT RECORDS</p><h2 id="records-title">측정 기록</h2></div><span id="filtered-count" class="count-label"></span></div>
       <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="배치·측정·시료 번호 검색" aria-label="배치 측정 시료 번호 검색"></label><label class="filter-label">검토 상태<select id="status-filter"><option value="all">전체 상태</option><option value="pass">기준 충족</option><option value="review">검토 필요</option></select></label><label class="filter-label">확인 항목<select id="category-filter"><option value="all">전체 항목</option><option value="missing">기록 누락</option><option value="data">입력 확인</option><option value="manufacturing">제조 조건 차이</option><option value="measurement">측정 조건 차이</option><option value="specification">점도 규격 이탈</option></select></label><button id="reset-filter" class="text-button">초기화</button></div>
+      <details id="condition-explorer" class="condition-explorer">
+        <summary><strong>조건으로 골라보기</strong><span id="condition-summary">조건 미적용</span></summary>
+        <form id="condition-form" novalidate>
+          <p class="condition-intro">보고 싶은 항목을 골라 기록을 좁혀보세요. 검색·검토 필터와 함께 적용되며, 검토 기준은 바뀌지 않아요.</p>
+          <label class="condition-field-label">보고 싶은 항목<select id="condition-field"></select></label>
+          <label class="condition-limit-label"><input id="condition-limit" type="checkbox" checked> 특정 범위나 값으로 좁히기</label>
+          <div id="condition-number-fields" class="condition-number-fields">
+            <label>중심값<input id="condition-center" type="number" step="any" value="45"></label><span class="condition-plusminus" aria-hidden="true">±</span><label>범위<input id="condition-tolerance" type="number" step="any" min="0" value="2"></label><span id="condition-unit"></span>
+          </div>
+          <label id="condition-text-fields" class="condition-field-label" hidden>보고 싶은 기록값<select id="condition-value"></select></label>
+          <p id="condition-preview" class="condition-preview" aria-live="polite"></p>
+          <p id="condition-error" class="form-error" role="alert" hidden></p>
+          <div class="condition-actions"><button type="submit" class="button primary">조건 적용</button><button id="clear-condition" type="button" class="button secondary" disabled>조건 해제</button></div>
+        </form>
+      </details>
       <div class="report-selection-toolbar"><strong id="report-selection-count" role="status" aria-live="polite">보고서에 담을 기록 0건 체크</strong><button id="clear-report-selection" type="button" class="text-button" disabled>선택 해제</button><p>앞의 체크박스로 골라 담으세요. 페이지나 검색을 바꿔도 선택은 유지돼요.</p></div>
       <div class="record-grid">
         <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">체크박스로 보고서에 담을 기록을 고르세요. 표 머리의 체크박스는 현재 페이지 전체를 선택합니다. 측정 번호를 누르면 상세 정보를 확인할 수 있습니다.</caption><thead><tr><th scope="col" class="report-select-cell"><label><input id="select-visible-records" type="checkbox" aria-label="현재 페이지 기록 전체 선택"><span class="sr-only">보고서 선택</span></label></th><th scope="col">배치 / 측정</th><th scope="col" class="viscosity-heading">점도<small>기록값 · 환산값</small><small class="unit-conversion-note">1 cP (= 1 mPa·s)</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>

@@ -51,6 +51,50 @@ export function numeric(value) {
 }
 const close = (a, b, tolerance = 0) => Math.abs(a - b) <= tolerance + 1e-9;
 
+export const CONDITION_FIELDS = FIELDS.filter(([field]) => !['batchId', 'measurementId', 'sampleId', 'measuredAt', 'sourceNote'].includes(field))
+  .map(([field, label]) => ({field, label, type: NUMERIC_FIELDS.has(field) ? 'number' : 'text',
+    unit: field === 'viscosity' ? 'mPa·s' : label.match(/\(([^)]+)\)$/)?.[1] ?? ''}));
+export function conditionValue(record, field) {
+  const definition = CONDITION_FIELDS.find(item => item.field === field);
+  if (!definition) return null;
+  if (definition.type === 'text') return missing(record[field]) ? null : String(record[field]);
+  const value = numeric(record[field]);
+  if (field === 'viscosity' && (!['mPa·s', 'cP'].includes(record.unit) || value < 0)) return null;
+  return value;
+}
+export function validateConditionFilter(filter) {
+  if (filter === null) return null;
+  const definition = CONDITION_FIELDS.find(item => item.field === filter?.field);
+  if (!definition) return '보고 싶은 항목을 선택하세요.';
+  if (filter.mode === 'all') return null;
+  if (definition.type === 'text') return filter.mode === 'value' && typeof filter.value === 'string' ? null : '보고 싶은 기록값을 선택하세요.';
+  const center = numeric(filter.center), tolerance = numeric(filter.tolerance);
+  if (filter.mode !== 'range' || center === null || tolerance === null) return '중심값과 ± 범위를 숫자로 입력하세요.';
+  if (tolerance < 0) return '± 범위는 0 이상이어야 합니다.';
+  if (numeric(center - tolerance) === null || numeric(center + tolerance) === null) return '범위가 너무 큽니다. 더 작은 값을 입력하세요.';
+  return null;
+}
+export function matchesConditionFilter(record, filter) {
+  if (filter === null) return true;
+  if (validateConditionFilter(filter)) return false;
+  if (filter.mode === 'all') return true;
+  if (filter.mode === 'value') return String(record[filter.field] ?? '') === filter.value;
+  const value = conditionValue(record, filter.field);
+  if (value === null) return false;
+  const center = Number(filter.center), tolerance = Number(filter.tolerance);
+  const epsilon = Number.EPSILON * Math.max(1, Math.abs(value), Math.abs(center), tolerance) * 4;
+  return Math.abs(value - center) <= tolerance + epsilon;
+}
+export function describeConditionFilter(filter) {
+  if (!filter || validateConditionFilter(filter)) return '조건 미적용';
+  const label = LABELS[filter.field];
+  if (filter.mode === 'all') return `${label} · 전체 값`;
+  if (filter.mode === 'value') return `${label}: ${filter.value.trim() ? filter.value : '미기재'}`;
+  const center = Number(filter.center), tolerance = Number(filter.tolerance);
+  const display = value => value.toLocaleString('ko-KR', {maximumFractionDigits: 20});
+  return `${label}: ${display(center)} ± ${display(tolerance)} (${display(Number((center-tolerance).toPrecision(15)))}~${display(Number((center+tolerance).toPrecision(15)))})`;
+}
+
 export function validateCriteria(criteria) {
   const errors = [];
   for (const [key, value] of Object.entries(DEFAULT_CRITERIA)) {
