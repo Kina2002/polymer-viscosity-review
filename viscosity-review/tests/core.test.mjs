@@ -16,6 +16,27 @@ test('후속 질문: 정상은 비어 있고 누락·측정·규격·제조 차�
   assert.ok(tasks[3].question.includes('단정하지'));
   assert.ok(followUpPlan({...base, unit: 'Pa·s'})[0].question.includes('원본 표기'));
 });
+test('점도만 이탈: 조건 차이 없는 기록은 원인 판단 보류·추가 자료 안내, 다른 문제는 별도 확인', () => {
+  const record = data.find(record => record.measurementId === 'PA-008-M1');
+  const task = followUpPlan(record, C)[0];
+  assert.deepEqual(reviewRecord(record, C).categories, ['specification']);
+  assert.ok(task.question.includes('조건 차이는 발견되지 않았어요'));
+  assert.ok(task.question.includes('원인을 알 수 없어 추가 자료가 필요'));
+  assert.ok(task.question.includes('확인 불가'));
+  assert.equal(followUpProgress(record, C)[0].status, 'pending');
+  for (const changes of [{sampleTemperature: 28}, {manufacturingTemperature: 45}, {rpm: ''}, {measuredAt: '일시 오류'}]) {
+    const question = followUpPlan({...record, ...changes}, C).find(task => task.category === 'specification').question;
+    assert.equal(question.includes('조건 차이는 발견되지'), false);
+  }
+  // 수정된 질문을 예전의 완료 표시로 덮지 않는다. 다른 항목의 체크 규칙은 유지한다.
+  const oldSignature = JSON.parse(followUpSignature(record, C)); oldSignature.policy = 'POLY-A-follow-up-v1';
+  const oldChecks = {[record.measurementId]: {signature: JSON.stringify(oldSignature), checked: [task.id]}};
+  assert.equal(followUpProgress(record, C, oldChecks)[0].status, 'pending');
+  const temperatureRecord = {...base, sampleTemperature: 28};
+  assert.equal(JSON.parse(followUpSignature(temperatureRecord, C)).policy, 'POLY-A-follow-up-v1');
+  assert.ok(reportMarkdown([record], C).includes(task.question));
+  assert.ok(recordsCSV([record], C).includes('원인을 알 수 없어 추가 자료가 필요'));
+});
 test('후속 체크: 원본·기준 변경과 측정별 분리, 보고서와 CSV 보존, 판정 유지', () => {
   const record = {...base, sampleTemperature: 28};
   const checks = {[record.measurementId]: {signature: followUpSignature(record, C), checked: ['measurement:sampleTemperature', 'unknown']}};
