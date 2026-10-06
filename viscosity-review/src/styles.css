@@ -94,6 +94,7 @@
 .follow-up-explanation{margin-top:10px;padding:10px 12px;border-left:3px solid #b4cdb4;background:#f0f5ec;font-size:11px;line-height:1.8;color:#48634f}
 .follow-up-explanation p{margin:0}
 .follow-up-explanation p+p{margin-top:7px}
+.follow-up-effect{white-space:pre-line}
 .follow-up-explanation strong{display:block;font-weight:600;color:#365f47;margin-bottom:2px}
 .follow-up-source{display:inline-block;font-size:10px;line-height:1.7;color:#5d7964;margin-top:8px;text-underline-offset:2px;overflow-wrap:anywhere}
 .follow-up-check{display:flex;align-items:center;gap:7px;font-size:11px;color:#3c7050;margin-top:10px;cursor:pointer;min-height:28px}
