@@ -1,4 +1,4 @@
-import { DEFAULT_CRITERIA, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from './core.js';
+import { DEFAULT_CRITERIA, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from './core.js';
 
 const $ = id => document.getElementById(id);
 const format = value => numeric(value) === null ? '—' : Number(value).toLocaleString('ko-KR', {maximumFractionDigits: 2});
@@ -25,6 +25,15 @@ let criteria = {...(validateCriteria(savedCriteria).length ? DEFAULT_CRITERIA : 
 let records = [], reviews = new Map(), batchMap = new Map(), filtered = [], selectedId = null;
 let page = 0, datasetKey = 'demo-20261002', source = '합성 시연 데이터', notes = Object.create(null);
 let checklists = Object.create(null);
+const categoryStorageKey = 'poly-unavailable-categories-v1';
+const savedReasonCategories = stored(categoryStorageKey, null);
+let reasonCategories = [];
+for (const value of Array.isArray(savedReasonCategories) ? savedReasonCategories : DEFAULT_REASON_CATEGORIES) {
+  const name = reasonCategoryName(value);
+  if (!validateReasonCategory(name, reasonCategories)) reasonCategories.push(name);
+}
+let unavailableCache = [], unavailablePage = 0, reasonCategoryTarget = null;
+const REASON_PAGE_SIZE = 20;
 const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
 
@@ -50,6 +59,7 @@ function recalculate() {
   $('pass-count').textContent = pass.toLocaleString('ko-KR');
   $('review-count').textContent = (records.length - pass).toLocaleString('ko-KR');
   $('criteria-version').textContent = criteria.version;
+  unavailableCache = unavailableEntries(records, criteria, checklists); unavailablePage = 0; renderUnavailableSummary();
   renderCategoryCounts(); applyFilters();
 }
 function resetFilters() {
@@ -197,8 +207,8 @@ function renderFollowUps(record) {
   const save = () => {
     checklists[record.measurementId] = {signature: followUpSignature(record, criteria),
       checked: tasks.filter(task => task.status === 'done').map(task => task.id),
-      outcomes: Object.fromEntries(tasks.map(task => [task.id, {status: task.status, reason: task.status === 'unavailable' ? task.reason : ''}]))};
-    store(`poly-checklists-${datasetKey}`, checklists); update();
+      outcomes: Object.fromEntries(tasks.map(task => [task.id, {status: task.status, reason: task.status === 'unavailable' ? task.reason : '', reasonCategory: task.status === 'unavailable' ? task.reasonCategory : ''}]))};
+    store(`poly-checklists-${datasetKey}`, checklists); update(); updateUnavailableRecord(record);
   };
   update(); section.append(progress);
   const list = element('div', 'follow-up-list');
@@ -215,16 +225,27 @@ function renderFollowUps(record) {
     const badge = element('span', 'badge follow-up-status'); badge.setAttribute('role', 'status');
     const unavailable = element('button', 'follow-up-unavailable', '확인 불가'); unavailable.type = 'button';
     unavailable.setAttribute('aria-label', `${record.measurementId} ${task.label} 확인 불가`);
-    const reasonLabel = element('label', 'follow-up-reason-label', '확인 불가 이유');
+    const reasonFields = element('div', 'follow-up-reason-fields');
+    const categoryLabel = element('label', 'follow-up-reason-category-label', '확인 불가 이유 분류');
+    const categorySelect = element('select', 'follow-up-reason-category');
+    const unclassified = element('option', '', '미분류'); unclassified.value = ''; categorySelect.append(unclassified);
+    const options = [...new Set([...reasonCategories, ...(task.reasonCategory ? [task.reasonCategory] : [])])];
+    for (const name of options) { const option = element('option', '', name); option.value = name; categorySelect.append(option); }
+    categorySelect.value = task.reasonCategory;
+    categoryLabel.append(categorySelect);
+    const manage = element('button', 'text-button follow-up-manage-categories', '분류 추가·삭제'); manage.type = 'button';
+    manage.addEventListener('click', () => openReasonCategories({measurementId: record.measurementId, taskId: task.id}));
+    categorySelect.addEventListener('change', () => { task.reasonCategory = categorySelect.value; save(); });
+    const reasonLabel = element('label', 'follow-up-reason-label', '확인 불가 이유 메모');
     const reason = element('textarea', 'follow-up-reason'); reason.maxLength = 2000; reason.value = task.reason;
     reason.placeholder = '예: 원본 실험 기록에 측정 온도가 없어 확인할 수 없음'; reason.rows = 2;
-    reasonLabel.append(reason);
+    reasonLabel.append(reason); reasonFields.append(categoryLabel, manage, reasonLabel);
     const refresh = () => {
       card.dataset.status = task.status; checkbox.checked = task.status === 'done';
       badge.textContent = FOLLOW_UP_STATUS_LABELS[task.status];
       badge.classList.toggle('warning', task.status === 'unavailable'); badge.classList.toggle('muted-badge', task.status === 'pending');
       unavailable.setAttribute('aria-pressed', String(task.status === 'unavailable'));
-      reasonLabel.hidden = task.status !== 'unavailable';
+      reasonFields.hidden = task.status !== 'unavailable';
     };
     checkbox.addEventListener('change', () => {
       task.status = checkbox.checked ? 'done' : 'pending'; refresh(); save();
@@ -233,11 +254,79 @@ function renderFollowUps(record) {
     reason.addEventListener('input', () => { task.reason = reason.value; save(); });
     label.append(checkbox, document.createTextNode('자료 확인 완료'));
     const actions = element('div', 'follow-up-actions'); actions.append(unavailable, badge);
-    card.append(label, actions, reasonLabel); refresh(); list.append(card);
+    card.append(label, actions, reasonFields); refresh(); list.append(card);
   }
   if (!tasks.length) list.append(element('p', 'follow-up-empty', '규칙에서 추가 확인할 차이·누락을 찾지 못했어요. 별도로 확인한 내용은 검토 메모에 남기세요.'));
   section.append(list, element('p', 'follow-up-note', '확인 불가를 다시 누르면 미확인으로 돌아갑니다. 자료 확인 상태는 판정 변경이나 출하 승인이 아닙니다. 기준·원본 기록이 달라지면 이전 상태를 적용하지 않습니다. 상태·이유는 결과 CSV와 보고서에 포함됩니다.'));
   return section;
+}
+
+function updateUnavailableRecord(record) {
+  unavailableCache = unavailableCache.filter(task => task.measurementId !== record.measurementId).concat(unavailableEntries([record], criteria, checklists));
+  renderUnavailableSummary();
+}
+function renderUnavailableSummary() {
+  $('unavailable-count').textContent = `${unavailableCache.length}개 항목`;
+  const filter = $('unavailable-filter'), selected = filter.value;
+  const counts = new Map();
+  for (const task of unavailableCache) { const name = task.reasonCategory || '미분류'; counts.set(name, (counts.get(name) || 0) + 1); }
+  const all = element('option', '', `전체 분류 (${unavailableCache.length}개)`); all.value = ''; filter.replaceChildren(all);
+  const names = [...new Set([...reasonCategories, ...counts.keys(), '미분류'])].filter(name => counts.has(name));
+  for (const name of names) { const option = element('option', '', `${name} (${counts.get(name)}개)`); option.value = name; filter.append(option); }
+  filter.value = counts.has(selected) ? selected : '';
+  const entries = unavailableCache.filter(task => !filter.value || (task.reasonCategory || '미분류') === filter.value)
+    .sort((a, b) => (a.reasonCategory || '미분류').localeCompare(b.reasonCategory || '미분류', 'ko') || String(a.measurementId).localeCompare(String(b.measurementId), 'ko') || a.id.localeCompare(b.id));
+  const pages = Math.max(1, Math.ceil(entries.length / REASON_PAGE_SIZE));
+  unavailablePage = Math.max(0, Math.min(unavailablePage, pages - 1));
+  $('unavailable-page-label').textContent = `${entries.length}개 항목 · ${unavailablePage + 1} / ${pages} 페이지`;
+  $('unavailable-previous').disabled = unavailablePage === 0; $('unavailable-next').disabled = unavailablePage + 1 >= pages;
+  $('export-unavailable').disabled = entries.length === 0;
+  const list = $('unavailable-list'); list.replaceChildren();
+  if (!$('unavailable-summary').open) return;
+  let previousCategory = null;
+  for (const task of entries.slice(unavailablePage * REASON_PAGE_SIZE, (unavailablePage + 1) * REASON_PAGE_SIZE)) {
+    const category = task.reasonCategory || '미분류';
+    if (category !== previousCategory) { list.append(element('h3', 'unavailable-group-title', `${category} · ${counts.get(category)}개`)); previousCategory = category; }
+    const card = element('article', 'unavailable-entry'); card.dataset.measurement = task.measurementId;
+    card.append(element('h4', '', `${task.measurementId} · ${task.label}`), element('p', 'unavailable-entry-evidence', `배치 ${task.batchId} · 실험 기록: ${task.actual} / 기준: ${task.expected}`));
+    card.append(element('p', 'unavailable-entry-note', task.reason.trim() || '메모를 아직 남기지 않았어요.'));
+    const open = element('button', 'text-button unavailable-open-record', '측정 기록 열기'); open.type = 'button';
+    open.setAttribute('aria-label', `${task.measurementId} ${task.label} 측정 기록 열기`);
+    open.addEventListener('click', () => { resetFilters(); $('search').value = task.measurementId; applyFilters(); select(task.measurementId); $('detail').scrollIntoView({behavior: 'instant', block: 'start'}); });
+    card.append(open); list.append(card);
+  }
+  if (!entries.length) list.append(element('p', 'empty-detail', '확인 불가로 남긴 항목이 아직 없어요. 체크리스트에서 확인 불가를 선택하고 이유 분류와 메모를 남겨보세요.'));
+}
+function renderReasonCategoryManager() {
+  const list = $('reason-category-list'); list.replaceChildren();
+  for (const name of reasonCategories) {
+    const item = element('li'); item.append(element('span', '', name));
+    const remove = element('button', 'text-button', '삭제'); remove.type = 'button'; remove.setAttribute('aria-label', `${name} 분류 삭제`);
+    remove.addEventListener('click', () => deleteReasonCategory(name)); item.append(remove); list.append(item);
+  }
+  if (!reasonCategories.length) list.append(element('li', 'subtle', '저장된 분류가 없어요. 새 분류를 추가할 수 있어요.'));
+}
+function openReasonCategories(target = null) {
+  reasonCategoryTarget = target; $('reason-category-name').value = ''; $('reason-category-error').hidden = true;
+  renderReasonCategoryManager(); $('reason-category-dialog').showModal(); $('reason-category-name').focus();
+}
+function deleteReasonCategory(name) {
+  const next = reasonCategories.filter(category => category !== name);
+  if (!store(categoryStorageKey, next)) return;
+  reasonCategories = next;
+  // 분류는 모든 파일에서 공유한다. 다른 파일의 저장된 메모도 내용과 상태를 보존하며 미분류로 옮긴다.
+  const currentKey = `poly-checklists-${datasetKey}`;
+  let fullySaved = true;
+  try {
+    const keys = Array.from({length: localStorage.length}, (_, i) => localStorage.key(i)).filter(key => key?.startsWith('poly-checklists-') && key !== currentKey);
+    for (const key of keys) {
+      const saved = stored(key, null);
+      if (saved && typeof saved === 'object' && !Array.isArray(saved)) fullySaved = store(key, removeReasonCategory(saved, name)) && fullySaved;
+    }
+  } catch { fullySaved = false; }
+  checklists = removeReasonCategory(checklists, name); fullySaved = store(currentKey, checklists) && fullySaved;
+  unavailableCache = unavailableEntries(records, criteria, checklists); renderDetail(); renderUnavailableSummary(); renderReasonCategoryManager();
+  message(fullySaved ? `「${name}」 분류를 삭제했어요. 해당 메모는 미분류로 옮겼고 내용은 보존했어요.` : '분류는 삭제했지만 일부 파일의 저장 내용을 갱신하지 못했습니다. 기존 메모는 보존되어 있습니다.', !fullySaved);
 }
 function renderDetail() {
   const panel = $('detail'); panel.replaceChildren();
@@ -361,6 +450,31 @@ let resizeTimer;
 window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(renderChart, 100); });
 $('previous-page').addEventListener('click', () => { page--; renderRows(); });
 $('next-page').addEventListener('click', () => { page++; renderRows(); });
+$('unavailable-summary').addEventListener('toggle', renderUnavailableSummary);
+$('unavailable-filter').addEventListener('change', () => { unavailablePage = 0; renderUnavailableSummary(); });
+$('unavailable-previous').addEventListener('click', () => { unavailablePage--; renderUnavailableSummary(); });
+$('unavailable-next').addEventListener('click', () => { unavailablePage++; renderUnavailableSummary(); });
+$('manage-reason-categories').addEventListener('click', () => openReasonCategories());
+$('close-reason-categories').addEventListener('click', () => $('reason-category-dialog').close());
+$('reason-category-form').addEventListener('submit', event => {
+  event.preventDefault();
+  const name = reasonCategoryName($('reason-category-name').value), error = validateReasonCategory(name, reasonCategories);
+  $('reason-category-error').hidden = !error;
+  if (error) { $('reason-category-error').textContent = error; return; }
+  const next = [...reasonCategories, name];
+  if (!store(categoryStorageKey, next)) return;
+  reasonCategories = next;
+  const target = reasonCategoryTarget, record = target && records.find(record => record.measurementId === target.measurementId);
+  const task = record && followUpProgress(record, criteria, checklists).find(task => task.id === target.taskId && task.status === 'unavailable');
+  if (task) {
+    checklists[record.measurementId].outcomes[task.id] = {status: 'unavailable', reason: task.reason, reasonCategory: name};
+    store(`poly-checklists-${datasetKey}`, checklists); updateUnavailableRecord(record);
+  }
+  renderDetail(); renderReasonCategoryManager();
+  if (target) $('reason-category-dialog').close();
+  else { $('reason-category-name').value = ''; $('reason-category-name').focus(); }
+});
+$('export-unavailable').addEventListener('click', () => download(unavailableReasonCSV(records, criteria, checklists, $('unavailable-filter').value || null), '확인불가_이유별_메모.csv', 'text/csv;charset=utf-8'));
 for (const id of ['open-criteria', 'open-criteria-nav']) $(id).addEventListener('click', openCriteria);
 $('close-criteria').addEventListener('click', () => $('criteria-dialog').close());
 $('reset-criteria').addEventListener('click', () => { fillCriteria(DEFAULT_CRITERIA); $('criteria-error').hidden = true; });

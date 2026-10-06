@@ -222,6 +222,18 @@ export function followUpSignature(record, criteria) {
     record: FIELDS.map(([key]) => [key, record[key] ?? ''])});
 }
 export const FOLLOW_UP_STATUS_LABELS = Object.freeze({pending: '미확인', done: '자료 확인 완료', unavailable: '확인 불가'});
+export const DEFAULT_REASON_CATEGORIES = Object.freeze(['원본 기록 없음', '필요한 항목 미기록', '추가 자료 필요', '담당자 확인 대기', '기타']);
+export function reasonCategoryName(value) {
+  return typeof value === 'string' ? value.normalize('NFC').trim().replace(/\s+/g, ' ') : '';
+}
+export function validateReasonCategory(value, existing = []) {
+  const name = reasonCategoryName(value);
+  if (!name) return '분류 이름을 입력하세요.';
+  if (name.length > 40) return '분류 이름은 40글자 이내로 입력하세요.';
+  if (name === '미분류') return '미분류는 분류를 선택하지 않은 메모에 자동으로 사용됩니다.';
+  if (existing.some(value => reasonCategoryName(value).toLocaleLowerCase('ko-KR') === name.toLocaleLowerCase('ko-KR'))) return '이미 있는 분류 이름입니다.';
+  return null;
+}
 export function followUpProgress(record, criteria, checklists = {}) {
   const state = checklists[record.measurementId];
   const valid = state?.signature === followUpSignature(record, criteria);
@@ -231,8 +243,26 @@ export function followUpProgress(record, criteria, checklists = {}) {
     // 기존 체크만 저장한 기록은 확인 완료로 읽는다. 확인 불가와 동시에 완료될 수 없다.
     const status = Object.hasOwn(FOLLOW_UP_STATUS_LABELS, outcome?.status) ? outcome.status : checked.has(task.id) ? 'done' : 'pending';
     const reason = status === 'unavailable' && typeof outcome?.reason === 'string' ? outcome.reason.slice(0, 2000) : '';
-    return {...task, status, checked: status === 'done', reason};
+    const categoryName = reasonCategoryName(outcome?.reasonCategory);
+    const reasonCategory = status === 'unavailable' && categoryName.length <= 40 && categoryName !== '미분류' ? categoryName : '';
+    return {...task, status, checked: status === 'done', reason, reasonCategory};
   });
+}
+
+export function unavailableEntries(records, criteria, checklists = {}) {
+  return records.flatMap(record => followUpProgress(record, criteria, checklists)
+    .filter(task => task.status === 'unavailable')
+    .map(task => ({...task, measurementId: record.measurementId, batchId: record.batchId})));
+}
+export function removeReasonCategory(checklists, category) {
+  const name = reasonCategoryName(category);
+  if (!name) return checklists;
+  return Object.assign(Object.create(null), Object.fromEntries(Object.entries(checklists).map(([id, state]) => {
+    if (!state?.outcomes || typeof state.outcomes !== 'object' || Array.isArray(state.outcomes)) return [id, state];
+    const outcomes = Object.fromEntries(Object.entries(state.outcomes).map(([taskId, outcome]) => [taskId,
+      outcome && typeof outcome === 'object' && reasonCategoryName(outcome.reasonCategory) === name ? {...outcome, reasonCategory: ''} : outcome]));
+    return [id, {...state, outcomes}];
+  })));
 }
 
 export function parseCSV(text) {
@@ -292,10 +322,24 @@ export function recordsCSV(records, criteria, notes = {}, includeReview = true, 
   })].join('\r\n');
 }
 
+export function unavailableReasonCSV(records, criteria, checklists = {}, category = null) {
+  const entries = unavailableEntries(records, criteria, checklists).filter(task => category === null || (task.reasonCategory || '미분류') === category);
+  const headers = ['measurementId', 'batchId', 'field', 'reasonCategory', 'reason', 'criteriaVersion'];
+  return '\uFEFF' + [headers.map(value => csvCell(value, false)).join(','), ...entries.map(task =>
+    [task.measurementId, task.batchId, task.label, task.reasonCategory || '미분류', task.reason, criteria.version].map(value => csvCell(value, true)).join(','))].join('\r\n');
+}
+
 const md = value => String(value ?? '').replaceAll('\\', '\\\\').replaceAll('|', '\\|').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\r', '').replaceAll('\n', '<br>');
 export function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 데이터', date = new Date().toISOString(), checklists = {}) {
   const reviews = records.map(record => reviewRecord(record, criteria));
   const counts = Object.keys(CATEGORY_LABELS).map(key => `- ${CATEGORY_LABELS[key]}: ${reviews.filter(review => review.categories.includes(key)).length}건`);
+  const unavailable = unavailableEntries(records, criteria, checklists);
+  const reasonGroups = new Map();
+  for (const task of unavailable) {
+    const category = task.reasonCategory || '미분류';
+    if (!reasonGroups.has(category)) reasonGroups.set(category, []);
+    reasonGroups.get(category).push(task);
+  }
   return [
     '# 고분자 수용액 A — 점도 검토 보고서', '',
     '> 교육용 가상 기준에 따른 검토입니다. 실제 물성 예측, 원인 확정 또는 출하 승인 결과가 아닙니다.', '',
@@ -304,6 +348,8 @@ export function reportMarkdown(records, criteria, notes = {}, source = '합성 �
     '## 검토 요약', '', `- 대상 측정: ${records.length}건`, `- 대상 배치: ${new Set(records.map(record => record.batchId)).size}개`,
     `- 기준 충족: ${reviews.filter(review => !review.issues.length).length}건`, ...counts,
     '- 범주별 건수는 중복될 수 있습니다. 수치상 범위 내라도 비교 조건 확인이 필요할 수 있습니다.', '',
+    '## 확인 불가 이유별 모아보기', '', `- 확인 불가 항목: ${unavailable.length}개`, '',
+    ...[...reasonGroups].flatMap(([category, tasks]) => [`### ${md(category)} · ${tasks.length}개`, '', ...tasks.map(task => `- ${md(task.measurementId)} / ${md(task.label)}: ${md(task.reason.trim() || '메모 미기재')}`), '']),
     '## 측정별 결과', '', '| 배치 | 측정 | 점도 (mPa·s) | 검토 | 수치 비교 | 비교 조건 | 이유 | 메모 |', '|---|---|---:|---|---|---|---|---|',
     ...records.map((record, i) => {
       const result = reviews[i];
@@ -312,7 +358,7 @@ export function reportMarkdown(records, criteria, notes = {}, source = '합성 �
     '확인 상태는 사용자가 선택한 자료 확인 결과입니다. 확인 불가는 자료를 확인할 수 없었다는 뜻이며, 원인 확정·판정 변경·출하 승인을 뜻하지 않습니다.', '',
     ...records.flatMap(record => {
       const tasks = followUpProgress(record, criteria, checklists);
-      return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}. 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}${task.status === 'unavailable' ? ` 확인 불가 이유: ${md(task.reason.trim() || '미기재')}` : ''}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
+      return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}. 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}${task.status === 'unavailable' ? ` 확인 불가 이유 분류: ${md(task.reasonCategory || '미분류')}. 확인 불가 이유: ${md(task.reason.trim() || '미기재')}` : ''}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
     }), '## 원본 기록', '', '원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 현재 필터로 선택한 기록의 검토 결과입니다.', ''
   ].join('\n');
 }
