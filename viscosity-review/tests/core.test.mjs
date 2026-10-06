@@ -1,11 +1,39 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { DEFAULT_CRITERIA as C, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, reviewRecord, comparisonRows, followUpPlan, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from '../src/core.js';
+import { DEFAULT_CRITERIA as C, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, reviewRecord, comparisonRows, followUpPlan, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from '../src/core.js';
 
 const data = JSON.parse(await readFile(new URL('../data/demo-records.json', import.meta.url), 'utf8'));
 const expected = JSON.parse(await readFile(new URL('../data/expected-results.json', import.meta.url), 'utf8'));
 const base = data[0];
+test('TXT 보고서: 선택한 기록·읽기 쉬운 기준·확인 불가 분류와 이유·여러 줄 메모 보존', () => {
+  const record = data.find(record => record.measurementId === 'PA-007-M1');
+  const id = 'missing:sampleTemperature';
+  const checks = {[record.measurementId]: {signature: followUpSignature(record, C), outcomes: {
+    [id]: {status: 'unavailable', reasonCategory: '필요한 항목 미기록', reason: '온도 | 원본 <확인>\r\n자료 요청'}
+  }}};
+  const notes = {[record.measurementId]: '기록 확보 후 검토\r\n두 번째 줄'};
+  const report = reportText([record], C, notes, '업로드 파일.csv', '2026-10-06', checks);
+  for (const expected of ['대상 측정: 1건', '데이터 출처: 업로드 파일.csv', '적용 기준: DEMO-POLY-A-v1',
+    '점도: 1000~1500 mPa·s', '목표 측정 온도: 25 ± 0.5 ℃', '제조 교반 시간: 20 ± 2분',
+    '온도 평형 확인: 완료', '표준액 점검: 적합 기록 확인', 'PA-007-M1', '필요한 항목 미기록',
+    '상태: 확인 불가', '온도 | 원본 <확인>\n  자료 요청', '기록 확보 후 검토\n  두 번째 줄',
+    '수치 비교: 수치상 범위 내', '비교 조건: 확인 필요']) assert.ok(report.includes(expected), expected);
+  for (const unexpected of ['PA-008-M1', '```', '<br>', '&lt;', 'temperatureTolerance', '\r']) assert.equal(report.includes(unexpected), false);
+  const changed = reportText([record], {...C, version: '수정 기준', temperatureTolerance: 1}, notes, '업로드 파일.csv', '2026-10-06', checks);
+  assert.ok(changed.includes('적용 기준: 수정 기준')); assert.ok(changed.includes('목표 측정 온도: 25 ± 1 ℃'));
+  assert.ok(changed.includes('상태: 미확인')); assert.ok(changed.includes('확인 불가 항목: 0개'));
+  assert.equal(changed.includes('자료 요청'), false);
+});
+test('TXT 보고서: 0 값·빈 메모·완료 상태·빈 결과를 추정 없이 출력', () => {
+  const record = {...base, viscosity: 0};
+  const checks = {[record.measurementId]: {signature: followUpSignature(record, C), checked: ['specification:viscosity']}};
+  const report = reportText([record], C, {}, '테스트', '2026-10-06', checks);
+  assert.ok(report.includes('점도: 0 mPa·s')); assert.ok(report.includes('점도: 실제 0 / 기준'));
+  assert.ok(report.includes('상태: 자료 확인 완료')); assert.ok(report.includes('검토 메모:\n  미기재'));
+  const empty = reportText([], C, {}, '테스트', '2026-10-06');
+  assert.ok(empty.includes('대상 측정: 0건')); assert.equal(empty.includes('(1) 배치:'), false);
+});
 test('후속 질문: 정상은 비어 있고 누락·측정·규격·제조 차이의 근거와 순서 보존', () => {
   assert.deepEqual(followUpPlan(base), []);
   const record = {...base, sampleTemperature: 28, rpm: '', manufacturingTemperature: 45, viscosity: 1750};

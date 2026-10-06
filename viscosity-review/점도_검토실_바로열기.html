@@ -131,6 +131,31 @@
 .chart-point.selected,.chart-point:hover,.chart-point:focus-visible{stroke:var(--ink);stroke-width:2;opacity:1}
 .chart-point:hover,.chart-point:focus-visible{r:4px;outline:none}
 .detail-panel{scroll-margin-top:20px}
+.report-download-actions{display:flex;align-items:stretch;gap:1px;min-width:0}
+.report-download-actions>#export-txt{border-radius:6px 0 0 6px}
+.report-formats{position:relative;margin:0;padding:0;border:0}
+.report-formats>summary{list-style:none;min-height:44px;min-width:44px;height:100%;border-radius:0 6px 6px 0;cursor:pointer}
+.report-formats>summary::-webkit-details-marker{display:none}
+.report-formats>summary[aria-disabled=true]{opacity:.45;cursor:default}
+.report-formats>summary:focus-visible,.report-format-options button:focus-visible{outline:3px solid #7dbfa0;outline-offset:3px}
+.report-format-options{position:absolute;right:0;top:calc(100% + 7px);z-index:4;width:220px;max-width:calc(100vw - 30px);padding:8px;border:1px solid var(--border);border-radius:8px;background:white;box-shadow:0 5px 24px #153e4026}
+.report-format-options>p{font-size:11px;color:#708575;margin:7px 10px 9px}
+.report-format-options button{display:block;width:100%;text-align:left;padding:12px 10px;border:0;border-radius:5px;background:white;font-size:13px;line-height:1.6;color:var(--ink);min-height:44px}
+.report-format-options button:hover{background:#edf5ec}
+.report-format-options small{display:block;font-size:11px;color:#708575}
+.report-export-controls{display:flex;flex-direction:column;align-items:flex-end;gap:8px;max-width:100%;min-width:0}
+.actions{align-items:flex-end}
+.actions>.button{min-height:44px}
+.report-scope-label{font-size:11px;color:#54705a;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.report-scope-label select{max-width:100%;min-width:0;border:1px solid var(--border);border-radius:5px;background:white;color:var(--ink);padding:8px;font-size:12px}
+.report-selection-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px 15px;margin:0 0 13px;font-size:12px;color:#54705a;line-height:1.8}
+.report-selection-toolbar p{width:100%;font-size:11px;color:#708575}
+.report-select-cell{width:44px;padding:0 4px}
+.report-select-cell label{display:flex;align-items:center;justify-content:center;min-height:44px;min-width:36px;cursor:pointer}
+.report-select-cell input{accent-color:var(--green);width:17px;height:17px;margin:0}
+.table-panel th:not(.report-select-cell),.table-panel td:not(.report-select-cell){padding-left:9px;padding-right:9px}
+tr.report-selected{background:#edf5ec}
+@media(max-width:650px){.actions{grid-template-columns:repeat(3,minmax(0,1fr))}.report-export-controls{grid-column:1 / -1;justify-self:stretch}.report-scope-label{width:100%;justify-content:space-between}.report-download-actions>#export-txt{font-size:12px;min-height:44px;padding:11px 15px}.report-select-cell{padding:0 4px}.report-selection-toolbar{font-size:11px}}
 @media(prefers-reduced-motion:no-preference){button,.button,a{transition:background .15s ease,color .15s ease}.hero-sample svg{animation:appear .7s ease-out}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
 </style>
 
@@ -161,7 +186,23 @@
     </section>
     <section class="workspace-toolbar" aria-label="입력과 저장">
       <div class="source"><span class="file-icon" aria-hidden="true">▤</span><div><strong id="source-name">합성 시연 데이터</strong><small id="source-description">모든 수치는 검토 기능을 확인하기 위한 가상 값입니다.</small><a id="download-template" class="template-link" href="./data/demo-records.csv" download="점도_입력양식_1080건.csv">입력 양식 CSV 내려받기 ↗</a></div></div>
-      <div class="actions"><button id="load-demo" class="button quiet">시연 데이터</button><label class="button secondary" for="csv-file">CSV 불러오기</label><input id="csv-file" type="file" accept=".csv,text/csv" hidden><button id="export-csv" class="button secondary">결과 CSV</button><button id="export-report" class="button primary">보고서 저장 <span aria-hidden="true">↓</span></button></div>
+      <div class="actions">
+        <button id="load-demo" class="button quiet">시연 데이터</button><label class="button secondary" for="csv-file">CSV 불러오기</label><input id="csv-file" type="file" accept=".csv,text/csv" hidden><button id="export-csv" class="button secondary">결과 CSV</button>
+        <div class="report-export-controls">
+          <label class="report-scope-label" for="report-scope">보고서에 담을 기록<select id="report-scope"><option value="filtered">검색·필터 결과 0건</option><option value="selected">체크한 기록 0건</option></select></label>
+          <div class="report-download-actions">
+          <button id="export-txt" class="button primary" disabled>TXT 내려받기 <span aria-hidden="true">↓</span></button>
+          <details id="report-formats" class="report-formats">
+            <summary class="button primary" aria-label="보고서 형식 선택" aria-controls="report-format-options"><span aria-hidden="true">▾</span></summary>
+            <div id="report-format-options" class="report-format-options">
+              <p>보고서 형식 선택</p>
+              <button id="export-txt-menu" type="button" disabled>텍스트 (.txt)<small>메모장에서 보기</small></button>
+              <button id="export-report" type="button" disabled>Markdown (.md)<small>GitHub 문서로 보기</small></button>
+            </div>
+          </details>
+          </div>
+        </div>
+      </div>
     </section>
     <p id="message" role="status" aria-live="polite" class="message" hidden></p>
     <section class="chart-grid">
@@ -182,8 +223,9 @@
     <section id="records" class="record-section" aria-labelledby="records-title">
       <div class="section-heading"><div><p class="eyebrow muted">MEASUREMENT RECORDS</p><h2 id="records-title">측정 기록</h2></div><span id="filtered-count" class="count-label"></span></div>
       <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="배치·측정·시료 번호 검색" aria-label="배치 측정 시료 번호 검색"></label><label class="filter-label">검토 상태<select id="status-filter"><option value="all">전체 상태</option><option value="pass">기준 충족</option><option value="review">검토 필요</option></select></label><label class="filter-label">확인 항목<select id="category-filter"><option value="all">전체 항목</option><option value="missing">기록 누락</option><option value="data">입력 확인</option><option value="manufacturing">제조 조건 차이</option><option value="measurement">측정 조건 차이</option><option value="specification">점도 규격 이탈</option></select></label><button id="reset-filter" class="text-button">초기화</button></div>
+      <div class="report-selection-toolbar"><strong id="report-selection-count" role="status" aria-live="polite">보고서에 담을 기록 0건 체크</strong><button id="clear-report-selection" type="button" class="text-button" disabled>선택 해제</button><p>앞의 체크박스로 골라 담으세요. 페이지나 검색을 바꿔도 선택은 유지돼요.</p></div>
       <div class="record-grid">
-        <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">현재 조건에 해당하는 개별 측정 기록. 측정 번호를 눌러 상세 정보를 확인하세요.</caption><thead><tr><th scope="col">배치 / 측정</th><th scope="col">점도 <small>mPa·s</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>
+        <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">체크박스로 보고서에 담을 기록을 고르세요. 표 머리의 체크박스는 현재 페이지 전체를 선택합니다. 측정 번호를 누르면 상세 정보를 확인할 수 있습니다.</caption><thead><tr><th scope="col" class="report-select-cell"><label><input id="select-visible-records" type="checkbox" aria-label="현재 페이지 기록 전체 선택"><span class="sr-only">보고서 선택</span></label></th><th scope="col">배치 / 측정</th><th scope="col">점도 <small>mPa·s</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>
         <aside id="detail" class="panel detail-panel" tabindex="-1" aria-label="선택한 측정의 상세 기록"><p class="empty-detail">측정 기록을 선택하세요.</p></aside>
       </div>
     </section>
@@ -533,8 +575,74 @@ function unavailableReasonCSV(records, criteria, checklists = {}, category = nul
     [task.measurementId, task.batchId, task.label, task.reasonCategory || '미분류', task.reason, criteria.version].map(value => csvCell(value, true)).join(','))].join('\r\n');
 }
 
+function reportText(records, criteria, notes = {}, source = '합성 시연 데이터', date = new Date().toISOString(), checklists = {}, scope = '현재 검색·필터 결과') {
+  const reviews = records.map(record => reviewRecord(record, criteria));
+  const unavailable = unavailableEntries(records, criteria, checklists);
+  const groups = new Map();
+  for (const task of unavailable) {
+    const category = task.reasonCategory || '미분류';
+    if (!groups.has(category)) groups.set(category, []);
+    groups.get(category).push(task);
+  }
+  const text = value => String(value ?? '').replace(/\r\n?/g, '\n');
+  const indented = value => text(value).split('\n').map(line => `  ${line}`).join('\n');
+  const criteriaLines = [
+    `점도: ${criteria.viscosityMin}~${criteria.viscosityMax} mPa·s (경계 포함)`,
+    `목표 측정 온도: ${criteria.temperature} ± ${criteria.temperatureTolerance} ℃`,
+    `스핀들: ${criteria.spindle}`, `용기: ${criteria.vessel}`, `측정 속도: ${criteria.rpm} rpm`,
+    `시료량: ${criteria.volume} mL`, `결과를 읽은 시점: 회전 시작 후 ${criteria.elapsed}초`,
+    `토크: ${criteria.torqueMin}~${criteria.torqueMax}%`,
+    `제조 온도: ${criteria.manufacturingTemperature} ± ${criteria.manufacturingTolerance} ℃`,
+    `제조 교반 속도: ${criteria.mixingRpm} ± ${criteria.mixingRpmTolerance} rpm`,
+    `제조 교반 시간: ${criteria.mixingMinutes} ± ${criteria.mixingMinutesTolerance}분`,
+    `농도: ${criteria.concentration} ± ${criteria.concentrationTolerance} wt%`,
+    ...Object.entries(FIXED_REQUIREMENTS).map(([field, value]) => `${LABELS[field]}: ${value}`)
+  ];
+  const lines = [
+    '고분자 수용액 A — 점도 검토 보고서', '',
+    '교육용 가상 기준에 따른 검토입니다. 실제 물성 예측, 원인 확정 또는 출하 승인 결과가 아닙니다.', '',
+    `작성: ${date}`, `데이터 출처: ${source}`, `적용 기준: ${criteria.version}`, `보고서 범위: ${scope}`, '',
+    '[적용 기준]', ...criteriaLines, '',
+    '[검토 요약]', `대상 측정: ${records.length}건`, `대상 배치: ${new Set(records.map(record => record.batchId)).size}개`,
+    `기준 충족: ${reviews.filter(review => !review.issues.length).length}건`,
+    ...Object.entries(CATEGORY_LABELS).map(([key, label]) => `${label}: ${reviews.filter(review => review.categories.includes(key)).length}건`),
+    '범주별 건수는 중복될 수 있습니다. 수치상 범위 내라도 비교 조건 확인이 필요할 수 있습니다.', '',
+    '[확인 불가 이유별 모아보기]', `확인 불가 항목: ${unavailable.length}개`, '',
+    ...[...groups].flatMap(([category, tasks]) => [`${category} (${tasks.length}개)`, ...tasks.flatMap(task => [
+      `  측정: ${task.measurementId} / 항목: ${task.label}`, indented(task.reason.trim() || '메모 미기재')
+    ]), '']),
+    '[측정별 결과]', ''
+  ];
+  for (const [index, record] of records.entries()) {
+    const result = reviews[index];
+    lines.push(
+      `(${index + 1}) 배치: ${record.batchId} / 측정: ${record.measurementId}`,
+      `시료: ${record.sampleId} / 반복 회차: ${record.repeat} / 측정 일시: ${record.measuredAt}`,
+      `점도: ${result.viscosity === null ? '비교 불가' : `${result.viscosity} mPa·s`}`,
+      `검토 결과: ${result.status}`, `수치 비교: ${result.numericStatus}`,
+      `비교 조건: ${result.comparable ? '확인됨' : '확인 필요'}`, '검토 이유:',
+      ...result.issues.map(issue => `  ${LABELS[issue.field]}: 실제 ${missing(issue.actual) ? '미기재' : issue.actual} / 기준 ${issue.expected} / ${issue.reason}`),
+      ...(result.issues.length ? [] : ['  가상 기준과 일치']),
+      '검토 메모:', indented(text(notes[record.measurementId]).trim() ? notes[record.measurementId] : '미기재'), '',
+      '추가 확인 질문과 체크리스트:'
+    );
+    const tasks = followUpProgress(record, criteria, checklists);
+    for (const task of tasks) {
+      lines.push(`  항목: ${task.label} / 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}`,
+        `  기록: ${task.actual} / 기준: ${task.expected}`, indented(task.question));
+      if (task.status === 'unavailable') lines.push(`  확인 불가 이유 분류: ${task.reasonCategory || '미분류'}`,
+        '  확인 불가 이유:', indented(task.reason.trim() || '미기재'));
+    }
+    if (!tasks.length) lines.push('  규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.');
+    lines.push('');
+  }
+  lines.push('[원본 기록]', `이 보고서는 ${scope}의 검토 결과입니다. 원본 CSV와 함께 보관하세요.`,
+    '자료 확인 상태는 원인 확정, 판정 변경 또는 출하 승인을 뜻하지 않습니다.');
+  return text(lines.join('\n'));
+}
+
 const md = value => String(value ?? '').replaceAll('\\', '\\\\').replaceAll('|', '\\|').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\r', '').replaceAll('\n', '<br>');
-function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 데이터', date = new Date().toISOString(), checklists = {}) {
+function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 데이터', date = new Date().toISOString(), checklists = {}, scope = '현재 검색·필터 결과') {
   const reviews = records.map(record => reviewRecord(record, criteria));
   const counts = Object.keys(CATEGORY_LABELS).map(key => `- ${CATEGORY_LABELS[key]}: ${reviews.filter(review => review.categories.includes(key)).length}건`);
   const unavailable = unavailableEntries(records, criteria, checklists);
@@ -547,7 +655,7 @@ function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 �
   return [
     '# 고분자 수용액 A — 점도 검토 보고서', '',
     '> 교육용 가상 기준에 따른 검토입니다. 실제 물성 예측, 원인 확정 또는 출하 승인 결과가 아닙니다.', '',
-    `작성: ${md(date)}`, `데이터 출처: ${md(source)}`, `적용 기준: ${md(criteria.version)}`, '',
+    `작성: ${md(date)}`, `데이터 출처: ${md(source)}`, `적용 기준: ${md(criteria.version)}`, `보고서 범위: ${md(scope)}`, '',
     '## 적용 기준 전체', '', '```json', JSON.stringify(criteria, null, 2).replaceAll('```', '\\u0060\\u0060\\u0060'), '```', '',
     '## 검토 요약', '', `- 대상 측정: ${records.length}건`, `- 대상 배치: ${new Set(records.map(record => record.batchId)).size}개`,
     `- 기준 충족: ${reviews.filter(review => !review.issues.length).length}건`, ...counts,
@@ -563,7 +671,7 @@ function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 �
     ...records.flatMap(record => {
       const tasks = followUpProgress(record, criteria, checklists);
       return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}. 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}${task.status === 'unavailable' ? ` 확인 불가 이유 분류: ${md(task.reasonCategory || '미분류')}. 확인 불가 이유: ${md(task.reason.trim() || '미기재')}` : ''}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
-    }), '## 원본 기록', '', '원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 현재 필터로 선택한 기록의 검토 결과입니다.', ''
+    }), '## 원본 기록', '', `원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 ${md(scope)}의 검토 결과입니다.`, ''
   ].join('\n');
 }
 
@@ -605,9 +713,11 @@ const REASON_PAGE_SIZE = 20;
 const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
 let comparisonExpanded = false;
+const selectedReportIds = new Set();
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
+  selectedReportIds.clear(); $('report-scope').value = 'filtered';
   notes = Object.assign(Object.create(null), stored(`poly-notes-${datasetKey}`, {}));
   checklists = Object.assign(Object.create(null), stored(`poly-checklists-${datasetKey}`, {}));
   batchMap = new Map();
@@ -646,8 +756,7 @@ function applyFilters() {
   page = Math.min(page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
   if (!filtered.some(record => record.measurementId === selectedId)) selectedId = filtered[0]?.measurementId ?? null;
   $('filtered-count').textContent = `현재 ${filtered.length.toLocaleString('ko-KR')}건 / 전체 ${records.length.toLocaleString('ko-KR')}건`;
-  $('export-csv').disabled = !$('export-report') || !filtered.length;
-  $('export-report').disabled = !filtered.length;
+  $('export-csv').disabled = !filtered.length;
   renderRows(); renderDetail(); renderChart();
 }
 function renderCategoryCounts() {
@@ -666,6 +775,12 @@ function renderRows() {
   for (const record of filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)) {
     const review = reviews.get(record.measurementId), tr = element('tr');
     tr.classList.toggle('selected', record.measurementId === selectedId);
+    const selectCell = element('td', 'report-select-cell'), selectLabel = element('label');
+    const checkbox = element('input', 'report-record-check'); checkbox.type = 'checkbox';
+    checkbox.dataset.measurementId = record.measurementId;
+    checkbox.setAttribute('aria-label', `${record.measurementId} 보고서에 담기`);
+    checkbox.addEventListener('change', () => changeReportSelection([record.measurementId], checkbox.checked));
+    selectLabel.append(checkbox); selectCell.append(selectLabel);
     const name = element('td'), button = element('button', 'record-link', record.batchId);
     button.append(element('span', '', `${record.measurementId} · ${record.repeat || '?'}회차`));
     button.setAttribute('aria-label', `${record.measurementId} 상세 기록`);
@@ -673,15 +788,45 @@ function renderRows() {
     button.addEventListener('click', () => select(record.measurementId));
     name.append(button);
     const status = element('td'); status.append(element('span', `badge${review.issues.length ? ' warning' : ''}`, review.status));
-    tr.append(name, element('td', 'number-cell', format(review.viscosity)), element('td', '', format(record.sampleTemperature)), status);
+    tr.append(selectCell, name, element('td', 'number-cell', format(review.viscosity)), element('td', '', format(record.sampleTemperature)), status);
     tbody.append(tr);
   }
   if (!filtered.length) {
-    const row = element('tr'), cell = element('td', 'empty-row', '해당하는 기록이 없습니다. 검색어나 필터를 바꿔보세요.'); cell.colSpan = 4; row.append(cell); tbody.append(row);
+    const row = element('tr'), cell = element('td', 'empty-row', '해당하는 기록이 없습니다. 검색어나 필터를 바꿔보세요.'); cell.colSpan = 5; row.append(cell); tbody.append(row);
   }
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   $('page-label').textContent = `${page + 1} / ${pages} 페이지 · 한 페이지 ${PAGE_SIZE}건`;
   $('previous-page').disabled = page === 0; $('next-page').disabled = page + 1 >= pages;
+  updateReportControls();
+}
+function reportRecords() {
+  return $('report-scope').value === 'selected' ? records.filter(record => selectedReportIds.has(record.measurementId)) : filtered;
+}
+function changeReportSelection(ids, checked) {
+  const wasEmpty = selectedReportIds.size === 0;
+  for (const id of ids) if (checked) selectedReportIds.add(id); else selectedReportIds.delete(id);
+  if (checked && wasEmpty) $('report-scope').value = 'selected';
+  updateReportControls();
+}
+function updateReportControls() {
+  $('report-scope').querySelector('[value="filtered"]').textContent = `검색·필터 결과 ${filtered.length.toLocaleString('ko-KR')}건`;
+  $('report-scope').querySelector('[value="selected"]').textContent = `체크한 기록 ${selectedReportIds.size.toLocaleString('ko-KR')}건`;
+  $('report-selection-count').textContent = `보고서에 담을 기록 ${selectedReportIds.size.toLocaleString('ko-KR')}건 체크`;
+  $('clear-report-selection').disabled = !selectedReportIds.size;
+  for (const checkbox of document.querySelectorAll('.report-record-check')) {
+    checkbox.checked = selectedReportIds.has(checkbox.dataset.measurementId);
+    checkbox.closest('tr').classList.toggle('report-selected', checkbox.checked);
+  }
+  const visible = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const checkedCount = visible.filter(record => selectedReportIds.has(record.measurementId)).length;
+  $('select-visible-records').checked = !!visible.length && checkedCount === visible.length;
+  $('select-visible-records').indeterminate = checkedCount > 0 && checkedCount < visible.length;
+  $('select-visible-records').disabled = !visible.length;
+  const hasReport = reportRecords().length > 0;
+  for (const id of ['export-report', 'export-txt', 'export-txt-menu']) $(id).disabled = !hasReport;
+  const summary = $('report-formats').querySelector('summary');
+  summary.setAttribute('aria-disabled', String(!hasReport)); summary.tabIndex = hasReport ? 0 : -1;
+  if (!hasReport) $('report-formats').open = false;
 }
 function select(id) {
   selectedId = id;
@@ -1113,12 +1258,37 @@ $('export-csv').addEventListener('click', () => {
   download(recordsCSV(filtered, criteria, notes, true, checklists), '점도_검토결과.csv', 'text/csv;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 검토 결과 CSV를 저장했습니다.`);
 });
-function exportReport() {
-  if (!filtered.length) return;
-  download(reportMarkdown(filtered, criteria, notes, source, undefined, checklists), '점도_검토보고서.md', 'text/markdown;charset=utf-8');
-  message(`현재 검색·필터에 해당하는 ${filtered.length}건의 보고서를 저장했습니다. 원본 CSV와 함께 보관하세요.`);
+function exportReport(format) {
+  const targetRecords = reportRecords();
+  if (!targetRecords.length) return;
+  const plain = format === 'txt';
+  const scope = $('report-scope').value === 'selected' ? `체크한 기록 ${targetRecords.length}건 (검색·필터 밖의 선택 포함)` : `현재 검색·필터 결과 ${targetRecords.length}건`;
+  const report = (plain ? reportText : reportMarkdown)(targetRecords, criteria, notes, source, undefined, checklists, scope);
+  // UTF-8 BOM과 CRLF로 Windows 메모장에서도 한글과 줄바꿈을 읽을 수 있게 한다.
+  download(plain ? '\uFEFF' + report.replaceAll('\n', '\r\n') : report,
+    `점도_검토보고서.${plain ? 'txt' : 'md'}`, plain ? 'text/plain;charset=utf-8' : 'text/markdown;charset=utf-8');
+  if ($('report-formats').open) {
+    $('report-formats').open = false; $('report-formats').querySelector('summary').focus();
+  }
+  message(`${scope}의 ${plain ? 'TXT' : 'Markdown'} 보고서를 내려받았습니다. 원본 CSV와 함께 보관하세요.`);
 }
-$('export-report').addEventListener('click', exportReport);
+$('report-scope').addEventListener('change', updateReportControls);
+$('select-visible-records').addEventListener('change', event => changeReportSelection(filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(record => record.measurementId), event.target.checked));
+$('clear-report-selection').addEventListener('click', () => { selectedReportIds.clear(); updateReportControls(); });
+$('export-txt').addEventListener('click', () => exportReport('txt'));
+$('export-txt-menu').addEventListener('click', () => exportReport('txt'));
+$('export-report').addEventListener('click', () => exportReport('md'));
+$('report-formats').querySelector('summary').addEventListener('click', event => {
+  if (!reportRecords().length) event.preventDefault();
+});
+document.addEventListener('click', event => {
+  if (!$('report-formats').contains(event.target)) $('report-formats').open = false;
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && $('report-formats').open) {
+    $('report-formats').open = false; $('report-formats').querySelector('summary').focus();
+  }
+});
 try { await demo(); }
 catch (error) { message(`시작 실패: ${error.message} npm start로 서버를 실행했는지 확인하세요.`, true); }
 </script>
