@@ -191,6 +191,10 @@
 .record-condition-value{display:block;color:#52745c;font-size:9px;font-weight:400;line-height:1.6;margin-top:4px;overflow-wrap:anywhere}
 @media(max-width:650px){.condition-explorer>summary{align-items:flex-start;flex-wrap:wrap;gap:6px}.condition-explorer>summary::after{position:absolute;right:13px;top:13px}.condition-explorer>summary{position:relative;padding-right:35px}#condition-summary{width:100%}.condition-explorer form{padding-left:12px;padding-right:12px}.condition-actions .button{min-height:44px}}
 .report-select-cell{width:44px;padding:0 4px}
+.sidebar nav .nav-link{line-height:1.6}
+#unavailable-summary{scroll-margin-top:15px}
+@media(max-width:900px){.sidebar{flex-wrap:wrap;gap:10px}.sidebar nav{flex-wrap:wrap;min-width:0}}
+@media(max-width:650px){.sidebar nav{width:100%}.sidebar nav .nav-link{min-height:40px}}
 .report-select-cell label{display:flex;align-items:center;justify-content:center;min-height:44px;min-width:36px;cursor:pointer}
 .report-select-cell input{accent-color:var(--green);width:17px;height:17px;margin:0}
 .table-panel th:not(.report-select-cell),.table-panel td:not(.report-select-cell){padding-left:9px;padding-right:9px}

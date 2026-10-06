@@ -709,6 +709,26 @@ let resizeTimer;
 window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(renderChart, 100); });
 $('previous-page').addEventListener('click', () => { page--; renderRows(); });
 $('next-page').addEventListener('click', () => { page++; renderRows(); });
+function openUnavailableSummary() {
+  $('unavailable-summary').open = true;
+  renderUnavailableSummary();
+}
+function syncSidebarNavigation() {
+  const hash = window.location.hash || '#top';
+  for (const link of document.querySelectorAll('.sidebar nav a.nav-link')) {
+    const active = link.getAttribute('href') === hash;
+    link.classList.toggle('active', active);
+    if (active) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  }
+  if (hash === '#unavailable-summary') openUnavailableSummary();
+}
+$('open-unavailable-nav').addEventListener('click', () => {
+  openUnavailableSummary();
+  $('unavailable-summary').querySelector('summary').focus({preventScroll: true});
+});
+window.addEventListener('hashchange', syncSidebarNavigation);
+syncSidebarNavigation();
 $('unavailable-summary').addEventListener('toggle', renderUnavailableSummary);
 $('unavailable-filter').addEventListener('change', () => { unavailablePage = 0; renderUnavailableSummary(); });
 $('unavailable-previous').addEventListener('click', () => { unavailablePage--; renderUnavailableSummary(); });
