@@ -36,6 +36,7 @@ let unavailableCache = [], unavailablePage = 0, reasonCategoryTarget = null;
 const REASON_PAGE_SIZE = 20;
 const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
+let comparisonExpanded = false;
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
@@ -136,12 +137,17 @@ function updateChartSelection() {
   }
 }
 function renderComparison(record) {
-  const section = element('section', 'detail-section comparison-section');
-  const heading = element('div', 'comparison-heading');
+  const section = element('details', 'detail-section comparison-section'); section.open = comparisonExpanded;
+  section.addEventListener('toggle', () => { if (section.isConnected) comparisonExpanded = section.open; });
+  const heading = element('summary', 'comparison-heading');
   heading.append(element('h3', '', '실험 기록 ↔ 검토 기준'));
+  const toggleLabel = element('span', 'comparison-toggle-label'); toggleLabel.setAttribute('aria-hidden', 'true');
+  toggleLabel.append(element('span', 'comparison-expand-label', '펼치기'), element('span', 'comparison-collapse-label', '접기'));
+  heading.append(toggleLabel); section.append(heading);
   const edit = element('button', 'text-button', '기준 수정 ↗'); edit.type = 'button';
-  edit.addEventListener('click', openCriteria); heading.append(edit);
-  section.append(heading, element('p', 'comparison-intro', `적용 기준: ${criteria.version} · 교육용 가상 기준`));
+  edit.addEventListener('click', openCriteria);
+  const tools = element('div', 'comparison-tools');
+  tools.append(element('p', 'comparison-intro', `적용 기준: ${criteria.version} · 교육용 가상 기준`), edit); section.append(tools);
   const label = element('label', 'comparison-filter');
   const filter = element('input'); filter.type = 'checkbox'; filter.id = 'comparison-only-issues'; filter.checked = comparisonOnlyIssues;
   label.append(filter, document.createTextNode('확인할 항목만 보기'));
@@ -343,7 +349,9 @@ function deleteReasonCategory(name) {
   message(fullySaved ? `「${name}」 분류를 삭제했어요. 해당 메모는 미분류로 옮겼고 내용은 보존했어요.` : '분류는 삭제했지만 일부 파일의 저장 내용을 갱신하지 못했습니다. 기존 메모는 보존되어 있습니다.', !fullySaved);
 }
 function renderDetail() {
-  const panel = $('detail'); panel.replaceChildren();
+  const panel = $('detail'), previousComparison = panel.querySelector('.comparison-section');
+  if (previousComparison) comparisonExpanded = previousComparison.open;
+  panel.replaceChildren();
   const record = records.find(row => row.measurementId === selectedId);
   if (!record) { panel.append(element('p', 'empty-detail', '선택할 기록이 없습니다. 필터를 바꿔보세요.')); return; }
   const review = reviews.get(record.measurementId);
