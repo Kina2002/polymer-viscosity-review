@@ -1,4 +1,4 @@
-import { DEFAULT_CRITERIA, CONDITION_FIELDS, conditionValue, validateConditionFilter, matchesConditionFilter, describeConditionFilter, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from './core.js';
+import { DEFAULT_CRITERIA, CONDITION_FIELDS, conditionValue, validateConditionFilter, matchesConditionFilter, describeConditionFilter, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, FOLLOW_UP_EXPLANATION_NOTE, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from './core.js';
 
 const $ = id => document.getElementById(id);
 const format = value => numeric(value) === null ? '—' : Number(value).toLocaleString('ko-KR', {maximumFractionDigits: 2});
@@ -388,6 +388,8 @@ function renderFollowUps(record) {
   };
   update(); section.append(progress);
   const list = element('div', 'follow-up-list');
+  list.classList.toggle('single-task', tasks.length === 1);
+  if (tasks.length) section.append(element('p', 'follow-up-explanation-note', FOLLOW_UP_EXPLANATION_NOTE));
   let previousCategory = null;
   for (const task of tasks) {
     if (task.category !== previousCategory) {
@@ -395,6 +397,18 @@ function renderFollowUps(record) {
     }
     const card = element('div', 'follow-up-task'); card.dataset.task = task.id;
     card.append(element('strong', 'follow-up-label', task.label), element('p', 'follow-up-evidence', `실험 기록: ${task.actual} / 검토 기준: ${task.expected}`), element('p', 'follow-up-question', task.question));
+    const context = element('div', 'follow-up-explanation');
+    const why = element('p', 'follow-up-why');
+    why.append(element('strong', '', '이 항목을 확인하는 이유'), document.createTextNode(task.explanation.why));
+    const effect = element('p', 'follow-up-effect');
+    effect.append(element('strong', '', '달라지면 생길 수 있는 변화'), document.createTextNode(task.explanation.effect));
+    context.append(why, effect);
+    if (task.explanation.source) {
+      const source = element('a', 'follow-up-source', `설명 근거: ${task.explanation.source.title}`);
+      source.href = task.explanation.source.url; source.target = '_blank'; source.rel = 'noopener noreferrer';
+      context.append(source);
+    }
+    card.append(context);
     const label = element('label', 'follow-up-check');
     const checkbox = element('input'); checkbox.type = 'checkbox'; checkbox.checked = task.checked;
     checkbox.setAttribute('aria-label', `${record.measurementId} ${task.label} 자료 확인`);
