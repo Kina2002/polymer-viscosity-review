@@ -80,17 +80,7 @@ function applyFilters() {
   $('filtered-count').textContent = `현재 ${filtered.length.toLocaleString('ko-KR')}건 / 전체 ${records.length.toLocaleString('ko-KR')}건`;
   $('export-csv').disabled = !$('export-report') || !filtered.length;
   $('export-report').disabled = !filtered.length;
-  renderReportSaveBar();
   renderRows(); renderDetail(); renderChart();
-}
-function updateReportSaveVisibility() {
-  $('report-save-bar').hidden = $('export-report').getBoundingClientRect().bottom > 0;
-}
-function renderReportSaveBar() {
-  $('export-report-floating').disabled = !filtered.length;
-  $('report-save-scope').textContent = filtered.length
-    ? `현재 검색·필터 ${filtered.length.toLocaleString('ko-KR')}건` : '저장할 기록이 없어요';
-  updateReportSaveVisibility();
 }
 function renderCategoryCounts() {
   const container = $('category-counts'); container.replaceChildren();
@@ -269,7 +259,8 @@ function renderFollowUps(record) {
     const reasonLabel = element('label', 'follow-up-reason-label', '확인 불가 이유 메모');
     const reason = element('textarea', 'follow-up-reason'); reason.maxLength = 2000; reason.value = task.reason;
     reason.placeholder = '예: 원본 실험 기록에 측정 온도가 없어 확인할 수 없음'; reason.rows = 2;
-    reasonLabel.append(reason); reasonFields.append(categoryLabel, manage, reasonLabel);
+    reasonLabel.append(reason); reasonFields.append(categoryLabel, manage, reasonLabel,
+      element('p', 'note-hint', '분류와 메모는 입력하면 이 브라우저에 자동 저장돼요.'));
     const refresh = () => {
       card.dataset.status = task.status; checkbox.checked = task.status === 'done';
       badge.textContent = FOLLOW_UP_STATUS_LABELS[task.status];
@@ -559,13 +550,6 @@ function exportReport() {
   download(reportMarkdown(filtered, criteria, notes, source, undefined, checklists), '점도_검토보고서.md', 'text/markdown;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 보고서를 저장했습니다. 원본 CSV와 함께 보관하세요.`);
 }
-for (const id of ['export-report', 'export-report-floating']) $(id).addEventListener('click', exportReport);
-let reportScrollFrame = null;
-function scheduleReportSaveVisibility() {
-  if (reportScrollFrame !== null) return;
-  reportScrollFrame = requestAnimationFrame(() => { reportScrollFrame = null; updateReportSaveVisibility(); });
-}
-window.addEventListener('scroll', scheduleReportSaveVisibility, {passive: true});
-window.addEventListener('resize', scheduleReportSaveVisibility);
+$('export-report').addEventListener('click', exportReport);
 try { await demo(); }
 catch (error) { message(`시작 실패: ${error.message} npm start로 서버를 실행했는지 확인하세요.`, true); }

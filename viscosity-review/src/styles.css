@@ -123,14 +123,4 @@
 .chart-point.selected,.chart-point:hover,.chart-point:focus-visible{stroke:var(--ink);stroke-width:2;opacity:1}
 .chart-point:hover,.chart-point:focus-visible{r:4px;outline:none}
 .detail-panel{scroll-margin-top:20px}
-main{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
-html{scroll-padding-bottom:120px}
-.report-save-bar{position:fixed;right:38px;bottom:18px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:18px;width:min(430px,calc(100vw - 280px));padding:13px 16px;border:1px solid #bed4c4;border-radius:10px;background:#fff;box-shadow:0 5px 24px #153e4026}
-.report-save-bar[hidden]{display:none}
-.report-save-info{min-width:0;line-height:1.6}
-.report-save-info strong{display:block;font-size:13px;font-weight:600;color:var(--ink);overflow-wrap:anywhere}
-.report-save-info small{display:block;font-size:11px;color:#718079;margin-top:2px}
-.report-save-bar .button{min-height:44px;font-size:13px;padding:11px 15px;flex-shrink:0}
-@media(max-width:1180px){.report-save-bar{right:23px;width:min(430px,calc(100vw - 231px))}}
-@media(max-width:900px){.report-save-bar{left:15px;right:15px;bottom:calc(12px + env(safe-area-inset-bottom));width:auto;padding:10px 12px;gap:10px}}
 @media(prefers-reduced-motion:no-preference){button,.button,a{transition:background .15s ease,color .15s ease}.hero-sample svg{animation:appear .7s ease-out}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
