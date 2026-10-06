@@ -1,4 +1,4 @@
-import { DEFAULT_CRITERIA, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from './core.js';
+import { DEFAULT_CRITERIA, CONDITION_FIELDS, conditionValue, validateConditionFilter, matchesConditionFilter, describeConditionFilter, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from './core.js';
 
 const $ = id => document.getElementById(id);
 const format = value => numeric(value) === null ? '—' : Number(value).toLocaleString('ko-KR', {maximumFractionDigits: 2});
@@ -47,6 +47,62 @@ const comparisonGroupExpanded = new Map();
 const selectedReportIds = new Set();
 const REPORT_FORMAT_LABELS = {txt: 'TXT', md: 'Markdown'};
 let reportFormat = 'txt';
+let activeCondition = null;
+
+function conditionDisplay(record, field) {
+  const definition = CONDITION_FIELDS.find(item => item.field === field), value = conditionValue(record, field);
+  if (value === null) return String(record[field] ?? '').trim() || '미기재';
+  if (definition.type === 'text') return value;
+  if (field === 'viscosity') return viscosityDisplay(record);
+  return `${formatViscosity(value)}${definition.unit ? ` ${definition.unit}` : ''}`;
+}
+function draftCondition() {
+  const field = $('condition-field').value, definition = CONDITION_FIELDS.find(item => item.field === field);
+  if (!$('condition-limit').checked) return {field, mode: 'all'};
+  return definition?.type === 'number' ? {field, mode: 'range', center: $('condition-center').value, tolerance: $('condition-tolerance').value}
+    : {field, mode: 'value', value: $('condition-value').value};
+}
+function updateConditionPreview() {
+  const filter = draftCondition(), error = validateConditionFilter(filter);
+  $('condition-error').hidden = true;
+  const limited = $('condition-limit').checked;
+  for (const id of ['condition-center', 'condition-tolerance', 'condition-value']) $(id).disabled = !limited;
+  $('condition-preview').textContent = error || `적용하면 볼 기록: ${describeConditionFilter(filter)}`;
+}
+function fillConditionDraft() {
+  const definition = CONDITION_FIELDS.find(item => item.field === $('condition-field').value);
+  if (!definition) return;
+  $('condition-number-fields').hidden = definition.type !== 'number'; $('condition-text-fields').hidden = definition.type !== 'text';
+  $('condition-unit').textContent = definition.unit;
+  if (definition.type === 'number') {
+    $('condition-center').value = definition.field === 'manufacturingTemperature' ? 45 : conditionValue(records[0] ?? {}, definition.field) ?? 0;
+    $('condition-tolerance').value = ({mixingRpm: 30, rpm: 0, concentration: 0.05, viscosity: 100, sampleVolume: 10})[definition.field] ?? 2;
+  } else {
+    const select = $('condition-value'); select.replaceChildren();
+    const values = [...new Set(records.map(record => String(record[definition.field] ?? '')))];
+    for (const value of values.sort((a,b) => a.localeCompare(b,'ko-KR'))) {
+      const option = element('option', '', value.trim() ? value : '미기재'); option.value = value; select.append(option);
+    }
+  }
+  updateConditionPreview();
+}
+function prepareConditionControls() {
+  const select = $('condition-field'); select.replaceChildren();
+  for (const [type, name] of [['number','숫자로 기록하는 항목'],['text','종류·상태로 기록하는 항목']]) {
+    const group = element('optgroup'); group.label = name;
+    for (const definition of CONDITION_FIELDS.filter(item => item.type === type)) {
+      const option = element('option', '', definition.label); option.value = definition.field; group.append(option);
+    }
+    select.append(group);
+  }
+  select.value = 'manufacturingTemperature'; $('condition-limit').checked = true; fillConditionDraft();
+}
+function updateConditionStatus() {
+  $('condition-summary').textContent = describeConditionFilter(activeCondition);
+  $('clear-condition').disabled = !activeCondition;
+  $('chart-axis-controls').hidden = !activeCondition;
+  if (activeCondition) $('chart-axis').querySelector('[value="condition"]').textContent = CONDITION_FIELDS.find(item => item.field === activeCondition.field).label;
+}
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
@@ -61,7 +117,7 @@ function loadRecords(next, name, key) {
   selectedId = records[0]?.measurementId ?? null;
   $('source-name').textContent = name;
   $('source-description').textContent = key === 'demo-20261002' ? '270개 배치 × 4회 측정 · 모든 수치는 합성된 가상 값입니다.' : '업로드 파일을 브라우저에서 검토합니다. 원본 파일은 수정하지 않습니다.';
-  resetFilters(); recalculate();
+  prepareConditionControls(); resetFilters(); recalculate();
 }
 function recalculate() {
   reviews = new Map(records.map(record => [record.measurementId, reviewRecord(record, criteria)]));
@@ -76,6 +132,8 @@ function recalculate() {
 }
 function resetFilters() {
   $('search').value = ''; $('status-filter').value = 'all'; $('category-filter').value = 'all'; page = 0;
+  activeCondition = null; $('chart-axis').value = 'batch'; updateConditionStatus();
+  $('condition-error').hidden = true;
 }
 function applyFilters() {
   const query = $('search').value.trim().toLowerCase();
@@ -84,7 +142,8 @@ function applyFilters() {
     const review = reviews.get(record.measurementId);
     return (!query || [record.batchId, record.measurementId, record.sampleId].some(value => String(value ?? '').toLowerCase().includes(query)))
       && (status === 'all' || (status === 'pass' ? !review.issues.length : !!review.issues.length))
-      && (category === 'all' || review.categories.includes(category));
+      && (category === 'all' || review.categories.includes(category))
+      && matchesConditionFilter(record, activeCondition);
   });
   page = Math.min(page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
   if (!filtered.some(record => record.measurementId === selectedId)) selectedId = filtered[0]?.measurementId ?? null;
@@ -116,6 +175,10 @@ function renderRows() {
     selectLabel.append(checkbox); selectCell.append(selectLabel);
     const name = element('td'), button = element('button', 'record-link', record.batchId);
     button.append(element('span', '', `${record.measurementId} · ${record.repeat || '?'}회차`));
+    if (activeCondition) {
+      const definition = CONDITION_FIELDS.find(item => item.field === activeCondition.field);
+      button.append(element('small', 'record-condition-value', `${definition.label.replace(/ \([^)]+\)$/, '')}: ${conditionDisplay(record, definition.field)}`));
+    }
     button.setAttribute('aria-label', `${record.measurementId} 상세 기록`);
     button.setAttribute('aria-pressed', String(record.measurementId === selectedId));
     button.addEventListener('click', () => select(record.measurementId));
@@ -476,19 +539,45 @@ function svgElement(tag, attrs = {}, text) {
 function renderChart() {
   const graph = $('chart'); graph.replaceChildren();
   const onlyComparable = $('comparable-only').checked;
+  const condition = activeCondition && $('chart-axis').value === 'condition' ? activeCondition : null;
+  const definition = condition && CONDITION_FIELDS.find(item => item.field === condition.field);
+  $('chart-title').textContent = condition ? '조건별 점도 기록' : '배치별 점도 기록';
+  $('chart-condition-hint').hidden = !condition;
   const points = filtered.filter(record => {
-    const review = reviews.get(record.measurementId); return review.viscosity !== null && (!onlyComparable || review.comparable);
+    const review = reviews.get(record.measurementId);
+    return review.viscosity !== null && (!onlyComparable || review.comparable) && (!condition || conditionValue(record, condition.field) !== null);
   });
   const batchIds = [...new Set(filtered.map(record => record.batchId))];
-  $('chart-note').textContent = `${points.length.toLocaleString('ko-KR')}개 개별 값 · 평균으로 합치지 않음`;
-  if (!points.length) { graph.append(element('p', 'empty-detail', '표시할 점도 기록이 없습니다. 필터나 비교 조건 설정을 확인하세요.')); return; }
+  const conditionValues = condition ? [...new Set(points.map(record => conditionValue(record, condition.field)))] : [];
+  $('chart-note').textContent = `${points.length.toLocaleString('ko-KR')}개 개별 값 · 목록 ${filtered.length.toLocaleString('ko-KR')}건 · 평균으로 합치지 않음`;
+  if (condition) $('chart-condition-hint').textContent = `가로축: ${definition.label} · 세로축: 점도 (mPa·s). 가상 기록의 분포이며, 다른 조건도 함께 확인하세요.${conditionValues.length === 1 ? ` 현재 표시된 ${definition.label} 기록값은 모두 ${conditionDisplay(points[0], condition.field)}입니다.` : ''}`;
+  if (!points.length) {
+    graph.append(element('p', 'empty-detail', `표시할 점도 기록이 없습니다.${onlyComparable ? ' 「비교 조건이 맞는 값만」을 해제해 다른 기록도 살펴보세요.' : ' 선택한 항목과 점도에 유효한 기록값이 있는지 확인하세요.'}`)); return;
+  }
   const width = Math.max(280, graph.clientWidth), height = graph.clientHeight, left = 50, right = 18, top = 15, bottom = 33;
   const values = points.map(record => reviews.get(record.measurementId).viscosity);
   const minValue = Math.min(criteria.viscosityMin, ...values), maxValue = Math.max(criteria.viscosityMax, ...values);
   const padding = Math.max(100, (maxValue - minValue) * 0.18), low = Math.max(0, minValue - padding), high = maxValue + padding;
   const y = value => top + (high - value) / (high - low) * (height - top - bottom);
-  const x = index => left + (index + 0.5) / batchIds.length * (width - left - right);
-  const svg = svgElement('svg', {viewBox: `0 0 ${width} ${height}`, role: 'group', 'aria-label': `${batchIds.length}개 배치의 개별 점도 ${points.length}건. 가로축은 배치 순서, 세로축은 점도 mPa·s. 점선은 가상 규격 상한과 하한.`, 'aria-describedby': 'chart-hint'});
+  const batchIndex = new Map(batchIds.map((id, i) => [id, i]));
+  let xForRecord, xTicks;
+  if (definition?.type === 'number') {
+    const observedLow = Math.min(...conditionValues), observedHigh = Math.max(...conditionValues);
+    let axisLow = condition.mode === 'range' ? Number(condition.center) - Number(condition.tolerance) : observedLow;
+    let axisHigh = condition.mode === 'range' ? Number(condition.center) + Number(condition.tolerance) : observedHigh;
+    if (axisLow === axisHigh) { const padding = Math.max(1, Math.abs(axisLow) * 0.05); axisLow -= padding; axisHigh += padding; }
+    const x = value => left + (value - axisLow) / (axisHigh - axisLow) * (width - left - right);
+    xForRecord = record => x(conditionValue(record, condition.field));
+    const tickValues = conditionValues.length === 1 ? [observedLow] : [axisLow, axisLow + (axisHigh-axisLow)/2, axisHigh];
+    xTicks = tickValues.map(value => [x(value), `${Number(value.toPrecision(12)).toLocaleString('ko-KR', {maximumFractionDigits: 12})}${definition.unit ? ` ${definition.unit}` : ''}`]);
+  } else {
+    const labels = condition ? conditionValues.sort((a,b) => a.localeCompare(b,'ko-KR')) : batchIds;
+    const index = condition ? new Map(labels.map((value, i) => [value, i])) : batchIndex;
+    const x = value => left + (value + 0.5) / labels.length * (width - left - right);
+    xForRecord = record => x(index.get(condition ? conditionValue(record, condition.field) : record.batchId));
+    xTicks = [...new Set([0, Math.floor((labels.length-1)/2), labels.length-1])].map(i => [x(i), String(labels[i])]);
+  }
+  const svg = svgElement('svg', {viewBox: `0 0 ${width} ${height}`, role: 'group', 'aria-label': `${batchIds.length}개 배치의 개별 점도 ${points.length}건. 가로축은 ${definition?.label ?? '배치 순서'}, 세로축은 점도 mPa·s. 점선은 가상 규격 상한과 하한.`, 'aria-describedby': condition ? 'chart-hint chart-condition-hint' : 'chart-hint'});
   svg.append(svgElement('rect', {x: left, y: y(criteria.viscosityMax), width: width-left-right, height: y(criteria.viscosityMin)-y(criteria.viscosityMax), fill:'#eff6ec'}));
   for (let i = 0; i <= 3; i++) {
     const value = low + (high-low) * i / 3, ypos = y(value);
@@ -499,18 +588,20 @@ function renderChart() {
     svg.append(svgElement('line', {x1:left, x2:width-right, y1:y(value), y2:y(value), stroke:'#b8cbb1', 'stroke-dasharray':'4 4'}));
     svg.append(svgElement('text', {x:width-right-2, y:y(value)-5, 'text-anchor':'end', fill:'#93a687','font-size':9}, `${label} ${format(value)}`));
   }
-  const batchIndex = new Map(batchIds.map((id, i) => [id, i]));
   for (const record of points) {
     const review = reviews.get(record.measurementId);
-    const circle = svgElement('circle', {cx:x(batchIndex.get(record.batchId)), cy:y(review.viscosity), r:points.length > 500 ? 2 : 3, fill:review.numericStatus === '수치상 범위 외' ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3', class:'chart-point', 'data-measurement-id':record.measurementId, role:'button', tabindex:0, 'aria-label':`${record.measurementId} · ${viscosityDisplay(record)} · 상세 기록 열기`});
+    const conditionDescription = condition ? `${definition.label} ${conditionDisplay(record, condition.field)} / ` : '';
+    const circle = svgElement('circle', {cx:xForRecord(record), cy:y(review.viscosity), r:points.length > 500 ? 2 : 3, fill:review.numericStatus === '수치상 범위 외' ? '#bc863e' : '#37886c', opacity:review.comparable ? '.65' : '.3', class:'chart-point', 'data-measurement-id':record.measurementId, role:'button', tabindex:0, 'aria-label':`${record.measurementId} · ${conditionDescription}${viscosityDisplay(record)} · 상세 기록 열기`});
     circle.addEventListener('click', () => openChartRecord(record.measurementId));
     circle.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openChartRecord(record.measurementId); }
     });
-    circle.append(svgElement('title', {}, `${record.measurementId}: ${viscosityDisplay(record)} / ${review.conclusion}`)); svg.append(circle);
+    circle.append(svgElement('title', {}, `${record.measurementId}: ${conditionDescription}${viscosityDisplay(record)} / ${review.conclusion}`)); svg.append(circle);
   }
-  const ticks = [...new Set([0, Math.floor((batchIds.length - 1)/2), batchIds.length-1])];
-  for (const index of ticks) svg.append(svgElement('text', {x:x(index), y:height-8, 'text-anchor':'middle', fill:'#8c9b86', 'font-size':10}, batchIds[index]));
+  for (const [x, label] of xTicks) {
+    const tick = svgElement('text', {x, y:height-8, 'text-anchor':'middle', fill:'#8c9b86', 'font-size':10}, label.length > 18 ? label.slice(0,17) + '…' : label);
+    tick.append(svgElement('title', {}, label)); svg.append(tick);
+  }
   graph.append(svg); updateChartSelection();
 }
 
@@ -553,6 +644,22 @@ $('search').addEventListener('input', () => { page = 0; applyFilters(); });
 for (const id of ['status-filter', 'category-filter']) $(id).addEventListener('change', () => { page = 0; applyFilters(); });
 $('reset-filter').addEventListener('click', () => { resetFilters(); applyFilters(); });
 $('comparable-only').addEventListener('change', renderChart);
+$('condition-field').addEventListener('change', fillConditionDraft);
+for (const id of ['condition-center', 'condition-tolerance', 'condition-value']) $(id).addEventListener('input', updateConditionPreview);
+$('condition-limit').addEventListener('change', updateConditionPreview);
+$('condition-form').addEventListener('submit', event => {
+  event.preventDefault();
+  const filter = draftCondition(), error = validateConditionFilter(filter);
+  $('condition-error').hidden = !error;
+  if (error) { $('condition-error').textContent = error; return; }
+  activeCondition = filter; $('chart-axis').value = 'condition'; page = 0;
+  updateConditionStatus(); applyFilters();
+});
+$('clear-condition').addEventListener('click', () => {
+  activeCondition = null; $('chart-axis').value = 'batch'; $('condition-error').hidden = true; page = 0;
+  updateConditionStatus(); applyFilters();
+});
+$('chart-axis').addEventListener('change', renderChart);
 let resizeTimer;
 window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(renderChart, 100); });
 $('previous-page').addEventListener('click', () => { page--; renderRows(); });
@@ -574,7 +681,7 @@ $('reason-category-form').addEventListener('submit', event => {
   const target = reasonCategoryTarget, record = target && records.find(record => record.measurementId === target.measurementId);
   const task = record && followUpProgress(record, criteria, checklists).find(task => task.id === target.taskId && task.status === 'unavailable');
   if (task) {
-    checklists[record.measurementId].outcomes[task.id] = {status: 'unavailable', reason: task.reason, reasonCategory: name};
+    checklists[record.measurementId].outcomes[task.id] = {status: 'unavailable', reason: task.reason, reasonCategory: name, completionNote: task.completionNote};
     store(`poly-checklists-${datasetKey}`, checklists); updateUnavailableRecord(record);
   }
   renderDetail(); renderReasonCategoryManager();
@@ -636,7 +743,7 @@ function exportReport() {
   const targetRecords = reportRecords();
   if (!targetRecords.length) return;
   const plain = reportFormat === 'txt';
-  const scope = $('report-scope').value === 'selected' ? `체크한 기록 ${targetRecords.length}건 (검색·필터 밖의 선택 포함)` : `현재 검색·필터 결과 ${targetRecords.length}건`;
+  const scope = $('report-scope').value === 'selected' ? `체크한 기록 ${targetRecords.length}건 (검색·필터 밖의 선택 포함)` : `현재 검색·필터 결과 ${targetRecords.length}건${activeCondition ? ` · ${describeConditionFilter(activeCondition)}` : ''}`;
   const report = (plain ? reportText : reportMarkdown)(targetRecords, criteria, notes, source, undefined, checklists, scope);
   // UTF-8 BOM과 CRLF로 Windows 메모장에서도 한글과 줄바꿈을 읽을 수 있게 한다.
   download(plain ? '\uFEFF' + report.replaceAll('\n', '\r\n') : report,

@@ -1,11 +1,48 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { DEFAULT_CRITERIA as C, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, reviewRecord, comparisonRows, followUpPlan, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from '../src/core.js';
+import { DEFAULT_CRITERIA as C, CONDITION_FIELDS, conditionValue, validateConditionFilter, matchesConditionFilter, describeConditionFilter, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, reviewRecord, comparisonRows, followUpPlan, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from '../src/core.js';
 
 const data = JSON.parse(await readFile(new URL('../data/demo-records.json', import.meta.url), 'utf8'));
 const expected = JSON.parse(await readFile(new URL('../data/expected-results.json', import.meta.url), 'utf8'));
 const base = data[0];
+
+test('조건 범위: 경계 포함·소수 오차·0·누락과 숫자 오류·잘못된 범위 거부', () => {
+  const filter = {field: 'manufacturingTemperature', mode: 'range', center: 45, tolerance: 2};
+  for (const value of [43, '45', 47]) assert.equal(matchesConditionFilter({...base, manufacturingTemperature: value}, filter), true);
+  for (const value of [42.999999, 47.000001, '', null, '잘못된 값']) assert.equal(matchesConditionFilter({...base, manufacturingTemperature: value}, filter), false);
+  const decimal = {field:'concentration',mode:'range',center:0.3,tolerance:0.1};
+  for (const value of [0.2,0.4]) assert.equal(matchesConditionFilter({...base,concentration:value},decimal),true);
+  assert.equal(matchesConditionFilter({...base,concentration:0.199999},decimal),false);
+  assert.ok(describeConditionFilter(decimal).includes('(0.2~0.4)'));
+  assert.equal(matchesConditionFilter({...base,manufacturingTemperature:0},{...filter,center:0,tolerance:0}),true);
+  for (const invalid of [{...filter,center:''},{...filter,tolerance:-1},{...filter,tolerance:'Infinity'},{...filter,center:Number.MAX_SAFE_INTEGER,tolerance:2},{...filter,field:'unknown'}]) {
+    assert.ok(validateConditionFilter(invalid)); assert.equal(matchesConditionFilter(base,invalid),false);
+  }
+});
+
+test('조건 선택: 숫자와 문자 항목·미기재·전체 값·점도 단위 확인', () => {
+  assert.equal(CONDITION_FIELDS.length,35);
+  assert.equal(matchesConditionFilter(base,null),true);
+  assert.equal(matchesConditionFilter({...base,manufacturingTemperature:''},{field:'manufacturingTemperature',mode:'all'}),true);
+  const filter = {field:'spindle',mode:'value',value:'DEMO-S2'};
+  assert.equal(matchesConditionFilter({...base,spindle:'DEMO-S2'},filter),true);
+  assert.equal(matchesConditionFilter(base,filter),false);
+  assert.equal(matchesConditionFilter({...base,spindle:''},{...filter,value:''}),true);
+  assert.equal(conditionValue({...base,spindle:''},'spindle'),null);
+  const viscosity = {field:'viscosity',mode:'range',center:1221,tolerance:0};
+  assert.equal(matchesConditionFilter({...base,viscosity:1221,unit:'cP'},viscosity),true);
+  assert.equal(matchesConditionFilter({...base,viscosity:1221,unit:'Pa·s'},viscosity),false);
+});
+
+test('조건으로 기록 선택: 제조 온도 45±2의 216건·검토 규칙과 원본 보존', () => {
+  const filter = {field:'manufacturingTemperature',mode:'range',center:45,tolerance:2};
+  const before = JSON.stringify(data), selected = data.filter(record => matchesConditionFilter(record,filter));
+  assert.equal(selected.length,216);
+  assert.equal(selected.filter(record => reviewRecord(record,C).comparable).length,108);
+  assert.equal(selected.every(record => reviewRecord(record,C).status === '검토 필요'),true);
+  assert.equal(JSON.stringify(data),before);
+});
 
 test('확인 완료 메모: 기존 체크 호환·상태 전환 보존·원본과 기준 변경 무효화', () => {
   const record = {...base, manufacturingTemperature: 45}, id = 'manufacturing:manufacturingTemperature';
