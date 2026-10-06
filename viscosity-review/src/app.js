@@ -6,9 +6,7 @@ const formatViscosity = value => numeric(value) === null ? '—' : Number(value)
 function viscosityDisplay(record) {
   const value = numeric(record.viscosity);
   if (value === null) return String(record.viscosity ?? '').trim() ? String(record.viscosity) : '미기재';
-  const amount = formatViscosity(value);
-  const original = `${amount} ${record.unit || '(단위 미기재)'}`;
-  return record.unit === 'cP' && value >= 0 ? `${original} (= ${amount} mPa·s)` : original;
+  return `${formatViscosity(value)} ${record.unit || '(단위 미기재)'}`;
 }
 const element = (tag, className, text) => {
   const node = document.createElement(tag);
@@ -286,9 +284,6 @@ function renderComparisonGuide(record) {
     const more = element('details', 'guide-more'); more.append(element('summary', '', `나머지 ${targets.length - 4}개 비교할 값 보기`));
     const rest = element('ul', 'guide-list'); targets.slice(4).forEach(row => rest.append(item(row))); more.append(rest); guide.append(more);
   }
-  if (record.unit === 'cP' && numeric(record.viscosity) !== null && Number(record.viscosity) >= 0) {
-    guide.append(element('p', 'guide-unit-note', '1 cP = 1 mPa·s로, 단위 이름만 다르고 숫자는 같아요. 괄호 안의 mPa·s 값을 기준과 비교하세요.'));
-  }
   guide.append(element('p', 'guide-footnote', `적용 기준: ${criteria.version} · 아래 비교표에서 확인 결과와 이유를 볼 수 있어요.`));
   return guide;
 }
@@ -437,7 +432,6 @@ function renderDetail() {
   top.append(name, element('span', `badge${review.issues.length ? ' warning' : ''}`, review.status)); panel.append(top);
   panel.append(element('p', 'detail-subtitle', `${record.batchId} · 시료 ${record.sampleId || '미기재'} · 반복 ${record.repeat || '?'}회차`));
   const reading = element('div', 'reading'); reading.append(element('strong', '', formatViscosity(review.viscosity)), element('span', '', review.viscosity === null ? '비교 불가' : record.unit));
-  if (review.viscosity !== null && record.unit === 'cP') reading.append(element('span', 'reading-conversion', `(= ${formatViscosity(review.viscosity)} mPa·s)`));
   panel.append(reading, element('p', `conclusion${!review.comparable || review.numericStatus === '수치상 범위 외' ? ' attention' : ''}`, review.conclusion));
   panel.append(renderComparisonGuide(record));
   panel.append(renderComparison(record));

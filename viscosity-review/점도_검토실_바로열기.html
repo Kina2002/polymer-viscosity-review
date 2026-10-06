@@ -76,7 +76,8 @@
 .guide-pair small{display:block;font-size:10px;font-weight:400;color:#728977;margin-bottom:3px}
 .guide-pair span{overflow-wrap:anywhere}
 .guide-actual{font-weight:650;color:#234d3a;font-variant-numeric:tabular-nums}
-.guide-unit-note{font-size:11px;color:#47674f;line-height:1.8;margin-top:12px;overflow-wrap:anywhere}
+.viscosity-heading small{display:block;margin:3px 0 0;font-size:9px;font-weight:400;line-height:1.5;white-space:nowrap}
+.viscosity-heading .unit-conversion-note{color:#637b69}
 .reading{flex-wrap:wrap}
 .number-cell{overflow-wrap:anywhere}
 .repeat-row{gap:8px}
@@ -245,7 +246,7 @@ tr.report-selected{background:#edf5ec}
       <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="배치·측정·시료 번호 검색" aria-label="배치 측정 시료 번호 검색"></label><label class="filter-label">검토 상태<select id="status-filter"><option value="all">전체 상태</option><option value="pass">기준 충족</option><option value="review">검토 필요</option></select></label><label class="filter-label">확인 항목<select id="category-filter"><option value="all">전체 항목</option><option value="missing">기록 누락</option><option value="data">입력 확인</option><option value="manufacturing">제조 조건 차이</option><option value="measurement">측정 조건 차이</option><option value="specification">점도 규격 이탈</option></select></label><button id="reset-filter" class="text-button">초기화</button></div>
       <div class="report-selection-toolbar"><strong id="report-selection-count" role="status" aria-live="polite">보고서에 담을 기록 0건 체크</strong><button id="clear-report-selection" type="button" class="text-button" disabled>선택 해제</button><p>앞의 체크박스로 골라 담으세요. 페이지나 검색을 바꿔도 선택은 유지돼요.</p></div>
       <div class="record-grid">
-        <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">체크박스로 보고서에 담을 기록을 고르세요. 표 머리의 체크박스는 현재 페이지 전체를 선택합니다. 측정 번호를 누르면 상세 정보를 확인할 수 있습니다.</caption><thead><tr><th scope="col" class="report-select-cell"><label><input id="select-visible-records" type="checkbox" aria-label="현재 페이지 기록 전체 선택"><span class="sr-only">보고서 선택</span></label></th><th scope="col">배치 / 측정</th><th scope="col">점도 <small>기록값 · 환산값</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>
+        <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">체크박스로 보고서에 담을 기록을 고르세요. 표 머리의 체크박스는 현재 페이지 전체를 선택합니다. 측정 번호를 누르면 상세 정보를 확인할 수 있습니다.</caption><thead><tr><th scope="col" class="report-select-cell"><label><input id="select-visible-records" type="checkbox" aria-label="현재 페이지 기록 전체 선택"><span class="sr-only">보고서 선택</span></label></th><th scope="col">배치 / 측정</th><th scope="col" class="viscosity-heading">점도<small>기록값 · 환산값</small><small class="unit-conversion-note">1 cP (= 1 mPa·s)</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>
         <aside id="detail" class="panel detail-panel" tabindex="-1" aria-label="선택한 측정의 상세 기록"><p class="empty-detail">측정 기록을 선택하세요.</p></aside>
       </div>
     </section>
@@ -702,9 +703,7 @@ const formatViscosity = value => numeric(value) === null ? '—' : Number(value)
 function viscosityDisplay(record) {
   const value = numeric(record.viscosity);
   if (value === null) return String(record.viscosity ?? '').trim() ? String(record.viscosity) : '미기재';
-  const amount = formatViscosity(value);
-  const original = `${amount} ${record.unit || '(단위 미기재)'}`;
-  return record.unit === 'cP' && value >= 0 ? `${original} (= ${amount} mPa·s)` : original;
+  return `${formatViscosity(value)} ${record.unit || '(단위 미기재)'}`;
 }
 const element = (tag, className, text) => {
   const node = document.createElement(tag);
@@ -982,9 +981,6 @@ function renderComparisonGuide(record) {
     const more = element('details', 'guide-more'); more.append(element('summary', '', `나머지 ${targets.length - 4}개 비교할 값 보기`));
     const rest = element('ul', 'guide-list'); targets.slice(4).forEach(row => rest.append(item(row))); more.append(rest); guide.append(more);
   }
-  if (record.unit === 'cP' && numeric(record.viscosity) !== null && Number(record.viscosity) >= 0) {
-    guide.append(element('p', 'guide-unit-note', '1 cP = 1 mPa·s로, 단위 이름만 다르고 숫자는 같아요. 괄호 안의 mPa·s 값을 기준과 비교하세요.'));
-  }
   guide.append(element('p', 'guide-footnote', `적용 기준: ${criteria.version} · 아래 비교표에서 확인 결과와 이유를 볼 수 있어요.`));
   return guide;
 }
@@ -1133,7 +1129,6 @@ function renderDetail() {
   top.append(name, element('span', `badge${review.issues.length ? ' warning' : ''}`, review.status)); panel.append(top);
   panel.append(element('p', 'detail-subtitle', `${record.batchId} · 시료 ${record.sampleId || '미기재'} · 반복 ${record.repeat || '?'}회차`));
   const reading = element('div', 'reading'); reading.append(element('strong', '', formatViscosity(review.viscosity)), element('span', '', review.viscosity === null ? '비교 불가' : record.unit));
-  if (review.viscosity !== null && record.unit === 'cP') reading.append(element('span', 'reading-conversion', `(= ${formatViscosity(review.viscosity)} mPa·s)`));
   panel.append(reading, element('p', `conclusion${!review.comparable || review.numericStatus === '수치상 범위 외' ? ' attention' : ''}`, review.conclusion));
   panel.append(renderComparisonGuide(record));
   panel.append(renderComparison(record));
