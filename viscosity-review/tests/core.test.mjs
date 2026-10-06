@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { DEFAULT_CRITERIA as C, reviewRecord, comparisonRows, followUpPlan, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from '../src/core.js';
+import { DEFAULT_CRITERIA as C, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, reviewRecord, comparisonRows, followUpPlan, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from '../src/core.js';
 
 const data = JSON.parse(await readFile(new URL('../data/demo-records.json', import.meta.url), 'utf8'));
 const expected = JSON.parse(await readFile(new URL('../data/expected-results.json', import.meta.url), 'utf8'));
@@ -64,6 +64,44 @@ test('확인 불가: 완료와 동시 표시 금지, 이유·내보내기·기�
   const csv = recordsCSV([record], C, {}, true, checks);
   assert.ok(csv.includes('""status"":""unavailable""')); assert.ok(csv.includes('""checked"":false'));
   assert.equal(followUpProgress(record, C, {[record.measurementId]: {signature: followUpSignature(record, C), checked: [taskId]}})[0].status, 'done');
+});
+test('이유 분류: 기본값·빈 이름·길이·중복·미분류 예약·공백 정리', () => {
+  assert.equal(DEFAULT_REASON_CATEGORIES.length, 5);
+  assert.equal(reasonCategoryName('  추가   자료 필요\n'), '추가 자료 필요');
+  assert.equal(validateReasonCategory('  추가   자료 필요 ', DEFAULT_REASON_CATEGORIES), '이미 있는 분류 이름입니다.');
+  for (const name of ['', '   ', '미분류', 'a'.repeat(41), {}]) assert.ok(validateReasonCategory(name));
+  assert.equal(validateReasonCategory('장비 점검 자료 없음'), null);
+  assert.ok(validateReasonCategory('abc', ['ABC']));
+});
+test('이유 모아보기: 기존 메모 보존·유효한 확인 불가만 집계·분류별 CSV와 보고서', () => {
+  const record = {...base, sampleTemperature: ''}, id = 'missing:sampleTemperature';
+  const checks = {[record.measurementId]: {signature: followUpSignature(record, C), outcomes: {[id]: {status: 'unavailable', reason: '=자료 요청 | 메모\n둘째 줄'}}}};
+  assert.equal(followUpProgress(record, C, checks)[0].reasonCategory, '');
+  assert.equal(unavailableEntries([record], C, checks).length, 1);
+  assert.ok(unavailableReasonCSV([record], C, checks, '미분류').includes('미분류'));
+  assert.equal(unavailableEntries([record], {...C, temperature: 26}, checks).length, 0);
+  checks[record.measurementId].outcomes[id].reasonCategory = '@자료 | <없음>';
+  assert.equal(followUpProgress(record, C, checks)[0].reasonCategory, '@자료 | <없음>');
+  const csv = unavailableReasonCSV([record], C, checks, '@자료 | <없음>');
+  assert.ok(csv.includes("'@자료 | <없음>")); assert.ok(csv.includes("'=자료 요청"));
+  assert.equal(unavailableReasonCSV([record], C, checks, '다른 분류').split('\r\n').length, 1);
+  assert.ok(recordsCSV([record], C, {}, true, checks).includes('""reasonCategory""'));
+  const report = reportMarkdown([record], C, {}, '테스트', '2026-10-06', checks);
+  assert.ok(report.includes('확인 불가 이유별 모아보기')); assert.ok(report.includes('@자료 \\| &lt;없음&gt;'));
+  checks[record.measurementId].outcomes[id].status = 'done';
+  assert.equal(unavailableEntries([record], C, checks).length, 0);
+  assert.equal(followUpProgress(record, C, checks)[0].reasonCategory, '');
+});
+test('분류 삭제: 메모·상태·서명·다른 분류 보존, 입력 객체 변경 없음', () => {
+  const checks = {a: {signature: '원래 서명', checked: [], outcomes: {one: {status: 'unavailable', reasonCategory: '추가 자료 필요', reason: '남겨둔 메모'}, two: {status: 'unavailable', reasonCategory: '다른 분류', reason: '다른 메모'}}}, legacy: {signature: '이전 서명', checked: ['x']}};
+  const updated = removeReasonCategory(checks, '추가 자료 필요');
+  assert.equal(updated.a.outcomes.one.reasonCategory, ''); assert.equal(updated.a.outcomes.one.reason, '남겨둔 메모');
+  assert.equal(updated.a.outcomes.one.status, 'unavailable'); assert.equal(updated.a.signature, '원래 서명');
+  assert.deepEqual(updated.a.outcomes.two, checks.a.outcomes.two); assert.deepEqual(updated.legacy, checks.legacy);
+  assert.equal(checks.a.outcomes.one.reasonCategory, '추가 자료 필요');
+  updated['__proto__'] = {signature: '측정 번호로 사용한 특수 문자열'};
+  assert.equal(Object.getPrototypeOf(updated), null); assert.equal(Object.hasOwn(updated, '__proto__'), true);
+  assert.ok(JSON.stringify(updated).includes('측정 번호로 사용한 특수 문자열'));
 });
 test('비교표: 전체 기록, 변경 기준, 누락과 비교 불가, 기록 전용 항목 구분', () => {
   const rows = comparisonRows(base);

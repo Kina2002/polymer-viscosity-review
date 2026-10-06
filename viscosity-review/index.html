@@ -42,6 +42,17 @@
       <div class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow muted">BATCH OVERVIEW</p><h2>배치별 점도 기록</h2></div><label class="check-label"><input type="checkbox" id="comparable-only" checked> 비교 조건이 맞는 값만</label></div><div id="chart" class="chart" aria-live="polite"></div><div class="chart-footer"><span><i class="legend-dot green-dot"></i> 수치상 범위 내 <i class="legend-dot amber-dot"></i> 수치상 범위 외</span><span id="chart-note">개별 측정값 · 평균으로 합치지 않음</span></div></div>
       <div class="panel findings-panel"><p class="eyebrow muted">REVIEW SIGNALS</p><h2>확인할 기록</h2><p class="subtle">범주를 눌러 해당 기록을 살펴보세요.</p><div id="category-counts"></div><p class="small-note">한 측정에 여러 항목이 표시될 수 있어요.<br>조건 차이는 원인 확정이나 불량 판정이 아닙니다.</p></div>
     </section>
+    <details id="unavailable-summary" class="panel unavailable-summary">
+      <summary>확인 불가 모아보기 <span id="unavailable-count" class="count-label">0개 항목</span></summary>
+      <p class="subtle unavailable-scope">현재 데이터 전체에서 확인 불가로 남긴 항목과 메모를 모아봅니다. 측정 기록의 검색·필터와 별도로 표시하며, 현재 기준과 원본에 유효한 확인 상태만 포함합니다.</p>
+      <div class="unavailable-toolbar">
+        <label class="filter-label">확인 불가 이유 분류<select id="unavailable-filter"><option value="">전체 분류</option></select></label>
+        <button type="button" id="manage-reason-categories" class="button secondary">분류 추가·삭제</button>
+        <button type="button" id="export-unavailable" class="button secondary" disabled>이유 CSV 저장</button>
+      </div>
+      <div id="unavailable-list" class="unavailable-list"></div>
+      <div class="pagination"><span id="unavailable-page-label"></span><div><button type="button" id="unavailable-previous" class="page-button" aria-label="확인 불가 이전 페이지">←</button><button type="button" id="unavailable-next" class="page-button" aria-label="확인 불가 다음 페이지">→</button></div></div>
+    </details>
     <section id="records" class="record-section" aria-labelledby="records-title">
       <div class="section-heading"><div><p class="eyebrow muted">MEASUREMENT RECORDS</p><h2 id="records-title">측정 기록</h2></div><span id="filtered-count" class="count-label"></span></div>
       <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="배치·측정·시료 번호 검색" aria-label="배치 측정 시료 번호 검색"></label><label class="filter-label">검토 상태<select id="status-filter"><option value="all">전체 상태</option><option value="pass">기준 충족</option><option value="review">검토 필요</option></select></label><label class="filter-label">확인 항목<select id="category-filter"><option value="all">전체 항목</option><option value="missing">기록 누락</option><option value="data">입력 확인</option><option value="manufacturing">제조 조건 차이</option><option value="measurement">측정 조건 차이</option><option value="specification">점도 규격 이탈</option></select></label><button id="reset-filter" class="text-button">초기화</button></div>
@@ -53,5 +64,16 @@
     <footer>점도 검토실 <span>·</span> 교육용 가상 제품 POLY-A <span>·</span> 첫 버전은 규칙에 따른 검토를 제공합니다.</footer>
   </main>
   <dialog id="criteria-dialog" aria-labelledby="criteria-title"><form id="criteria-form"><div class="dialog-heading"><div><p class="eyebrow muted">REVIEW METHOD</p><h2 id="criteria-title">시연용 검토 기준</h2></div><button type="button" id="close-criteria" class="page-button" aria-label="기준 설정 닫기">×</button></div><p class="dialog-intro">실제 SOP가 확정되기 전의 가상 초안입니다. 변경하면 모든 기록을 다시 검토하고 새 기준 버전을 남깁니다.</p><div id="criteria-fields"></div><p class="small-note">고정 확인 요건: 온도 평형·수평·영점 완료, 침지 표시 준수, 기포 육안 미관찰, 유효한 교정·적합한 표준액 점검 기록. 이 요건도 이번 시연을 위한 가정입니다.</p><p id="criteria-error" role="alert" class="form-error" hidden></p><div class="dialog-actions"><button type="button" id="reset-criteria" class="button secondary">가상 초안으로 되돌리기</button><button type="submit" class="button primary">기준 적용</button></div></form></dialog>
+  <dialog id="reason-category-dialog" aria-labelledby="reason-category-title">
+    <form id="reason-category-form">
+      <div class="dialog-heading"><h2 id="reason-category-title">확인 불가 이유 분류</h2><button type="button" id="close-reason-categories" class="page-button" aria-label="분류 관리 닫기">×</button></div>
+      <p class="dialog-intro">분류를 직접 추가하거나 삭제할 수 있어요. 분류를 삭제하면 저장된 메모는 <strong>미분류</strong>로 옮겨지고, 메모 내용은 남아요.</p>
+      <label class="criteria-input">새 분류 이름<input id="reason-category-name" type="text" maxlength="40" placeholder="예: 장비 점검 자료 없음" autocomplete="off"></label>
+      <p id="reason-category-error" role="alert" class="form-error" hidden></p>
+      <button type="submit" class="button primary category-add-button">분류 추가</button>
+      <ul id="reason-category-list" class="reason-category-list" aria-label="저장된 이유 분류"></ul>
+      <p class="small-note">분류는 이 브라우저의 모든 데이터 파일에서 함께 사용합니다. 분류를 선택하지 않은 기존 메모는 미분류로 표시합니다.</p>
+    </form>
+  </dialog>
 </body>
 </html>
