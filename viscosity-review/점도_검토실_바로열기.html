@@ -191,6 +191,7 @@
 .condition-plusminus,#condition-unit{padding-bottom:12px}
 .condition-preview{font-size:11px;color:#52745c;line-height:1.8;margin:12px 0;overflow-wrap:anywhere}
 .condition-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.condition-result-count{display:flex;align-items:center;padding:8px 11px;border-radius:5px;background:#edf5ec;color:#38694b;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.7}
 .condition-explorer [hidden],#chart-axis-controls[hidden]{display:none!important}
 .chart-axis-label{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:11px;color:#54705a;flex-wrap:wrap}
 .chart-axis-label select{padding:7px;border:1px solid var(--border);border-radius:5px;background:white;max-width:100%;color:var(--ink);font-size:11px}
@@ -281,7 +282,7 @@ tr.report-selected{background:#edf5ec}
           <label id="condition-text-fields" class="condition-field-label" hidden>보고 싶은 기록값<select id="condition-value"></select></label>
           <p id="condition-preview" class="condition-preview" aria-live="polite"></p>
           <p id="condition-error" class="form-error" role="alert" hidden></p>
-          <div class="condition-actions"><button type="submit" class="button primary">조건 적용</button><button id="clear-condition" type="button" class="button secondary" disabled>조건 해제</button></div>
+          <div class="condition-actions"><button type="submit" class="button primary">조건 적용</button><button id="clear-condition" type="button" class="button secondary" disabled>조건 해제</button><output id="condition-result-count" class="condition-result-count" role="status" aria-live="polite" aria-atomic="true" hidden></output></div>
         </form>
       </details>
       <div class="report-selection-toolbar"><strong id="report-selection-count" role="status" aria-live="polite">보고서에 담을 기록 0건 체크</strong><button id="clear-report-selection" type="button" class="text-button" disabled>선택 해제</button><p>앞의 체크박스로 골라 담으세요. 페이지나 검색을 바꿔도 선택은 유지돼요.</p></div>
@@ -931,6 +932,8 @@ function applyFilters() {
   page = Math.min(page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
   if (!filtered.some(record => record.measurementId === selectedId)) selectedId = filtered[0]?.measurementId ?? null;
   $('filtered-count').textContent = `현재 ${filtered.length.toLocaleString('ko-KR')}건 / 전체 ${records.length.toLocaleString('ko-KR')}건`;
+  $('condition-result-count').hidden = !activeCondition;
+  $('condition-result-count').textContent = `결과 ${filtered.length.toLocaleString('ko-KR')} / ${records.length.toLocaleString('ko-KR')}건`;
   $('export-csv').disabled = !filtered.length;
   renderRows(); renderDetail(); renderChart();
 }
