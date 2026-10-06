@@ -1,4 +1,4 @@
-import { DEFAULT_CRITERIA, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown } from './core.js';
+import { DEFAULT_CRITERIA, CATEGORY_LABELS, FOLLOW_UP_STATUS_LABELS, DEFAULT_REASON_CATEGORIES, reasonCategoryName, validateReasonCategory, unavailableEntries, removeReasonCategory, unavailableReasonCSV, numeric, reviewRecord, comparisonRows, followUpSignature, followUpProgress, validateCriteria, parseCSV, recordsCSV, reportMarkdown, reportText } from './core.js';
 
 const $ = id => document.getElementById(id);
 const format = value => numeric(value) === null ? '—' : Number(value).toLocaleString('ko-KR', {maximumFractionDigits: 2});
@@ -37,9 +37,11 @@ const REASON_PAGE_SIZE = 20;
 const PAGE_SIZE = 10;
 let comparisonOnlyIssues = false;
 let comparisonExpanded = false;
+const selectedReportIds = new Set();
 
 function loadRecords(next, name, key) {
   records = next; source = name; datasetKey = key;
+  selectedReportIds.clear(); $('report-scope').value = 'filtered';
   notes = Object.assign(Object.create(null), stored(`poly-notes-${datasetKey}`, {}));
   checklists = Object.assign(Object.create(null), stored(`poly-checklists-${datasetKey}`, {}));
   batchMap = new Map();
@@ -78,8 +80,7 @@ function applyFilters() {
   page = Math.min(page, Math.max(0, Math.ceil(filtered.length / PAGE_SIZE) - 1));
   if (!filtered.some(record => record.measurementId === selectedId)) selectedId = filtered[0]?.measurementId ?? null;
   $('filtered-count').textContent = `현재 ${filtered.length.toLocaleString('ko-KR')}건 / 전체 ${records.length.toLocaleString('ko-KR')}건`;
-  $('export-csv').disabled = !$('export-report') || !filtered.length;
-  $('export-report').disabled = !filtered.length;
+  $('export-csv').disabled = !filtered.length;
   renderRows(); renderDetail(); renderChart();
 }
 function renderCategoryCounts() {
@@ -98,6 +99,12 @@ function renderRows() {
   for (const record of filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)) {
     const review = reviews.get(record.measurementId), tr = element('tr');
     tr.classList.toggle('selected', record.measurementId === selectedId);
+    const selectCell = element('td', 'report-select-cell'), selectLabel = element('label');
+    const checkbox = element('input', 'report-record-check'); checkbox.type = 'checkbox';
+    checkbox.dataset.measurementId = record.measurementId;
+    checkbox.setAttribute('aria-label', `${record.measurementId} 보고서에 담기`);
+    checkbox.addEventListener('change', () => changeReportSelection([record.measurementId], checkbox.checked));
+    selectLabel.append(checkbox); selectCell.append(selectLabel);
     const name = element('td'), button = element('button', 'record-link', record.batchId);
     button.append(element('span', '', `${record.measurementId} · ${record.repeat || '?'}회차`));
     button.setAttribute('aria-label', `${record.measurementId} 상세 기록`);
@@ -105,15 +112,45 @@ function renderRows() {
     button.addEventListener('click', () => select(record.measurementId));
     name.append(button);
     const status = element('td'); status.append(element('span', `badge${review.issues.length ? ' warning' : ''}`, review.status));
-    tr.append(name, element('td', 'number-cell', format(review.viscosity)), element('td', '', format(record.sampleTemperature)), status);
+    tr.append(selectCell, name, element('td', 'number-cell', format(review.viscosity)), element('td', '', format(record.sampleTemperature)), status);
     tbody.append(tr);
   }
   if (!filtered.length) {
-    const row = element('tr'), cell = element('td', 'empty-row', '해당하는 기록이 없습니다. 검색어나 필터를 바꿔보세요.'); cell.colSpan = 4; row.append(cell); tbody.append(row);
+    const row = element('tr'), cell = element('td', 'empty-row', '해당하는 기록이 없습니다. 검색어나 필터를 바꿔보세요.'); cell.colSpan = 5; row.append(cell); tbody.append(row);
   }
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   $('page-label').textContent = `${page + 1} / ${pages} 페이지 · 한 페이지 ${PAGE_SIZE}건`;
   $('previous-page').disabled = page === 0; $('next-page').disabled = page + 1 >= pages;
+  updateReportControls();
+}
+function reportRecords() {
+  return $('report-scope').value === 'selected' ? records.filter(record => selectedReportIds.has(record.measurementId)) : filtered;
+}
+function changeReportSelection(ids, checked) {
+  const wasEmpty = selectedReportIds.size === 0;
+  for (const id of ids) if (checked) selectedReportIds.add(id); else selectedReportIds.delete(id);
+  if (checked && wasEmpty) $('report-scope').value = 'selected';
+  updateReportControls();
+}
+function updateReportControls() {
+  $('report-scope').querySelector('[value="filtered"]').textContent = `검색·필터 결과 ${filtered.length.toLocaleString('ko-KR')}건`;
+  $('report-scope').querySelector('[value="selected"]').textContent = `체크한 기록 ${selectedReportIds.size.toLocaleString('ko-KR')}건`;
+  $('report-selection-count').textContent = `보고서에 담을 기록 ${selectedReportIds.size.toLocaleString('ko-KR')}건 체크`;
+  $('clear-report-selection').disabled = !selectedReportIds.size;
+  for (const checkbox of document.querySelectorAll('.report-record-check')) {
+    checkbox.checked = selectedReportIds.has(checkbox.dataset.measurementId);
+    checkbox.closest('tr').classList.toggle('report-selected', checkbox.checked);
+  }
+  const visible = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const checkedCount = visible.filter(record => selectedReportIds.has(record.measurementId)).length;
+  $('select-visible-records').checked = !!visible.length && checkedCount === visible.length;
+  $('select-visible-records').indeterminate = checkedCount > 0 && checkedCount < visible.length;
+  $('select-visible-records').disabled = !visible.length;
+  const hasReport = reportRecords().length > 0;
+  for (const id of ['export-report', 'export-txt', 'export-txt-menu']) $(id).disabled = !hasReport;
+  const summary = $('report-formats').querySelector('summary');
+  summary.setAttribute('aria-disabled', String(!hasReport)); summary.tabIndex = hasReport ? 0 : -1;
+  if (!hasReport) $('report-formats').open = false;
 }
 function select(id) {
   selectedId = id;
@@ -545,11 +582,36 @@ $('export-csv').addEventListener('click', () => {
   download(recordsCSV(filtered, criteria, notes, true, checklists), '점도_검토결과.csv', 'text/csv;charset=utf-8');
   message(`현재 검색·필터에 해당하는 ${filtered.length}건의 검토 결과 CSV를 저장했습니다.`);
 });
-function exportReport() {
-  if (!filtered.length) return;
-  download(reportMarkdown(filtered, criteria, notes, source, undefined, checklists), '점도_검토보고서.md', 'text/markdown;charset=utf-8');
-  message(`현재 검색·필터에 해당하는 ${filtered.length}건의 보고서를 저장했습니다. 원본 CSV와 함께 보관하세요.`);
+function exportReport(format) {
+  const targetRecords = reportRecords();
+  if (!targetRecords.length) return;
+  const plain = format === 'txt';
+  const scope = $('report-scope').value === 'selected' ? `체크한 기록 ${targetRecords.length}건 (검색·필터 밖의 선택 포함)` : `현재 검색·필터 결과 ${targetRecords.length}건`;
+  const report = (plain ? reportText : reportMarkdown)(targetRecords, criteria, notes, source, undefined, checklists, scope);
+  // UTF-8 BOM과 CRLF로 Windows 메모장에서도 한글과 줄바꿈을 읽을 수 있게 한다.
+  download(plain ? '\uFEFF' + report.replaceAll('\n', '\r\n') : report,
+    `점도_검토보고서.${plain ? 'txt' : 'md'}`, plain ? 'text/plain;charset=utf-8' : 'text/markdown;charset=utf-8');
+  if ($('report-formats').open) {
+    $('report-formats').open = false; $('report-formats').querySelector('summary').focus();
+  }
+  message(`${scope}의 ${plain ? 'TXT' : 'Markdown'} 보고서를 내려받았습니다. 원본 CSV와 함께 보관하세요.`);
 }
-$('export-report').addEventListener('click', exportReport);
+$('report-scope').addEventListener('change', updateReportControls);
+$('select-visible-records').addEventListener('change', event => changeReportSelection(filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(record => record.measurementId), event.target.checked));
+$('clear-report-selection').addEventListener('click', () => { selectedReportIds.clear(); updateReportControls(); });
+$('export-txt').addEventListener('click', () => exportReport('txt'));
+$('export-txt-menu').addEventListener('click', () => exportReport('txt'));
+$('export-report').addEventListener('click', () => exportReport('md'));
+$('report-formats').querySelector('summary').addEventListener('click', event => {
+  if (!reportRecords().length) event.preventDefault();
+});
+document.addEventListener('click', event => {
+  if (!$('report-formats').contains(event.target)) $('report-formats').open = false;
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && $('report-formats').open) {
+    $('report-formats').open = false; $('report-formats').querySelector('summary').focus();
+  }
+});
 try { await demo(); }
 catch (error) { message(`시작 실패: ${error.message} npm start로 서버를 실행했는지 확인하세요.`, true); }

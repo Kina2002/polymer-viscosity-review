@@ -329,8 +329,74 @@ export function unavailableReasonCSV(records, criteria, checklists = {}, categor
     [task.measurementId, task.batchId, task.label, task.reasonCategory || '미분류', task.reason, criteria.version].map(value => csvCell(value, true)).join(','))].join('\r\n');
 }
 
+export function reportText(records, criteria, notes = {}, source = '합성 시연 데이터', date = new Date().toISOString(), checklists = {}, scope = '현재 검색·필터 결과') {
+  const reviews = records.map(record => reviewRecord(record, criteria));
+  const unavailable = unavailableEntries(records, criteria, checklists);
+  const groups = new Map();
+  for (const task of unavailable) {
+    const category = task.reasonCategory || '미분류';
+    if (!groups.has(category)) groups.set(category, []);
+    groups.get(category).push(task);
+  }
+  const text = value => String(value ?? '').replace(/\r\n?/g, '\n');
+  const indented = value => text(value).split('\n').map(line => `  ${line}`).join('\n');
+  const criteriaLines = [
+    `점도: ${criteria.viscosityMin}~${criteria.viscosityMax} mPa·s (경계 포함)`,
+    `목표 측정 온도: ${criteria.temperature} ± ${criteria.temperatureTolerance} ℃`,
+    `스핀들: ${criteria.spindle}`, `용기: ${criteria.vessel}`, `측정 속도: ${criteria.rpm} rpm`,
+    `시료량: ${criteria.volume} mL`, `결과를 읽은 시점: 회전 시작 후 ${criteria.elapsed}초`,
+    `토크: ${criteria.torqueMin}~${criteria.torqueMax}%`,
+    `제조 온도: ${criteria.manufacturingTemperature} ± ${criteria.manufacturingTolerance} ℃`,
+    `제조 교반 속도: ${criteria.mixingRpm} ± ${criteria.mixingRpmTolerance} rpm`,
+    `제조 교반 시간: ${criteria.mixingMinutes} ± ${criteria.mixingMinutesTolerance}분`,
+    `농도: ${criteria.concentration} ± ${criteria.concentrationTolerance} wt%`,
+    ...Object.entries(FIXED_REQUIREMENTS).map(([field, value]) => `${LABELS[field]}: ${value}`)
+  ];
+  const lines = [
+    '고분자 수용액 A — 점도 검토 보고서', '',
+    '교육용 가상 기준에 따른 검토입니다. 실제 물성 예측, 원인 확정 또는 출하 승인 결과가 아닙니다.', '',
+    `작성: ${date}`, `데이터 출처: ${source}`, `적용 기준: ${criteria.version}`, `보고서 범위: ${scope}`, '',
+    '[적용 기준]', ...criteriaLines, '',
+    '[검토 요약]', `대상 측정: ${records.length}건`, `대상 배치: ${new Set(records.map(record => record.batchId)).size}개`,
+    `기준 충족: ${reviews.filter(review => !review.issues.length).length}건`,
+    ...Object.entries(CATEGORY_LABELS).map(([key, label]) => `${label}: ${reviews.filter(review => review.categories.includes(key)).length}건`),
+    '범주별 건수는 중복될 수 있습니다. 수치상 범위 내라도 비교 조건 확인이 필요할 수 있습니다.', '',
+    '[확인 불가 이유별 모아보기]', `확인 불가 항목: ${unavailable.length}개`, '',
+    ...[...groups].flatMap(([category, tasks]) => [`${category} (${tasks.length}개)`, ...tasks.flatMap(task => [
+      `  측정: ${task.measurementId} / 항목: ${task.label}`, indented(task.reason.trim() || '메모 미기재')
+    ]), '']),
+    '[측정별 결과]', ''
+  ];
+  for (const [index, record] of records.entries()) {
+    const result = reviews[index];
+    lines.push(
+      `(${index + 1}) 배치: ${record.batchId} / 측정: ${record.measurementId}`,
+      `시료: ${record.sampleId} / 반복 회차: ${record.repeat} / 측정 일시: ${record.measuredAt}`,
+      `점도: ${result.viscosity === null ? '비교 불가' : `${result.viscosity} mPa·s`}`,
+      `검토 결과: ${result.status}`, `수치 비교: ${result.numericStatus}`,
+      `비교 조건: ${result.comparable ? '확인됨' : '확인 필요'}`, '검토 이유:',
+      ...result.issues.map(issue => `  ${LABELS[issue.field]}: 실제 ${missing(issue.actual) ? '미기재' : issue.actual} / 기준 ${issue.expected} / ${issue.reason}`),
+      ...(result.issues.length ? [] : ['  가상 기준과 일치']),
+      '검토 메모:', indented(text(notes[record.measurementId]).trim() ? notes[record.measurementId] : '미기재'), '',
+      '추가 확인 질문과 체크리스트:'
+    );
+    const tasks = followUpProgress(record, criteria, checklists);
+    for (const task of tasks) {
+      lines.push(`  항목: ${task.label} / 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}`,
+        `  기록: ${task.actual} / 기준: ${task.expected}`, indented(task.question));
+      if (task.status === 'unavailable') lines.push(`  확인 불가 이유 분류: ${task.reasonCategory || '미분류'}`,
+        '  확인 불가 이유:', indented(task.reason.trim() || '미기재'));
+    }
+    if (!tasks.length) lines.push('  규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.');
+    lines.push('');
+  }
+  lines.push('[원본 기록]', `이 보고서는 ${scope}의 검토 결과입니다. 원본 CSV와 함께 보관하세요.`,
+    '자료 확인 상태는 원인 확정, 판정 변경 또는 출하 승인을 뜻하지 않습니다.');
+  return text(lines.join('\n'));
+}
+
 const md = value => String(value ?? '').replaceAll('\\', '\\\\').replaceAll('|', '\\|').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\r', '').replaceAll('\n', '<br>');
-export function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 데이터', date = new Date().toISOString(), checklists = {}) {
+export function reportMarkdown(records, criteria, notes = {}, source = '합성 시연 데이터', date = new Date().toISOString(), checklists = {}, scope = '현재 검색·필터 결과') {
   const reviews = records.map(record => reviewRecord(record, criteria));
   const counts = Object.keys(CATEGORY_LABELS).map(key => `- ${CATEGORY_LABELS[key]}: ${reviews.filter(review => review.categories.includes(key)).length}건`);
   const unavailable = unavailableEntries(records, criteria, checklists);
@@ -343,7 +409,7 @@ export function reportMarkdown(records, criteria, notes = {}, source = '합성 �
   return [
     '# 고분자 수용액 A — 점도 검토 보고서', '',
     '> 교육용 가상 기준에 따른 검토입니다. 실제 물성 예측, 원인 확정 또는 출하 승인 결과가 아닙니다.', '',
-    `작성: ${md(date)}`, `데이터 출처: ${md(source)}`, `적용 기준: ${md(criteria.version)}`, '',
+    `작성: ${md(date)}`, `데이터 출처: ${md(source)}`, `적용 기준: ${md(criteria.version)}`, `보고서 범위: ${md(scope)}`, '',
     '## 적용 기준 전체', '', '```json', JSON.stringify(criteria, null, 2).replaceAll('```', '\\u0060\\u0060\\u0060'), '```', '',
     '## 검토 요약', '', `- 대상 측정: ${records.length}건`, `- 대상 배치: ${new Set(records.map(record => record.batchId)).size}개`,
     `- 기준 충족: ${reviews.filter(review => !review.issues.length).length}건`, ...counts,
@@ -359,6 +425,6 @@ export function reportMarkdown(records, criteria, notes = {}, source = '합성 �
     ...records.flatMap(record => {
       const tasks = followUpProgress(record, criteria, checklists);
       return [`### ${md(record.measurementId)}`, '', ...tasks.map(task => `- [${task.checked ? 'x' : ' '}] ${md(task.label)} — 상태: ${FOLLOW_UP_STATUS_LABELS[task.status]}. 기록: ${md(task.actual)} / 기준: ${md(task.expected)}. ${md(task.question)}${task.status === 'unavailable' ? ` 확인 불가 이유 분류: ${md(task.reasonCategory || '미분류')}. 확인 불가 이유: ${md(task.reason.trim() || '미기재')}` : ''}`), ...(tasks.length ? [] : ['규칙에서 추가 확인할 차이·누락을 찾지 못했습니다.']), ''];
-    }), '## 원본 기록', '', '원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 현재 필터로 선택한 기록의 검토 결과입니다.', ''
+    }), '## 원본 기록', '', `원본은 별도의 입력 데이터 CSV 또는 검토 결과 CSV와 함께 보관하세요. 이 보고서는 ${md(scope)}의 검토 결과입니다.`, ''
   ].join('\n');
 }
