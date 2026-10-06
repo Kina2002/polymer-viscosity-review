@@ -831,5 +831,9 @@ document.addEventListener('keydown', event => {
     $('report-formats').open = false; $('report-formats').querySelector('summary').focus();
   }
 });
-try { await demo(); }
+try {
+  await demo();
+  // 데이터로 측정 목록·상세 높이가 바뀐 뒤 하단 바로가기 위치를 맞춘다.
+  if (window.location.hash === '#unavailable-summary') $('unavailable-summary').scrollIntoView({behavior: 'instant', block: 'start'});
+}
 catch (error) { message(`시작 실패: ${error.message} npm start로 서버를 실행했는지 확인하세요.`, true); }

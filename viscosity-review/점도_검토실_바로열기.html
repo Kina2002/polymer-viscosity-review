@@ -277,6 +277,15 @@ tr.report-selected{background:#edf5ec}
       <div class="panel chart-panel"><div class="panel-heading"><div><p class="eyebrow muted">MEASUREMENT OVERVIEW</p><h2 id="chart-title">배치별 점도 기록</h2></div><label class="check-label"><input type="checkbox" id="comparable-only" checked> 비교 조건이 맞는 값만</label></div><div id="chart-axis-controls" class="chart-axis-controls"><label class="chart-axis-label" for="chart-axis">가로축<select id="chart-axis"><option value="batch">배치 순서</option><option value="condition" disabled>적용한 조건</option></select></label><label class="chart-axis-label" for="chart-y-field">세로축<select id="chart-y-field"><option value="viscosity">점도 (mPa·s)</option></select></label></div><div id="chart" class="chart" aria-live="polite"></div><div class="chart-footer"><span id="chart-legend"><i class="legend-dot green-dot"></i> 수치상 범위 내 <i class="legend-dot amber-dot"></i> 수치상 범위 외</span><span id="chart-note">개별 측정값 · 평균으로 합치지 않음</span></div><p id="chart-hint" class="chart-hint">점을 누르면 해당 측정 기록으로 이동해요.</p><p id="chart-condition-hint" class="chart-hint" hidden></p></div>
       <div class="panel findings-panel"><p class="eyebrow muted">REVIEW SIGNALS</p><h2>확인할 기록</h2><p class="subtle">범주를 눌러 해당 기록을 살펴보세요.</p><div id="category-counts"></div><p class="small-note">한 측정에 여러 항목이 표시될 수 있어요.<br>조건 차이는 원인 확정이나 불량 판정이 아닙니다.</p></div>
     </section>
+    <section id="records" class="record-section" aria-labelledby="records-title">
+      <div class="section-heading"><div><p class="eyebrow muted">MEASUREMENT RECORDS</p><h2 id="records-title">측정 기록</h2></div><span id="filtered-count" class="count-label"></span></div>
+      <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="배치·측정·시료 번호 검색" aria-label="배치 측정 시료 번호 검색"></label><label class="filter-label">검토 상태<select id="status-filter"><option value="all">전체 상태</option><option value="pass">기준 충족</option><option value="review">검토 필요</option></select></label><label class="filter-label">확인 항목<select id="category-filter"><option value="all">전체 항목</option><option value="missing">기록 누락</option><option value="data">입력 확인</option><option value="manufacturing">제조 조건 차이</option><option value="measurement">측정 조건 차이</option><option value="specification">점도 규격 이탈</option></select></label><button id="reset-filter" class="text-button">초기화</button></div>
+      <div class="report-selection-toolbar"><strong id="report-selection-count" role="status" aria-live="polite">보고서에 담을 기록 0건 체크</strong><button id="clear-report-selection" type="button" class="text-button" disabled>선택 해제</button><p>앞의 체크박스로 골라 담으세요. 페이지나 검색을 바꿔도 선택은 유지돼요.</p></div>
+      <div class="record-grid">
+        <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">체크박스로 보고서에 담을 기록을 고르세요. 표 머리의 체크박스는 현재 페이지 전체를 선택합니다. 측정 번호를 누르면 상세 정보를 확인할 수 있습니다.</caption><thead><tr><th scope="col" class="report-select-cell"><label><input id="select-visible-records" type="checkbox" aria-label="현재 페이지 기록 전체 선택"><span class="sr-only">보고서 선택</span></label></th><th scope="col">배치 / 측정</th><th scope="col" class="viscosity-heading">점도<small>기록값 · 환산값</small><small class="unit-conversion-note">1 cP (= 1 mPa·s)</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>
+        <aside id="detail" class="panel detail-panel" tabindex="-1" aria-label="선택한 측정의 상세 기록"><p class="empty-detail">측정 기록을 선택하세요.</p></aside>
+      </div>
+    </section>
     <details id="unavailable-summary" class="panel unavailable-summary">
       <summary>확인 불가 모아보기 <span id="unavailable-count" class="count-label">0개 항목</span></summary>
       <p class="subtle unavailable-scope">현재 데이터 전체에서 확인 불가로 남긴 항목과 메모를 모아봅니다. 측정 기록의 검색·필터와 별도로 표시하며, 현재 기준과 원본에 유효한 확인 상태만 포함합니다.</p>
@@ -288,15 +297,6 @@ tr.report-selected{background:#edf5ec}
       <div id="unavailable-list" class="unavailable-list"></div>
       <div class="pagination"><span id="unavailable-page-label"></span><div><button type="button" id="unavailable-previous" class="page-button" aria-label="확인 불가 이전 페이지">←</button><button type="button" id="unavailable-next" class="page-button" aria-label="확인 불가 다음 페이지">→</button></div></div>
     </details>
-    <section id="records" class="record-section" aria-labelledby="records-title">
-      <div class="section-heading"><div><p class="eyebrow muted">MEASUREMENT RECORDS</p><h2 id="records-title">측정 기록</h2></div><span id="filtered-count" class="count-label"></span></div>
-      <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="배치·측정·시료 번호 검색" aria-label="배치 측정 시료 번호 검색"></label><label class="filter-label">검토 상태<select id="status-filter"><option value="all">전체 상태</option><option value="pass">기준 충족</option><option value="review">검토 필요</option></select></label><label class="filter-label">확인 항목<select id="category-filter"><option value="all">전체 항목</option><option value="missing">기록 누락</option><option value="data">입력 확인</option><option value="manufacturing">제조 조건 차이</option><option value="measurement">측정 조건 차이</option><option value="specification">점도 규격 이탈</option></select></label><button id="reset-filter" class="text-button">초기화</button></div>
-      <div class="report-selection-toolbar"><strong id="report-selection-count" role="status" aria-live="polite">보고서에 담을 기록 0건 체크</strong><button id="clear-report-selection" type="button" class="text-button" disabled>선택 해제</button><p>앞의 체크박스로 골라 담으세요. 페이지나 검색을 바꿔도 선택은 유지돼요.</p></div>
-      <div class="record-grid">
-        <div class="panel table-panel"><div class="table-scroll"><table><caption class="sr-only">체크박스로 보고서에 담을 기록을 고르세요. 표 머리의 체크박스는 현재 페이지 전체를 선택합니다. 측정 번호를 누르면 상세 정보를 확인할 수 있습니다.</caption><thead><tr><th scope="col" class="report-select-cell"><label><input id="select-visible-records" type="checkbox" aria-label="현재 페이지 기록 전체 선택"><span class="sr-only">보고서 선택</span></label></th><th scope="col">배치 / 측정</th><th scope="col" class="viscosity-heading">점도<small>기록값 · 환산값</small><small class="unit-conversion-note">1 cP (= 1 mPa·s)</small></th><th scope="col">온도 <small>℃</small></th><th scope="col">검토 상태</th></tr></thead><tbody id="record-rows"></tbody></table></div><div class="pagination"><span id="page-label"></span><div><button id="previous-page" class="page-button" aria-label="이전 페이지">←</button><button id="next-page" class="page-button" aria-label="다음 페이지">→</button></div></div></div>
-        <aside id="detail" class="panel detail-panel" tabindex="-1" aria-label="선택한 측정의 상세 기록"><p class="empty-detail">측정 기록을 선택하세요.</p></aside>
-      </div>
-    </section>
     <footer>점도 검토실 <span>·</span> 교육용 가상 제품 POLY-A <span>·</span> 첫 버전은 규칙에 따른 검토를 제공합니다.</footer>
   </main>
   <dialog id="criteria-dialog" aria-labelledby="criteria-title"><form id="criteria-form"><div class="dialog-heading"><div><p class="eyebrow muted">REVIEW METHOD</p><h2 id="criteria-title">시연용 검토 기준</h2></div><button type="button" id="close-criteria" class="page-button" aria-label="기준 설정 닫기">×</button></div><p class="dialog-intro">실제 SOP가 확정되기 전의 가상 초안입니다. 변경하면 모든 기록을 다시 검토하고 새 기준 버전을 남깁니다.</p><div id="criteria-fields"></div><p class="small-note">고정 확인 요건: 온도 평형·수평·영점 완료, 침지 표시 준수, 기포 육안 미관찰, 유효한 교정·적합한 표준액 점검 기록. 이 요건도 이번 시연을 위한 가정입니다.</p><p id="criteria-error" role="alert" class="form-error" hidden></p><div class="dialog-actions"><button type="button" id="reset-criteria" class="button secondary">가상 초안으로 되돌리기</button><button type="submit" class="button primary">기준 적용</button></div></form></dialog>
@@ -1621,7 +1621,11 @@ document.addEventListener('keydown', event => {
     $('report-formats').open = false; $('report-formats').querySelector('summary').focus();
   }
 });
-try { await demo(); }
+try {
+  await demo();
+  // 데이터로 측정 목록·상세 높이가 바뀐 뒤 하단 바로가기 위치를 맞춘다.
+  if (window.location.hash === '#unavailable-summary') $('unavailable-summary').scrollIntoView({behavior: 'instant', block: 'start'});
+}
 catch (error) { message(`시작 실패: ${error.message} npm start로 서버를 실행했는지 확인하세요.`, true); }
 </script>
 </body>
